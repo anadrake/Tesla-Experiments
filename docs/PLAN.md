@@ -139,6 +139,8 @@ Rough size: S ≈ one short session, M ≈ one full session.
 - ✅ Done when: flow 3 works, every control in the 5 panes is interactive
 
 ### Phase 7 — Polish & handoff (S–M)
+- **New map imagery** (Anastasiya, P1 feedback): bigger, nicer map styled with [Snazzy Maps](https://snazzymaps.com/) — Light + Dark styles matching the Figma tiles' palette, rendered large enough for pinch zoom (≥ 2× the 1960px canvas, maybe tiled). Open: how to render it (Google Static Maps API needs a key + has size limits; alternative = a MapLibre style with the Snazzy palette, captured to images) — decide at the start of P7. Route line / pins in P3 must be re-aligned to the new image.
+- Self-host fonts for offline home-screen use; maskable icon (from P0 review)
 - Motion fidelity pass against Figma timelines; 60fps check on iPad
 - On-device QA sweep, fix list from WORKLOG
 - README: how to run, deploy, and add a new screen (vibe-coding guide)
