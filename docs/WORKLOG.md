@@ -6,9 +6,9 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 ---
 
 ## Current state
-- **Phase:** 0 — Foundation & tooling (built, in review)
+- **Phase:** 0 — ✅ done, live at https://anadrake.github.io/Tesla-Experiments/
 - **Last session:** 2026-10-26 — plan approved; Phase 0 scaffold, tokens, stage, deploy workflow, design-ref, reviewer agent
-- **Next step:** reviewer pass → fixes → commit → push + enable Pages → Anastasiya opens on iPad → Phase 1 (Display Shell)
+- **Next step:** Phase 1 (Display Shell + Day/Night)
 - **Carry-over to Phase 1:** export shared assets (map, car renders, album art, app icons) — moved from P0 so they're pulled with `get_design_context` where they're used; read Notes page (`310:79790`) in pieces (whole-page fetch fails)
 
 ## Open questions
