@@ -19,9 +19,10 @@ const ICON = 'var(--color-icon-strong)';
  * Figma "Keyboard" (52:32037): 1920×500 overlay over the lower stage.
  * Opens with Move in, duration/slow + easing/enter (component spec; read-me says 0.25s — see WORKLOG).
  * Shift = one-shot capital. ?#&, mic and cursor keys give press feedback only (not designed further).
+ * Types into Navigate (Enter starts the trip) or Settings search (Enter closes the keyboard).
  */
 export function Keyboard() {
-  const { typeText, backspace, startTrip } = useHud();
+  const { typeText, backspace, startTrip, closeKeyboard, settingsTyping } = useHud();
   const [shift, setShift] = useState(false);
 
   const type = (ch: string) => {
@@ -49,7 +50,7 @@ export function Keyboard() {
           {[...ROWS[1]].map((ch) => (
             <Key key={ch} label={shift ? ch.toUpperCase() : ch} onPress={() => type(ch)} />
           ))}
-          <Key type="action" width={228} label="Enter" onPress={() => startTrip()} />
+          <Key type="action" width={228} label="Enter" onPress={() => (settingsTyping ? closeKeyboard() : startTrip())} />
         </div>
         <div className={styles.row}>
           <Key

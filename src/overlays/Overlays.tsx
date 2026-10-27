@@ -6,14 +6,15 @@ import { SettingsWindow } from './Settings/SettingsWindow';
 
 /** Display Shell Overlay slot content (one overlay at a time). */
 export function Overlays() {
-  const typing = useHud((s) => s.nav === 'typing');
+  const typing = useHud((s) => s.nav === 'typing' || s.settingsTyping);
   const quickActions = useHud((s) => s.quickActions);
   const settingsOpen = useHud((s) => s.settingsOpen);
   return (
     <AnimatePresence>
-      {typing && <Keyboard key="keyboard" />}
       {quickActions && <QuickActions key="quick-actions" />}
       {settingsOpen && <SettingsWindow key="settings" />}
+      {/* last, so it sits over the settings window when Settings search is focused */}
+      {typing && <Keyboard key="keyboard" />}
     </AnimatePresence>
   );
 }

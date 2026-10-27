@@ -136,11 +136,35 @@ export function ToggleButton({ setting, initial = false, children, width = 370 }
 }
 
 /** Search Field (4230:136). */
-export function SearchField({ placeholder = 'Search' }: { placeholder?: string }) {
+export function SearchField({
+  placeholder = 'Search',
+  value = '',
+  focused = false,
+  onPress,
+}: {
+  placeholder?: string;
+  value?: string;
+  /** Keyboard open: focus ring, typed text and a blinking caret (as the Navigate field). */
+  focused?: boolean;
+  onPress?: () => void;
+}) {
   return (
-    <button type="button" className={styles.searchField}>
-      <Icon src={search} size={40} color="var(--color-content-secondary)" />
-      <span className="text-title-l">{placeholder}</span>
+    <button
+      type="button"
+      className={styles.searchField}
+      data-focused={focused || undefined}
+      onClick={() => !focused && onPress?.()}
+      aria-label={value ? `${placeholder}: ${value}` : placeholder}
+    >
+      <Icon src={search} size={40} color={focused || value ? 'var(--color-content-primary)' : 'var(--color-content-secondary)'} />
+      {focused || value ? (
+        <span className={`text-title-l ${styles.searchValue}`}>
+          {value}
+          {focused && <span className={styles.caret} />}
+        </span>
+      ) : (
+        <span className="text-title-l">{placeholder}</span>
+      )}
     </button>
   );
 }

@@ -115,6 +115,16 @@
       "ref": "settings-search-dark.png"
     },
     {
+      "name": "settings-search-typing-light",
+      "query": "mode=light&settings=search&keyboard=1",
+      "ref": "settings-search-light.png"
+    },
+    {
+      "name": "settings-search-typing-dark",
+      "query": "mode=dark&settings=search&keyboard=1",
+      "ref": "settings-search-dark.png"
+    },
+    {
       "name": "settings-pedals-light",
       "query": "mode=light&settings=pedals",
       "ref": "settings-pedals-light.png"

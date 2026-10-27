@@ -66,7 +66,9 @@ export interface HudState {
   /** Typing over an active trip returns to it when the keyboard closes without Enter. */
   resumeTrip: boolean;
   openKeyboard: () => void;
+  /** Closes the keyboard, whichever field it is typing into. */
   closeKeyboard: () => void;
+  /** Types into the focused field: Settings search while it's open, else the Navigate field. */
   typeText: (text: string) => void;
   backspace: () => void;
   /** Enter / shortcut: start a trip to `to` (or the typed query, or the Figma default). */
@@ -87,6 +89,10 @@ export interface HudState {
   settingsPage: SettingsPage;
   toggleSettings: () => void;
   setSettingsPage: (p: SettingsPage) => void;
+  /** Settings search field focused: the keyboard is up over the settings window and types into settingsQuery. */
+  settingsTyping: boolean;
+  settingsQuery: string;
+  openSettingsSearch: () => void;
   /**
    * Every settings control reads/writes here by key (e.g. 'controls.headlights').
    * Defaults live with each page; unset keys fall back to them.
@@ -113,7 +119,7 @@ export const useHud = create<HudState>()((set) => ({
   setCarView: (carView) =>
     set((s) => ({
       carView,
-      ...(carView === 'full' ? { quickActions: false, settingsOpen: false } : {}),
+      ...(carView === 'full' ? { quickActions: false, settingsOpen: false, settingsTyping: false } : {}),
       ...(carView === 'full' && s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
     })),
 
@@ -134,9 +140,14 @@ export const useHud = create<HudState>()((set) => ({
   openKeyboard: () =>
     set((s) => ({ nav: 'typing', query: '', resumeTrip: s.nav === 'navigating', quickActions: false, settingsOpen: false })),
   closeKeyboard: () =>
-    set((s) => (s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {})),
-  typeText: (text) => set((s) => ({ query: s.query + text })),
-  backspace: () => set((s) => ({ query: s.query.slice(0, -1) })),
+    set((s) => ({
+      settingsTyping: false,
+      ...(s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
+    })),
+  typeText: (text) =>
+    set((s) => (s.settingsTyping ? { settingsQuery: s.settingsQuery + text } : { query: s.query + text })),
+  backspace: () =>
+    set((s) => (s.settingsTyping ? { settingsQuery: s.settingsQuery.slice(0, -1) } : { query: s.query.slice(0, -1) })),
   startTrip: (to) =>
     set((s) => ({
       nav: 'navigating',
@@ -163,7 +174,10 @@ export const useHud = create<HudState>()((set) => ({
   settingsOpen: false,
   settingsPage: 'controls',
   toggleSettings: () => set((s) => ({ ...closeAll(s), settingsOpen: !s.settingsOpen })),
-  setSettingsPage: (settingsPage) => set({ settingsPage }),
+  setSettingsPage: (settingsPage) => set({ settingsPage, settingsTyping: false }),
+  settingsTyping: false,
+  settingsQuery: '',
+  openSettingsSearch: () => set({ settingsTyping: true }),
   settings: {},
   setSetting: (key, value) => set((s) => ({ settings: { ...s.settings, [key]: value } })),
 }));
@@ -173,6 +187,7 @@ function closeAll(s: HudState): Partial<HudState> {
   return {
     quickActions: false,
     settingsOpen: false,
+    settingsTyping: false,
     ...(s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
   };
 }

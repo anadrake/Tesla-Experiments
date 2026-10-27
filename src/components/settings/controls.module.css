@@ -169,6 +169,36 @@
   border-radius: var(--radius-sm);
   background: var(--color-surface-field);
   color: var(--color-content-secondary);
+  text-align: left;
+}
+
+.searchField[data-focused] {
+  border-color: var(--color-border-focus);
+}
+
+.searchValue {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  white-space: pre;
+  overflow: hidden;
+  color: var(--color-content-primary);
+}
+
+/* Same caret as the Navigate field */
+.caret {
+  flex: none;
+  width: 2px;
+  height: 28px;
+  background: var(--color-border-focus);
+  animation: blink var(--duration-caret-blink) steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 /* ---- Structure ---- */

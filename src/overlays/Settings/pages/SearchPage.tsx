@@ -7,9 +7,12 @@ import { useHud, type SettingsPage } from '../../../state/store';
  */
 export function SearchPage() {
   const go = (page: SettingsPage) => () => useHud.getState().setSettingsPage(page);
+  const typing = useHud((s) => s.settingsTyping);
+  const query = useHud((s) => s.settingsQuery);
+  const openSearch = useHud((s) => s.openSettingsSearch);
   return (
     <>
-      <SearchField placeholder="Search settings" />
+      <SearchField placeholder="Search settings" value={query} focused={typing} onPress={openSearch} />
       <Overline>Highlighted features</Overline>
       <SettingRow
         setting="display.nightShift"
