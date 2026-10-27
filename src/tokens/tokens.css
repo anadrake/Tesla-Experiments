@@ -1,0 +1,159 @@
+/*
+ * Design tokens — mirrored from Figma variables (file L4iGjQC6AbgfNfqCAxQnh9).
+ * Names match Figma 1:1. Light = default; Dark via [data-mode="dark"] on <html>.
+ * To add a token: pull it with get_variable_defs on a Light AND Dark frame, add to both blocks.
+ */
+:root {
+  /* Type */
+  --font-family-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family-map: 'Source Sans 3', 'Inter', sans-serif; /* map labels only */
+  --font-size-14: 14px;
+  --font-size-16: 16px;
+  --font-size-18: 18px;
+  --font-size-20: 20px;
+  --font-size-22: 22px;
+  --font-size-24: 24px;
+  --font-size-28: 28px;
+  --font-size-36: 36px;
+  --font-size-46: 46px;
+
+  /* Space */
+  --space-0: 0px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+
+  /* Radius */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 7px;
+  --radius-lg: 10px;
+  --radius-xl: 22px;
+  --radius-full: 999px;
+
+  /* Stroke */
+  --stroke-1: 1px;
+  --stroke-2: 2px;
+
+  /* Size */
+  --size-icon-16: 16px;
+  --size-icon-24: 24px;
+  --size-icon-32: 32px;
+  --size-icon-40: 40px;
+  --size-icon-48: 48px;
+  --size-touch-min: 64px;
+  --size-control-lg: 86px;
+  --size-tile-md: 110px;
+  --size-tile-lg: 160px;
+  --size-panel-default: 630px;
+
+  /* Display geometry (Display Shell) */
+  --display-w: 1920px;
+  --display-h: 1200px;
+  --stage-h: 1080px;
+  --control-bar-h: 120px;
+
+  /* Motion (Foundations › Motion). JS equivalents in motion.ts */
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --duration-deliberate: 600ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --easing-enter: cubic-bezier(0, 0, 0.2, 1);
+  --easing-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Primitive accents not yet aliased by a semantic token */
+  --primitive-yellow-500: #ffbd0a; /* route line */
+  --primitive-teal-500: #2fccbb;
+
+  /* Color — Light mode */
+  --color-surface-canvas: #fafafa;
+  --color-surface-canvas-fade: #fafafa00;
+  --color-surface-panel: #f0f0f0;
+  --color-surface-raised: #ffffff;
+  --color-surface-floating: #fafafa;
+  --color-surface-field: #e0e0e0;
+  --color-surface-selected: #d0d1d2;
+  --color-surface-sunken: #d0d1d2;
+  --color-surface-glass: #000000f2;
+  --color-content-primary: #414141;
+  --color-content-secondary: #757575;
+  --color-content-tertiary: #a2a3a5;
+  --color-content-on-accent: #ffffff;
+  --color-icon-strong: #414141;
+  --color-icon-default: #d0d1d2;
+  --color-icon-muted: #a2a3a5;
+  --color-icon-on-accent: #ffffff;
+  --color-border-subtle: #414141;
+  --color-border-default: #d0d1d2;
+  --color-border-strong: #757575;
+  --color-action-primary-bg-default: #005aff;
+  --color-status-danger: #ed4e3b;
+  --color-status-success: #25cb55;
+  --color-shadow-panel-1: #7575751a;
+  --color-shadow-panel-2: #75757514;
+  --color-shadow-panel-3: #41414112;
+  --color-shadow-map: #00000040;
+}
+
+[data-mode='dark'] {
+  --color-surface-canvas: #171717;
+  --color-surface-canvas-fade: #17171700;
+  --color-surface-panel: #414141;
+  --color-surface-raised: #5c5c5c;
+  --color-surface-floating: #414141;
+  --color-surface-field: #5c5c5c;
+  --color-surface-selected: #757575;
+  --color-surface-sunken: #242424;
+  --color-surface-glass: #000000f2;
+  --color-content-primary: #f0f0f0;
+  --color-content-secondary: #d0d1d2;
+  --color-content-tertiary: #a2a3a5;
+  --color-content-on-accent: #ffffff;
+  --color-icon-strong: #f0f0f0;
+  --color-icon-default: #d0d1d2;
+  --color-icon-muted: #757575;
+  --color-icon-on-accent: #ffffff;
+  --color-border-subtle: #414141;
+  --color-border-default: #757575;
+  --color-border-strong: #d0d1d2;
+  --color-shadow-panel-1: #0000001a;
+  --color-shadow-panel-2: #00000014;
+  --color-shadow-panel-3: #00000012;
+}
+
+/* Effect styles */
+:root {
+  --elevation-panel: 5px -3px 30px 20px var(--color-shadow-panel-1), -2px -2px 20px 8px var(--color-shadow-panel-2),
+    1px 1px 12px 2px var(--color-shadow-panel-3);
+  --elevation-map-shadow: 2px 4px 4px 0 var(--color-shadow-map);
+  --elevation-map-blur: blur(20px);
+}
+
+/*
+ * Text styles. Figma letterSpacing values are percent (1 → 0.01em).
+ * Usage: class="text-heading-l" etc.
+ */
+.text-heading-xl { font: 600 var(--font-size-46) / 56px var(--font-family-ui); letter-spacing: 0.01em; }
+.text-heading-l { font: 600 var(--font-size-36) / 46px var(--font-family-ui); letter-spacing: 0; }
+.text-heading-m { font: 600 var(--font-size-28) / 40px var(--font-family-ui); letter-spacing: 0.01em; }
+.text-heading-s { font: 700 var(--font-size-24) / 29px var(--font-family-ui); letter-spacing: 0.01em; }
+.text-title-l { font: 600 var(--font-size-22) / 1.1 var(--font-family-ui); letter-spacing: 0; }
+.text-title-m { font: 600 var(--font-size-20) / 1.2 var(--font-family-ui); letter-spacing: 0; }
+.text-body-l-strong { font: 600 var(--font-size-18) / 1.2 var(--font-family-ui); letter-spacing: -0.01em; }
+.text-body-l { font: 500 var(--font-size-18) / 1.2 var(--font-family-ui); letter-spacing: -0.01em; }
+.text-body-m { font: 500 var(--font-size-16) / 1.2 var(--font-family-ui); letter-spacing: 0.01em; }
+.text-label-button { font: 500 var(--font-size-20) / 1.2 var(--font-family-ui); letter-spacing: 0.02em; }
+.text-map-label-l { font: 600 18px / 1.2 var(--font-family-map); letter-spacing: 0.03em; }
+.text-map-street-s { font: 600 12px / 1.2 var(--font-family-map); letter-spacing: 0.03em; }
+.text-body-s { font: 500 var(--font-size-14) / 1.2 var(--font-family-ui); letter-spacing: 0; }

@@ -1,0 +1,16 @@
+.viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.display {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--display-w);
+  height: var(--display-h);
+  overflow: hidden;
+  background: var(--color-surface-canvas);
+  transform-origin: center; /* centered via translate(-50%,-50%) in Stage.tsx */
+}
