@@ -43,6 +43,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-27 — Dark mode, Driving: expanding to Car status shouldn't lighten the background; keep the panel's dark. Done via app token `--color-bg-car-status-driving` (Light = surface-panel unchanged, Dark = surface-canvas). Parked Car status unchanged. Side effect: the compact turn card is now visible in Dark.
 - 2026-10-26 — While driving, the map search field should read "Search Along Route" instead of "Navigate". Done (placeholder + accessible label).
 - 2026-10-26 — Q13: starting a trip switches to Driving, End Trip back to Parked.
 - 2026-10-26 — Widget bar should remember which widget was scrolled to and show that widget's chicklet form when the car panel is collapsed (Figma has Chicklet + Mini Chicklet for Music / Odometer / Tire Pressure).
@@ -55,7 +56,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Map Driving screen visually identical to Navigating → not a bug, intentional duplicate (Q6)
 - Car status callout label/value order flips between Frunk and Trunk. → Q7
 - Car status status bar has enlarged time/temp/profile → **bug**; use Map-screen sizes (Q8)
-- Car status driving (Dark): compact turn card uses surface-floating (#414141) = Car status bg surface-panel (#414141), so it has no visible fill; the Dark ref shows a faint one, Light is clear. Left as tokens say.
+- ~~Car status driving (Dark): compact turn card invisible (same grey as bg)~~ — resolved by the darker Driving Car status bg (2026-10-27).
 - Car status driving shows Trip Card / Search while the panel is Driving — built Active instead (driving = navigating).
 - `--color-surface-inverse` has no Dark value in the variables we can read → assumed #f0f0f0 (only used by the music Chicklet progress strip).
 - Collapsed Driving rail scales speed ×1.83 and the limit sign ×1.98 (different factors) — matched as-is.

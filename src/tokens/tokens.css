@@ -78,6 +78,10 @@
   --easing-exit: cubic-bezier(0.4, 0, 1, 1);
   --duration-caret-blink: 1060ms; /* not a Figma token — standard text caret blink */
 
+  /* App-level aliases (not Figma variables) */
+  /* Car status while driving: Light keeps Figma's panel grey; Dark stays on the canvas (Anastasiya) */
+  --color-bg-car-status-driving: var(--color-surface-panel);
+
   /* Primitive accents not yet aliased by a semantic token */
   --primitive-yellow-500: #ffbd0a; /* route line */
   --primitive-teal-500: #2fccbb;
@@ -115,6 +119,7 @@
 }
 
 [data-mode='dark'] {
+  --color-bg-car-status-driving: var(--color-surface-canvas);
   --color-surface-canvas: #171717;
   --color-surface-canvas-fade: #17171700;
   --color-surface-panel: #414141;

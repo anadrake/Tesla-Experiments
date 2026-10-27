@@ -26,6 +26,9 @@ const PANEL_BG = {
   full: 'var(--color-surface-panel)',
   collapsed: 'var(--color-surface-canvas)',
 } as const;
+/** Driving Car status: no lighter "stage" in Dark — same dark as the panel (Anastasiya). */
+const panelBg = (view: keyof typeof PANEL_BG, driving: boolean) =>
+  view === 'full' && driving ? 'var(--color-bg-car-status-driving)' : PANEL_BG[view];
 const TAP_SLOP = 10;
 
 /**
@@ -84,7 +87,7 @@ export function CarPanel() {
       className={styles.panel}
       aria-label="Car status"
       initial={false}
-      animate={{ width: panelWidth(view, driving), backgroundColor: PANEL_BG[view] }}
+      animate={{ width: panelWidth(view, driving), backgroundColor: panelBg(view, driving) }}
       transition={transition.screen}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
