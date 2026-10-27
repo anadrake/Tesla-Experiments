@@ -1,3 +1,4 @@
+import { MotionConfig } from 'motion/react';
 import { useEffect } from 'react';
 import { DisplayShell } from './shell/DisplayShell';
 import { Stage } from './shell/Stage';
@@ -17,9 +18,12 @@ export function App() {
     document.documentElement.dataset.mode = mode;
   }, [mode]);
 
+  // reducedMotion="user": honours iPad Settings › Accessibility › Reduce Motion (motion components skip transforms)
   return (
-    <Stage>
-      <DisplayShell main={<MapView />} left={<CarPanel />} status={<StatusCluster />} overlay={<Overlays />} />
-    </Stage>
+    <MotionConfig reducedMotion="user">
+      <Stage>
+        <DisplayShell main={<MapView />} left={<CarPanel />} status={<StatusCluster />} overlay={<Overlays />} />
+      </Stage>
+    </MotionConfig>
   );
 }

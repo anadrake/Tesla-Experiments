@@ -6,7 +6,7 @@ import bluetooth from '../../assets/settings/status-bluetooth.svg';
 import wifi from '../../assets/settings/status-wifi.svg';
 import { Icon } from '../../components/Icon/Icon';
 import { useHud, type SettingsPage } from '../../state/store';
-import { transition } from '../../tokens/motion';
+import { presets, transition } from '../../tokens/motion';
 import { NAV_ITEMS } from './navItems';
 import { ComingSoonPage } from './pages/ComingSoonPage';
 import { ControlsPage } from './pages/ControlsPage';
@@ -75,9 +75,10 @@ export function SettingsWindow() {
             ))}
           </span>
         </header>
-        <div className={styles.body} key={page}>
+        {/* tab switch: duration/fast + easing/standard (Figma motion rules) */}
+        <motion.div className={styles.body} key={page} {...presets.fadeIn} transition={transition.toggle}>
           <Page />
-        </div>
+        </motion.div>
       </section>
     </motion.div>
   );

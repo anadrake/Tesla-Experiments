@@ -51,3 +51,14 @@ button {
   transition-duration: var(--duration-deliberate) !important;
   transition-timing-function: var(--easing-standard) !important;
 }
+
+/* Reduce Motion: CSS transitions/animations collapse too (the caret stops blinking) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
