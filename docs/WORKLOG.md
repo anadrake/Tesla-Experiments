@@ -43,6 +43,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-26 — While driving, the map search field should read "Search Along Route" instead of "Navigate". Done (placeholder + accessible label).
 - 2026-10-26 — Q13: starting a trip switches to Driving, End Trip back to Parked.
 - 2026-10-26 — Widget bar should remember which widget was scrolled to and show that widget's chicklet form when the car panel is collapsed (Figma has Chicklet + Mini Chicklet for Music / Odometer / Tire Pressure).
 - 2026-10-26 — Dragging left from the car panel handle should minimize the panel into its collapsed state (pulled forward from P4).
