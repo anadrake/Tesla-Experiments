@@ -6,7 +6,7 @@ import { duration, easing, presets, transition } from '../../tokens/motion';
 import route from './routeData.json';
 import styles from './Map.module.css';
 
-/** Route polyline in 1960-tile px, from scripts/render-map.mjs (real roads via OSRM). */
+/** Route polyline in tile px, from scripts/render-map.mjs (real roads via OSRM). */
 const POINTS = route.route.map(([x, y]) => `${x},${y}`).join(' ');
 
 /**
@@ -19,7 +19,7 @@ export function RouteLayer() {
     <AnimatePresence>
       {navigating && (
         <motion.div key="route" className={styles.route} {...presets.fadeIn} transition={transition.toggle}>
-          <svg className={styles.routeSvg} viewBox="0 0 1960 1960" aria-hidden>
+          <svg className={styles.routeSvg} viewBox={`0 0 ${route.tile} ${route.tile}`} aria-hidden>
             <motion.polyline
               points={POINTS}
               fill="none"

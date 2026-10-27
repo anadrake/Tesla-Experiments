@@ -1,7 +1,8 @@
 // One-time map imagery build (Phase 7, Anastasiya: "Snazzy-style map, open data, no key").
 // Renders OpenStreetMap vector tiles (OpenFreeMap, Positron) with Light/Dark palettes matched to the Figma
-// map tiles, at 2× the 1960px Figma "map canvas", and routes the trip on real roads (OSRM).
-// Writes: src/assets/map/tiles-{light,dark}.jpg + src/screens/Map/routeData.json (tile-space coords).
+// map tiles, and routes the trip on real roads (OSRM). The map is TILE design px square — twice the 1960px
+// Figma "map canvas" (which sits in its centre) so you can pinch out — split into a 2×2 grid of JPGs.
+// Writes: src/assets/map/tiles-{light,dark}-{col}{row}.jpg + src/screens/Map/routeData.json (tile-space coords).
 // Usage: node scripts/render-map.mjs   (needs network; output is committed — not run at app runtime)
 import { chromium } from 'playwright-core';
 import { execFileSync } from 'node:child_process';
@@ -9,13 +10,19 @@ import { writeFileSync } from 'node:fs';
 
 /** Trip on Washington Blvd, Culver City (the area the Figma map shows). [lng, lat] */
 const ORIGIN = [-118.399, 34.018];
-const DESTINATION = [-118.3809, 34.0291]; // close enough that the pin lands on the 1960 tile
+const DESTINATION = [-118.3809, 34.0291]; // close enough that the pin lands in the default (1960) view area
 const ZOOM = 15.9; // ≈ the street density of the Figma map tiles
 /** Draw everything (labels, road widths) this much bigger than the default style, like the Figma map. */
 const SCALE = 1.75;
-const CSS_SIZE = Math.round(1960 / SCALE);
-/** Where the car sits on the 1960 tile so it lands where the Figma nav arrow is on screen. */
-const CAR_TILE_PX = [962, 806];
+/** Whole map in design px; the Figma 1960 canvas is its centre. */
+const TILE = 3920;
+const QUAD = TILE / 2;
+/** Image px per design px. iPad Pro shows ~1.43 device px per design px, so 1.5 stays sharp at 1×. */
+const DENSITY = 1.5;
+const CSS_SIZE = Math.round(QUAD / SCALE);
+/** Where the car sits on the 1960 Figma canvas so it lands where the Figma nav arrow is on screen. */
+const CAR_CANVAS_PX = [962, 806];
+const CAR_TILE_PX = CAR_CANVAS_PX.map((v) => v + (TILE - 1960) / 2);
 const CAR_FRACTION = 0.56; // how far along the route the car is
 
 const PALETTES = {
@@ -30,15 +37,16 @@ const line = route.routes[0].geometry.coordinates;
 const car = line[Math.round(line.length * CAR_FRACTION)];
 
 const b = await chromium.launch({ channel: 'chrome', args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
-// Small CSS canvas × high pixel ratio = same area as 1960px at ZOOM, with everything SCALE× larger; 3920px output.
-const page = await b.newPage({ viewport: { width: CSS_SIZE, height: CSS_SIZE }, deviceScaleFactor: 3920 / CSS_SIZE });
+// Small CSS canvas × high pixel ratio = one QUAD of design px at ZOOM, with everything SCALE× larger.
+// The page shows the top-left quadrant; the others are rendered by panning one CSS_SIZE across/down.
+const page = await b.newPage({ viewport: { width: CSS_SIZE, height: CSS_SIZE }, deviceScaleFactor: (QUAD * DENSITY) / CSS_SIZE });
 await page.goto(`file://${new URL('./map-render.html', import.meta.url).pathname}`);
 await page.addStyleTag({ content: `#map { width: ${CSS_SIZE}px !important; height: ${CSS_SIZE}px !important; }` });
 
 let routeData;
 for (const [name, pal] of Object.entries(PALETTES)) {
   routeData = await page.evaluate(
-    async ({ pal, car, line, zoom, carPx, scale }) => {
+    async ({ pal, car, line, zoom, carPx, scale, tile }) => {
       const style = await (await fetch('https://tiles.openfreemap.org/styles/positron')).json();
       for (const l of style.layers) {
         const id = l.id;
@@ -68,18 +76,27 @@ for (const [name, pal] of Object.entries(PALETTES)) {
       await new Promise((r) => map.once('load', r));
       const c = map.project(car);
       map.panBy([c.x - carPx[0] / scale, c.y - carPx[1] / scale], { animate: false });
-      await new Promise((r) => (map.loaded() && map.areTilesLoaded() ? setTimeout(r, 800) : map.once('idle', () => setTimeout(r, 800))));
+      window.__settle = () => new Promise((r) => (map.loaded() && map.areTilesLoaded() ? setTimeout(r, 800) : map.once('idle', () => setTimeout(r, 800))));
+      await window.__settle();
       const px = (ll) => {
-        const q = map.project(ll); // CSS px → 1960 tile px
+        const q = map.project(ll); // CSS px → tile px
         return [Math.round(q.x * scale * 10) / 10, Math.round(q.y * scale * 10) / 10];
       };
-      return { route: line.map(px), car: px(car), destination: px(line[line.length - 1]), center: map.getCenter().toArray(), zoom };
+      return { tile, route: line.map(px), car: px(car), destination: px(line[line.length - 1]), zoom };
     },
-    { pal, car, line, zoom: ZOOM, carPx: CAR_TILE_PX, scale: SCALE },
+    { pal, car, line, zoom: ZOOM, carPx: CAR_TILE_PX, scale: SCALE, tile: TILE },
   );
-  const png = `/tmp/map-${name}.png`;
-  await page.locator('#map').screenshot({ path: png });
-  execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '80', png, '--out', `src/assets/map/tiles-${name}.jpg`]);
+  for (const [col, row] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
+    const d = [col * CSS_SIZE, row * CSS_SIZE];
+    await page.evaluate(async (d) => {
+      window.__hudMap.panBy(d, { animate: false });
+      await window.__settle();
+    }, d);
+    const png = `/tmp/map-${name}-${col}${row}.png`;
+    await page.locator('#map').screenshot({ path: png });
+    execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '75', png, '--out', `src/assets/map/tiles-${name}-${col}${row}.jpg`]);
+    await page.evaluate((d) => window.__hudMap.panBy([-d[0], -d[1]], { animate: false }), d);
+  }
   console.log('✓', name);
 }
 

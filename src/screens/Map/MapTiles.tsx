@@ -1,12 +1,17 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import tilesDark from '../../assets/map/tiles-dark.jpg';
-import tilesLight from '../../assets/map/tiles-light.jpg';
 import { useStageScale } from '../../shell/Stage';
 import styles from './Map.module.css';
 import { capture } from '../../lib/pointer';
+import route from './routeData.json';
 
-const TILE = 1960; // Figma "map canvas" size
+/** Whole map in design px (scripts/render-map.mjs) — 2× the Figma 1960 "map canvas", which is its centre. */
+export const TILE = route.tile;
 const MAX_ZOOM = 3;
+
+/** 2×2 grid of JPGs per theme (one huge image is too heavy for iPad Safari). Keys: tiles-<theme>-<col><row>. */
+const files = import.meta.glob<string>('../../assets/map/tiles-*.jpg', { eager: true, import: 'default' });
+const QUADS = ['00', '10', '01', '11'] as const;
+const quads = (theme: 'light' | 'dark') => QUADS.map((q) => files[`../../assets/map/tiles-${theme}-${q}.jpg`]);
 
 interface Props {
   /** Map viewport size in design px (target size; the tiles are CSS-centred so they follow width animations). */
@@ -18,12 +23,13 @@ interface Props {
   onTap?: () => void;
 }
 
-/** Figma "map canvas": centred on the map, offset (-1, -105). */
+/** Map centred on the viewport, offset (-1, -105) as the Figma "map canvas". */
 const OFFSET_X = -1;
 const OFFSET_Y = -105;
 
 /**
- * Static Figma map tiles with one-finger pan and two-finger pinch zoom (Q2).
+ * Static map tiles with one-finger pan and two-finger pinch zoom (Q2). Opens at 1×, the Figma framing;
+ * pinch out down to the zoom where the map just fills the viewport.
  * Both themes are stacked and cross-fade by opacity during the Day/Night dissolve.
  * Transforms are written straight to the DOM (no React re-render per pointer move).
  */
@@ -37,7 +43,10 @@ export function MapTiles({ width, height, children, onTap }: Props) {
   const pinch = useRef<{ dist: number; k: number } | null>(null);
   const downAt = useRef<{ x: number; y: number } | null>(null);
 
-  const clamp = (x: number, y: number, k: number) => {
+  const minZoom = Math.max(width, height) / TILE;
+
+  const clamp = (x: number, y: number, k0: number) => {
+    const k = Math.min(MAX_ZOOM, Math.max(minZoom, k0));
     const half = TILE / 2;
     const minX = width - baseLeft - half * (1 + k);
     const maxX = -baseLeft - half * (1 - k);
@@ -84,7 +93,7 @@ export function MapTiles({ width, height, children, onTap }: Props) {
     } else if (pointers.current.size === 2 && pinch.current) {
       // Zoom about the finger midpoint: keep the map point under it fixed, then add the midpoint's own drift.
       const { dist, mid } = twoFinger();
-      const k = Math.min(MAX_ZOOM, Math.max(1, (pinch.current.k * dist) / pinch.current.dist));
+      const k = Math.min(MAX_ZOOM, Math.max(minZoom, (pinch.current.k * dist) / pinch.current.dist));
       const m = toTileSpace(e.currentTarget, mid);
       const r = k / v.k;
       const drift = { x: (e.clientX - prev.x) / scale / 2, y: (e.clientY - prev.y) / scale / 2 };
@@ -119,8 +128,13 @@ export function MapTiles({ width, height, children, onTap }: Props) {
           height: TILE,
         }}
       >
-        <img className={styles.tileLight} src={tilesLight} alt="" draggable={false} />
-        <img className={styles.tileDark} src={tilesDark} alt="" draggable={false} />
+        {(['light', 'dark'] as const).map((theme) => (
+          <div key={theme} className={theme === 'light' ? styles.tileLight : styles.tileDark}>
+            {quads(theme).map((src) => (
+              <img key={src} src={src} alt="" draggable={false} />
+            ))}
+          </div>
+        ))}
         {children}
       </div>
     </div>

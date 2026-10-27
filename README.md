@@ -18,7 +18,7 @@ A tap-driven, web-based prototype of an in-car center display, built from my Fig
 | Tap **Navigate** | Keyboard; type and tap **Enter** to start navigating |
 | Tap the car icon in the dock | Settings (Controls, Pedals & Steering, Display, Lights, Search) |
 | Tap **All apps** | Quick Actions |
-| Pinch / drag the map | Zoom and pan |
+| Pinch / drag the map | Zoom in, zoom out to the wider area, and pan |
 
 ## Develop
 ```bash
@@ -61,7 +61,7 @@ Start every session by pointing the agent at [CLAUDE.md](CLAUDE.md); it reads th
 ```bash
 node scripts/render-map.mjs
 ```
-It needs internet (OpenFreeMap tiles, OSRM routing) and installed Chrome. It rewrites `src/assets/map/tiles-{light,dark}.jpg` and `src/screens/Map/routeData.json`; the route, car arrow and destination pin follow automatically.
+It needs internet (OpenFreeMap tiles, OSRM routing) and installed Chrome. It rewrites `src/assets/map/tiles-{light,dark}-{00,10,01,11}.jpg` (a 2×2 grid per theme) and `src/screens/Map/routeData.json`; the route, car arrow and destination pin follow automatically.
 
 ## Project docs
 - [docs/PLAN.md](docs/PLAN.md) — phased build plan

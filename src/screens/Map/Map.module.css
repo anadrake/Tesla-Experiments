@@ -23,9 +23,16 @@
 .tileDark {
   position: absolute;
   inset: 0;
+  display: grid;
+  grid-template: 1fr 1fr / 1fr 1fr;
+  pointer-events: none;
+}
+
+.tileLight > img,
+.tileDark > img {
+  display: block;
   width: 100%;
   height: 100%;
-  pointer-events: none;
 }
 
 .tileDark,
@@ -117,7 +124,7 @@
   bottom: 34px;
 }
 
-/* ---- Route layer: tile coordinates (1960 map canvas) ---- */
+/* ---- Route layer: tile coordinates (TILE map px) ---- */
 .route {
   position: absolute;
   inset: 0;
