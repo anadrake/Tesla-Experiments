@@ -8,7 +8,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 ## Current state
 - **Phase:** 7 — ✅ done (committed; awaiting push). All planned phases complete. Live site: https://anadrake.github.io/Tesla-Experiments/
 - **Last session:** 2026-10-27 — Phase 7: bundled fonts, PWA icons, motion pass, OSM map imagery + real route, README vibe-coding guide, full iPad QA sweep
-- **Next step:** Anastasiya pushes + tries on iPad (real-touch pinch/pan wasn't testable by the reviewer). Answer Q17. Then new features (customisable dock, more Settings pages, …)
+- **Next step:** Anastasiya pushes + tries on iPad (real-touch pinch/pan wasn't testable by the reviewer). Then new features (customisable dock, more Settings pages, …)
 - **Carry-over:** read Notes page (`310:79790`) in pieces (whole-page fetch fails) — still not done
 
 ## Open questions
@@ -29,7 +29,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q14 | ✅ Blue on-state approved. Climate tiles in Quick Actions toggle, but App Tile has no On state in Figma. Built: glyph turns blue when on (`--color-icon-active`: blue/600 light, blue/300 dark). | ✅ |
 | Q15 | Search page copy | ✅ Real copy: Night Shift, Text Size, Sentry Mode (+ Ask each time), 24-Hour Clock, Show Battery Percentage, Distance Units, Auto High Beam (shares `controls.autoHighBeam` with the Controls tile) |
 | Q16 | Undesigned categories | ✅ "Coming soon" body (category icon + "<Category> — coming soon" + "This section hasn't been designed yet.") |
-| Q17 | Location tag: Figma says "San Francisco, CA" but the map (old and new) is Culver City / LA. Built "Culver City, CA". OK? | open |
+| Q17 | Location tag: Figma says "San Francisco, CA" but the map (old and new) is Culver City / LA. Built "Culver City, CA". | ✅ 2026-10-27: use "San Francisco, CA" as in Figma (map art stays Culver City) |
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
