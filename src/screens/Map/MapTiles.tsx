@@ -10,8 +10,8 @@ const MAX_ZOOM = 3;
 
 /** 2×2 grid of JPGs per theme (one huge image is too heavy for iPad Safari). Keys: tiles-<theme>-<col><row>. */
 const files = import.meta.glob<string>('../../assets/map/tiles-*.jpg', { eager: true, import: 'default' });
-const QUADS = ['00', '10', '01', '11'] as const;
-const quads = (theme: 'light' | 'dark') => QUADS.map((q) => files[`../../assets/map/tiles-${theme}-${q}.jpg`]);
+const QUAD = TILE / 2;
+const QUADS = [[0, 0], [1, 0], [0, 1], [1, 1]] as const;
 
 interface Props {
   /** Map viewport size in design px (target size; the tiles are CSS-centred so they follow width animations). */
@@ -130,8 +130,15 @@ export function MapTiles({ width, height, children, onTap }: Props) {
       >
         {(['light', 'dark'] as const).map((theme) => (
           <div key={theme} className={theme === 'light' ? styles.tileLight : styles.tileDark}>
-            {quads(theme).map((src) => (
-              <img key={src} src={src} alt="" draggable={false} />
+            {/* Explicit px boxes, not a CSS grid: Safari sized 1fr tracks from the images' natural size (warped map). */}
+            {QUADS.map(([col, row]) => (
+              <img
+                key={`${col}${row}`}
+                src={files[`../../assets/map/tiles-${theme}-${col}${row}.jpg`]}
+                alt=""
+                draggable={false}
+                style={{ left: col * QUAD, top: row * QUAD, width: QUAD, height: QUAD }}
+              />
             ))}
           </div>
         ))}

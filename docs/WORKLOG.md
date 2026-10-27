@@ -79,6 +79,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - `--color-surface-glass` resolves to `#000000f2` in BOTH modes via get_variable_defs, but the Light map ref shows a near-white location tag and the component's own fallback is neutral-50 · 80%. Built Light = `#f6f6f6cc`. Likely a missing Light value on the variable.
 
 ## Learnings
+- Don't lay out big images in a CSS grid with `1fr` tracks: `1fr` has an `auto` minimum, and Safari sized the tracks from the images' natural 2940px, so the live map looked warped on iPad (Chrome was fine). Give each map image explicit px boxes.
 - Render-map framing: the route must end inside the 1960 tile or the pin is unreachable (pan is clamped to the tile). If you move `DESTINATION`, adjust `CAR_FRACTION` so the car stays at `CAR_TILE_PX` on the same road.
 - Figma Screens "Read me" documents the whole prototype wiring and motion tokens — treat as the UX spec.
 - Display = 1920×1080 stage (Left 630 / Main / Overlay slots) + 120px control bar = 1920×1200.
