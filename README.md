@@ -5,7 +5,7 @@ A tap-driven, web-based prototype of an in-car center display, built from my Fig
 > **Design concept.** Not affiliated with, endorsed by, or connected to Tesla, Inc. Vehicle imagery, album art and app logos are used for illustration only.
 
 ## Try it
-- **Live:** GitHub Pages (Settings → Pages → Source: GitHub Actions). URL: `https://anadrake.github.io/Tesla-Experiements/`
+- **Live:** GitHub Pages (Settings → Pages → Source: GitHub Actions). URL: `https://anadrake.github.io/Tesla-Experiments/`
 - **On iPad:** open the URL in Safari → Share → **Add to Home Screen** → launch from the icon for full-screen.
 
 ## Develop

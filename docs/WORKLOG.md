@@ -49,6 +49,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Figma letterSpacing values are percent (1 → 0.01em). Map labels use Source Sans 3; everything else Inter.
 - Primitive yellow/500 `#FFBD0A` (route line) and teal/500 have no semantic token yet.
 - Stage: centering a 1920px box with CSS grid fails when it's wider than the viewport (track grows) — use absolute + translate(-50%,-50%) scale().
+- Repo renamed to `Tesla-Experiments` (local folder + remote URL keep old spelling; GitHub redirects). Pages must be enabled (Settings › Pages › Source: GitHub Actions) or deploy-pages fails.
 - Git CLI on this Mac has no GitHub login (no gh, no SSH key); Anastasiya pushes via GitHub Desktop. Phase 0 pushed 2026-10-26 (`84cc715`).
 - `npm run shots` uses installed Google Chrome via playwright-core (no browser download).
 - Key node IDs: Map Parked L/D `4300:1022`/`4300:1216`; Car status L/D `4300:18`/`4300:714`; Navigating L/D `4300:2833`/`4300:3474`; Quick actions L/D `4300:2105`/`4300:2520`; Settings Controls L/D `4300:21356`/`4300:21841`.
