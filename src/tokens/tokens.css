@@ -56,6 +56,9 @@
   --size-tile-lg: 160px;
   --size-panel-default: 630px;
 
+  /* Outside the display (letterbox bars on non-16:10 screens) */
+  --color-letterbox: #000;
+
   /* Display geometry (Display Shell) */
   --display-w: 1920px;
   --display-h: 1200px;
@@ -85,7 +88,7 @@
   --color-surface-field: #e0e0e0;
   --color-surface-selected: #d0d1d2;
   --color-surface-sunken: #d0d1d2;
-  --color-surface-glass: #000000f2;
+  --color-surface-glass: #f6f6f6cc; /* Figma vars report #000000f2 for Light; Light refs + component fallback show neutral-50 · 80% — see WORKLOG */
   --color-content-primary: #414141;
   --color-content-secondary: #757575;
   --color-content-tertiary: #a2a3a5;

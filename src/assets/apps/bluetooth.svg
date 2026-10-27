@@ -1,0 +1,63 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icons">
+<g id="pictogram/app" clip-path="url(#clip0_4221_18851)">
+<g id="grid" clip-path="url(#clip1_4221_18851)">
+<g id="bluetooth">
+<g id="pictogram/app/bluetooth" clip-path="url(#clip2_4221_18851)">
+<g id="Bluetooth">
+<rect id="Rectangle 36" x="3" y="3" width="41" height="42" rx="2" fill="url(#paint0_linear_4221_18851)"/>
+</g>
+<g id="Vector" filter="url(#filter0_d_4221_18851)">
+<path d="M14 16.535L32.7284 30.2465C32.8637 30.3456 32.8651 30.547 32.7312 30.6479L24.7004 36.6983C24.5357 36.8224 24.3 36.7049 24.3 36.4986V11.5115C24.3 11.3034 24.5394 11.1864 24.7036 11.3142L32.7394 17.5702C32.8702 17.6721 32.8675 17.8706 32.734 17.9689L14 31.7563" stroke="white" stroke-width="2" shape-rendering="crispEdges"/>
+</g>
+<g id="Bluetooth_2">
+<rect id="Rectangle 36_2" x="3" y="3" width="41" height="42" rx="7" fill="url(#paint1_linear_4221_18851)"/>
+</g>
+<g id="Vector_2" filter="url(#filter1_d_4221_18851)">
+<path d="M14 16.535L32.7284 30.2465C32.8637 30.3456 32.8651 30.547 32.7312 30.6479L24.7004 36.6983C24.5357 36.8224 24.3 36.7049 24.3 36.4986V11.5115C24.3 11.3034 24.5394 11.1864 24.7036 11.3142L32.7394 17.5702C32.8702 17.6721 32.8675 17.8706 32.734 17.9689L14 31.7563" stroke="white" stroke-width="2" shape-rendering="crispEdges"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_4221_18851" x="9.40729" y="10.259" width="36.4285" height="43.4919" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="4" dy="8"/>
+<feGaussianBlur stdDeviation="4"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_4221_18851"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_4221_18851" result="shape"/>
+</filter>
+<filter id="filter1_d_4221_18851" x="9.40729" y="10.259" width="36.4285" height="43.4919" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="4" dy="8"/>
+<feGaussianBlur stdDeviation="4"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_4221_18851"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_4221_18851" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_4221_18851" x1="23.5" y1="3" x2="23.5" y2="45" gradientUnits="userSpaceOnUse">
+<stop offset="0.00931923" stop-color="#0082FC"/>
+<stop offset="1" stop-color="#0033FF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_4221_18851" x1="23.5" y1="3" x2="23.5" y2="45" gradientUnits="userSpaceOnUse">
+<stop offset="0.00931923" stop-color="#0082FC"/>
+<stop offset="1" stop-color="#0033FF"/>
+</linearGradient>
+<clipPath id="clip0_4221_18851">
+<rect width="1552" height="290" fill="white" transform="translate(-640 -197)"/>
+</clipPath>
+<clipPath id="clip1_4221_18851">
+<rect width="1552" height="234" fill="white" transform="translate(-640 -141)"/>
+</clipPath>
+<clipPath id="clip2_4221_18851">
+<rect width="48" height="48" fill="white"/>
+</clipPath>
+</defs>
+</svg>

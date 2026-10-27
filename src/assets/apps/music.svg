@@ -1,0 +1,35 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icons">
+<g id="pictogram/app" clip-path="url(#clip0_4221_18851)">
+<g id="grid" clip-path="url(#clip1_4221_18851)">
+<g id="music">
+<g id="pictogram/app/music">
+<g id="Bluetooth">
+<rect id="Rectangle 36" x="3" y="3" width="41" height="42" rx="7" fill="url(#paint0_linear_4221_18851)"/>
+</g>
+<g id="Frame 233">
+<path id="Line 25" d="M34 21L34 27" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path id="Line 20" d="M29 12L29 36" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path id="Line 22" d="M24 17L24 31" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path id="Line 19" d="M19 12L19 36" stroke="white" stroke-width="3" stroke-linecap="round"/>
+<path id="Line 24" d="M14 21L14 27" stroke="white" stroke-width="3" stroke-linecap="round"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_4221_18851" x1="44" y1="3" x2="21" y2="40.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFAF00"/>
+<stop offset="0.458333" stop-color="#FEA356"/>
+<stop offset="1" stop-color="#FF604D"/>
+</linearGradient>
+<clipPath id="clip0_4221_18851">
+<rect width="1552" height="290" fill="white" transform="translate(-64 -197)"/>
+</clipPath>
+<clipPath id="clip1_4221_18851">
+<rect width="1552" height="234" fill="white" transform="translate(-64 -141)"/>
+</clipPath>
+</defs>
+</svg>

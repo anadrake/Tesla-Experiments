@@ -1,0 +1,32 @@
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: 220px;
+  height: var(--size-control-lg);
+  padding: 0 var(--space-12);
+  border-radius: var(--radius-md);
+}
+
+.value {
+  flex: 1 0 0;
+  margin: 0;
+  text-align: center;
+  color: var(--color-content-primary);
+  font-feature-settings: 'liga' 0, 'rclt' 0;
+}
+
+.chevron {
+  /* 48px glyph, 64px hit area */
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: -8px;
+  padding: 8px;
+  box-sizing: content-box;
+}
+
+.chevron:disabled {
+  opacity: 0.35;
+}

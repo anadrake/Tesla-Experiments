@@ -1,0 +1,32 @@
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--control-bar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-48);
+  background: var(--color-surface-canvas);
+  color: var(--color-content-primary);
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+}
+
+.dock {
+  display: flex;
+  align-items: center;
+  gap: var(--space-48);
+}
+
+.volume {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}

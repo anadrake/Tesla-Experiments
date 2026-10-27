@@ -1,0 +1,23 @@
+.shell {
+  position: absolute;
+  inset: 0;
+  background: var(--color-surface-canvas);
+}
+
+.stage {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--stage-h);
+  overflow: hidden;
+}
+
+/* Slots are full-stage layers; children position themselves. Empty areas pass taps through. */
+.slot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.slot > * {
+  pointer-events: auto;
+}

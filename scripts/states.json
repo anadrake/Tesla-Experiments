@@ -1,7 +1,7 @@
 {
-  "_comment": "Every reviewable prototype state. name → URL query. Add entries as phases land. ref = design-ref file to compare against (optional).",
+  "_comment": "Every reviewable prototype state. name → URL query. ref = design-ref file to compare against.",
   "states": [
-    { "name": "empty-light", "query": "mode=light" },
-    { "name": "empty-dark", "query": "mode=dark" }
+    { "name": "map-parked-light", "query": "mode=light", "ref": "map-parked-light.png" },
+    { "name": "map-parked-dark", "query": "mode=dark", "ref": "map-parked-dark.png" }
   ]
 }

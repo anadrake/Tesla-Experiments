@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
+import { DisplayShell } from './shell/DisplayShell';
 import { Stage } from './shell/Stage';
+import { MapView } from './screens/Map/Map';
 import { useHud } from './state/store';
 import { initUrlSync } from './state/url';
 
@@ -14,12 +16,8 @@ export function App() {
 
   return (
     <Stage>
-      {/* Phase 1 replaces this with <DisplayShell /> */}
-      <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
-        <p className="text-body-s" style={{ color: 'var(--color-content-tertiary)' }}>
-          Design concept · not affiliated with Tesla, Inc.
-        </p>
-      </div>
+      {/* TODO P2: left = <CarPanel /> (PRND, battery, car, music bar) */}
+      <DisplayShell main={<MapView />} />
     </Stage>
   );
 }
