@@ -8,13 +8,14 @@ import { Icon } from '../../components/Icon/Icon';
 import { useHud, type SettingsPage } from '../../state/store';
 import { transition } from '../../tokens/motion';
 import { NAV_ITEMS } from './navItems';
+import { ComingSoonPage } from './pages/ComingSoonPage';
 import { ControlsPage } from './pages/ControlsPage';
 import { SearchPage } from './pages/SearchPage';
 import styles from './SettingsWindow.module.css';
 
 /**
  * Pages built so far. Add a page: create pages/XPage.tsx from the Figma Settings Panel body and register it here.
- * Undesigned categories show the panel header with an empty body.
+ * Undesigned categories show a Coming soon body (Q16).
  */
 const PAGES: Partial<Record<SettingsPage, () => JSX.Element>> = {
   search: SearchPage,
@@ -29,7 +30,8 @@ const PAGES: Partial<Record<SettingsPage, () => JSX.Element>> = {
 export function SettingsWindow() {
   const page = useHud((s) => s.settingsPage);
   const setPage = useHud((s) => s.setSettingsPage);
-  const Page = PAGES[page];
+  // 6b registers pedals / display / lights; until then they fall back to Coming soon too.
+  const Page = PAGES[page] ?? ComingSoonPage;
 
   return (
     <motion.div
@@ -69,7 +71,7 @@ export function SettingsWindow() {
           </span>
         </header>
         <div className={styles.body} key={page}>
-          {Page && <Page />}
+          <Page />
         </div>
       </section>
     </motion.div>

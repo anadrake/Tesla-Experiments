@@ -1,35 +1,57 @@
 import { Checkbox, Divider, FieldGroup, Overline, SearchField, SegmentedControl, Select, SettingRow } from '../../../components/settings/controls';
-import { useHud } from '../../../state/store';
+import { useHud, type SettingsPage } from '../../../state/store';
 
 /**
- * Figma Settings / Search body. Copy is Figma's placeholder text ("Field Text", "Tab 1"…) — see WORKLOG Q15.
- * "Display" links jump to the Display page.
+ * Settings / Search — Figma layout, real copy (Q15). Highlighted features are shortcuts into other pages;
+ * shared setting keys (e.g. controls.autoHighBeam) stay in sync with the page they link to.
  */
 export function SearchPage() {
-  const toDisplay = () => useHud.getState().setSettingsPage('display');
+  const go = (page: SettingsPage) => () => useHud.getState().setSettingsPage(page);
   return (
     <>
-      <SearchField />
+      <SearchField placeholder="Search settings" />
       <Overline>Highlighted features</Overline>
-      <SettingRow setting="search.nightColors" initial title="Field Text" infoIcon description="Automatically adjust to warmer colors at night" link="Display" onLink={toDisplay} />
+      <SettingRow
+        setting="display.nightShift"
+        initial
+        title="Night Shift"
+        infoIcon
+        description="Automatically adjust to warmer colors at night"
+        link="Display"
+        onLink={go('display')}
+      />
       <Divider />
-      <FieldGroup title="Text Size" infoIcon link="Display" onLink={toDisplay}>
-        <SegmentedControl setting="search.textSize" options={['Off', 'On']} initial="Off" />
+      <FieldGroup title="Text Size" infoIcon link="Display" onLink={go('display')}>
+        <SegmentedControl setting="display.textSize" options={['Standard', 'Large']} initial="Standard" />
       </FieldGroup>
       <Divider />
-      <FieldGroup title="Text For Title Here" infoIcon link="Display" onLink={toDisplay} helper="Sentry Mode will not be enabled when you leave the car">
-        <SegmentedControl setting="search.tab" options={['Tab 1', 'Tab 2']} initial="Tab 1" />
-        <Checkbox setting="search.askEachTime" label="Ask each time" />
+      <FieldGroup
+        title="Sentry Mode"
+        infoIcon
+        link="Safety"
+        onLink={go('safety')}
+        helper="Sentry Mode will not be enabled when you leave the car"
+      >
+        <SegmentedControl setting="safety.sentry" options={['Off', 'On']} initial="Off" />
+        <Checkbox setting="safety.sentryAsk" label="Ask each time" />
       </FieldGroup>
       <Divider />
-      <SettingRow setting="search.field1" initial title="Field Text" />
-      <SettingRow setting="search.field2" title="Field Text" />
+      <SettingRow setting="display.clock24h" title="24-Hour Clock" />
+      <SettingRow setting="display.batteryPercent" initial title="Show Battery Percentage" />
       <Divider />
-      <FieldGroup title="Text For Title Here" infoIcon link="Display" onLink={toDisplay}>
-        <Select setting="search.option" options={['Option', 'Option 2', 'Option 3']} initial="Option" />
+      <FieldGroup title="Distance Units" infoIcon link="Display" onLink={go('display')}>
+        <Select setting="display.units" options={['Miles', 'Kilometers']} initial="Miles" />
       </FieldGroup>
       <Divider />
-      <SettingRow setting="search.field3" title="Field Text" infoIcon description="Text" link="Display" onLink={toDisplay} />
+      <SettingRow
+        setting="controls.autoHighBeam"
+        initial
+        title="Auto High Beam"
+        infoIcon
+        description="Switch to high beams when no traffic is ahead"
+        link="Controls"
+        onLink={go('controls')}
+      />
     </>
   );
 }

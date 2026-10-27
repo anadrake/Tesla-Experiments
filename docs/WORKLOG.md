@@ -8,7 +8,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 ## Current state
 - **Phase:** 6a — ✅ done (committed). 6b next: Pedals & Steering, Display, Lights. Live site: https://anadrake.github.io/Tesla-Experiments/
 - **Last session:** 2026-10-26 — plan approved; Phase 0 scaffold, tokens, stage, deploy workflow, design-ref, reviewer agent
-- **Next step:** Anastasiya pushes + tries Settings; answer Q15/Q16 → 6b
+- **Next step:** 6b — Pedals & Steering, Display, Lights (they show Coming soon until built)
 - **Carry-over:** read Notes page (`310:79790`) in pieces (whole-page fetch fails) — still not done
 
 ## Open questions
@@ -27,8 +27,8 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q12 | Favorite star | ✅ Toggles; on = `icon-strong`, off = `icon-muted` (no Figma active state) |
 | Q13 | Trip ⇄ Driving | ✅ Starting a trip switches the panel to Driving; End Trip goes back to Parked |
 | Q14 | ✅ Blue on-state approved. Climate tiles in Quick Actions toggle, but App Tile has no On state in Figma. Built: glyph turns blue when on (`--color-icon-active`: blue/600 light, blue/300 dark). | ✅ |
-| Q15 | Settings / Search page uses Figma placeholder copy ("Field Text", "Text For Title Here", "Tab 1/2", "Option"). Built as designed. Want real copy (e.g. highlighted Display/Lights settings)? | open |
-| Q16 | Undesigned settings categories (Charging, Autopilot, Locks, Trips, Navigation, Safety, Service, Software, Upgrades) show the panel header with an empty body. OK, or a "coming soon" note? | open |
+| Q15 | Search page copy | ✅ Real copy: Night Shift, Text Size, Sentry Mode (+ Ask each time), 24-Hour Clock, Show Battery Percentage, Distance Units, Auto High Beam (shares `controls.autoHighBeam` with the Controls tile) |
+| Q16 | Undesigned categories | ✅ "Coming soon" body (category icon + "<Category> — coming soon" + "This section hasn't been designed yet.") |
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
@@ -48,6 +48,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-27 — Q15: make the Search page copy real. Q16: add a coming-soon state for undesigned settings categories.
 - 2026-10-27 — Updated Control Bar in Figma: Quick Actions open from the **All apps** icon; apps right of the divider = recently used; apps left of All apps = customizable (functionality later).
 - 2026-10-27 — Dark mode, Driving: expanding to Car status shouldn't lighten the background; keep the panel's dark. Done via app token `--color-bg-car-status-driving` (Light = surface-panel unchanged, Dark = surface-canvas). Parked Car status unchanged. Side effect: the compact turn card is now visible in Dark.
 - 2026-10-26 — While driving, the map search field should read "Search Along Route" instead of "Navigate". Done (placeholder + accessible label).
