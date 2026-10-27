@@ -117,31 +117,19 @@
   bottom: 34px;
 }
 
-/* ---- Route layer (tile coordinates; Figma route container inset 18.93% 3.79% 3.93% 3.93% of 1960) ---- */
+/* ---- Route layer: tile coordinates (1960 map canvas) ---- */
 .route {
   position: absolute;
-  left: 77.03px;
-  top: 371.03px;
-  width: 1808.7px;
-  height: 1513.1px;
+  inset: 0;
   pointer-events: none;
 }
 
-.routeLineBox {
+.routeSvg {
   position: absolute;
-  left: 0.7px;
-  top: -504.08px;
-  width: 1797.6px;
-  height: 1944.06px;
-  display: grid;
-  place-items: center;
-}
-
-.routeLine {
-  width: 814.86px;
-  height: 1850.9px;
-  transform: rotate(39.3deg);
-  max-width: none;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 .pin {
@@ -149,6 +137,15 @@
   max-width: none;
 }
 
+/* Open-data credit (ODbL requires it) — kept small and quiet */
+.credit {
+  position: absolute;
+  left: var(--space-16);
+  bottom: var(--space-8);
+  margin: 0;
+  color: var(--color-content-tertiary);
+  pointer-events: none;
+}
 .controls {
   right: 26px;
   display: flex;
