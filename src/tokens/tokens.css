@@ -81,6 +81,8 @@
   /* App-level aliases (not Figma variables) */
   /* Car status while driving: Light keeps Figma's panel grey; Dark stays on the canvas (Anastasiya) */
   --color-bg-car-status-driving: var(--color-surface-panel);
+  /* Toggled-on glyph (Quick Actions climate tiles, Q14): blue/600 on light, blue/300 on dark for contrast */
+  --color-icon-active: #005aff;
 
   /* Primitive accents not yet aliased by a semantic token */
   --primitive-yellow-500: #ffbd0a; /* route line */
@@ -110,6 +112,7 @@
   --color-border-strong: #757575;
   --color-action-primary-bg-default: #005aff;
   --color-border-focus: #005aff;
+  --color-state-pressed-overlay: #00000014;
   --color-status-danger: #ed4e3b;
   --color-status-success: #25cb55;
   --color-shadow-panel-1: #7575751a;
@@ -120,6 +123,7 @@
 
 [data-mode='dark'] {
   --color-bg-car-status-driving: var(--color-surface-canvas);
+  --color-icon-active: #8fb4ff;
   --color-surface-canvas: #171717;
   --color-surface-canvas-fade: #17171700;
   --color-surface-panel: #414141;
@@ -142,6 +146,7 @@
   --color-border-default: #757575;
   --color-border-strong: #d0d1d2;
   --color-border-focus: #8fb4ff;
+  --color-state-pressed-overlay: #ffffff14; /* Dark value not in Figma vars (8% black is invisible on dark) — assumed 8% white */
   --color-shadow-panel-1: #0000001a;
   --color-shadow-panel-2: #00000014;
   --color-shadow-panel-3: #00000012;

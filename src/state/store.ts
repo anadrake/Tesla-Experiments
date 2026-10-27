@@ -20,6 +20,8 @@ export const DEFAULT_DESTINATION = 'Tesla Headquarters';
 export const isDriving = (s: Pick<HudState, 'nav' | 'resumeTrip'>) =>
   s.nav === 'navigating' || (s.nav === 'typing' && s.resumeTrip);
 
+export type ClimateAction = 'frontDefrost' | 'rearDefrost' | 'leftSeat' | 'heatedSteering' | 'wipers';
+
 export const TEMP_MIN = 60;
 export const TEMP_MAX = 84;
 
@@ -64,6 +66,13 @@ export interface HudState {
   endTrip: () => void;
   /** PRND tap (Q5): P ⇄ D — starts a trip to the default destination, or ends the current one. */
   toggleDrive: () => void;
+
+  /** Quick Actions launcher over the dock (All apps). */
+  quickActions: boolean;
+  toggleQuickActions: () => void;
+  closeOverlays: () => void;
+  climate: Record<ClimateAction, boolean>;
+  toggleClimate: (a: ClimateAction) => void;
 }
 
 const systemMode = (): Mode =>
@@ -84,6 +93,7 @@ export const useHud = create<HudState>()((set) => ({
   setCarView: (carView) =>
     set((s) => ({
       carView,
+      ...(carView === 'full' ? { quickActions: false } : {}),
       ...(carView === 'full' && s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
     })),
 
@@ -101,7 +111,7 @@ export const useHud = create<HudState>()((set) => ({
   query: '',
   destination: DEFAULT_DESTINATION,
   resumeTrip: false,
-  openKeyboard: () => set((s) => ({ nav: 'typing', query: '', resumeTrip: s.nav === 'navigating' })),
+  openKeyboard: () => set((s) => ({ nav: 'typing', query: '', resumeTrip: s.nav === 'navigating', quickActions: false })),
   closeKeyboard: () =>
     set((s) => (s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {})),
   typeText: (text) => set((s) => ({ query: s.query + text })),
@@ -120,4 +130,19 @@ export const useHud = create<HudState>()((set) => ({
         ? { nav: 'idle', resumeTrip: false }
         : { nav: 'navigating', destination: DEFAULT_DESTINATION, query: '', resumeTrip: false },
     ),
+
+  quickActions: false,
+  // Opening the launcher closes the keyboard (one overlay at a time)
+  toggleQuickActions: () =>
+    set((s) => ({
+      quickActions: !s.quickActions,
+      ...(s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
+    })),
+  closeOverlays: () =>
+    set((s) => ({
+      quickActions: false,
+      ...(s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
+    })),
+  climate: { frontDefrost: false, rearDefrost: false, leftSeat: false, heatedSteering: false, wipers: false },
+  toggleClimate: (a) => set((s) => ({ climate: { ...s.climate, [a]: !s.climate[a] } })),
 }));

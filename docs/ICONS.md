@@ -18,6 +18,6 @@ Colors are bound to `icon/*` (or `status/*` for telltales) → render glyphs via
 | pictogram/telltale | airbag-off-badge 4221:19111 |
 | pictogram/vehicle | model-3-top 4265:2785 |
 | climate | defrost-front 52:28917 · defrost-rear 52:28918 · seat-heat 52:28973 · steering-heat 52:28919 |
-| pictogram/app | dashcam 27:6340 · tunein 12:11040 · calendar 12:10906 · messages 26:6046 · theater 12:11034 · toybox 27:6400 · spotify 12:10934 · caraoke 27:6377 · music 27:8419 · zoom 55:13147 · phone 12:10905 · bluetooth 12:10921 · camera 40:9499 |
+| pictogram/app | all apps 4714:87228 (PNG) · dashcam 27:6340 · tunein 12:11040 · calendar 12:10906 · messages 26:6046 · theater 12:11034 · toybox 27:6400 · spotify 12:10934 · caraoke 27:6377 · music 27:8419 · zoom 55:13147 · phone 12:10905 · bluetooth 12:10921 · camera 40:9499 |
 
 Other components: Dynamic Widget Bar set `4416:12286` (Active=Music/Odometer/Tire × Dot Nav × Size=Open/Collapsed/Chicklet/Mini Chicklet) · `.Widget` `4396:41131` · `.Dot` `4367:37979` · Car Render `4266:2837` · Car Status Panel `4268:3115` · Map Tiles `4269:2425`.

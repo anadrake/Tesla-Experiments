@@ -1,9 +1,16 @@
 import { AnimatePresence } from 'motion/react';
 import { useHud } from '../state/store';
 import { Keyboard } from './Keyboard/Keyboard';
+import { QuickActions } from './QuickActions/QuickActions';
 
-/** Display Shell Overlay slot content. P5: Quick Actions. P6: Settings window. */
+/** Display Shell Overlay slot content (one overlay at a time). P6: Settings window. */
 export function Overlays() {
   const typing = useHud((s) => s.nav === 'typing');
-  return <AnimatePresence>{typing && <Keyboard key="keyboard" />}</AnimatePresence>;
+  const quickActions = useHud((s) => s.quickActions);
+  return (
+    <AnimatePresence>
+      {typing && <Keyboard key="keyboard" />}
+      {quickActions && <QuickActions key="quick-actions" />}
+    </AnimatePresence>
+  );
 }

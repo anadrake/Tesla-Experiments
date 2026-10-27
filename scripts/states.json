@@ -83,6 +83,16 @@
       "name": "navigating-expanded-dark",
       "query": "mode=dark&nav=navigating&car=collapsed",
       "ref": "navigating-expanded-dark.png"
+    },
+    {
+      "name": "quick-actions-light",
+      "query": "mode=light&overlay=apps",
+      "ref": "quick-actions-light.png"
+    },
+    {
+      "name": "quick-actions-dark",
+      "query": "mode=dark&overlay=apps",
+      "ref": "quick-actions-dark.png"
     }
   ]
 }

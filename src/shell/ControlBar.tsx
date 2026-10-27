@@ -7,31 +7,42 @@ import music from '../assets/apps/music.svg';
 import bluetooth from '../assets/apps/bluetooth.svg';
 import spotify from '../assets/apps/spotify.svg';
 import camera from '../assets/apps/camera.svg';
-import theater from '../assets/apps/theater.svg';
-import tunein from '../assets/apps/tunein.svg';
+import allApps from '../assets/apps/all-apps.png';
+import zoom from '../assets/apps/zoom.svg';
+import calendar from '../assets/apps/calendar.svg';
 import { Icon } from '../components/Icon/Icon';
 import { Pressable } from '../components/Pressable/Pressable';
 import { Stepper } from '../components/Stepper/Stepper';
 import { TEMP_MAX, TEMP_MIN, useHud } from '../state/store';
 import styles from './ControlBar.module.css';
 
-const DOCK = [
+/** Left of All apps: the driver's pinned apps (customizable later). */
+const PINNED = [
   { name: 'Phone', src: phone },
   { name: 'Music', src: music },
   { name: 'Bluetooth', src: bluetooth },
   { name: 'Spotify', src: spotify },
   { name: 'Camera', src: camera },
-  { name: 'Theater', src: theater },
-  { name: 'TuneIn', src: tunein },
+];
+/** Right of the divider: recently used apps (static for now). */
+const RECENT = [
+  { name: 'Zoom', src: zoom },
+  { name: 'Calendar', src: calendar },
 ];
 
 /**
  * Figma "Control Bar" (4273:375). Always dark — the component pins Color mode to Dark,
  * so this subtree sets data-mode="dark" regardless of the app mode.
- * TODO P5: dock opens Quick Actions. P6: car icon opens Settings.
+ * Dock: pinned apps · All apps (opens Quick Actions) | recent apps.
+ * TODO P6: car icon opens Settings. Later: customizable pinned apps, live recents.
  */
 export function ControlBar() {
-  const { driverTemp, passengerTemp, setDriverTemp, setPassengerTemp } = useHud();
+  const { driverTemp, passengerTemp, setDriverTemp, setPassengerTemp, quickActions, toggleQuickActions } = useHud();
+  const app = (a: { name: string; src: string }) => (
+    <Pressable key={a.name} className={styles.iconButton} aria-label={a.name}>
+      <img src={a.src} alt="" width={48} height={48} />
+    </Pressable>
+  );
 
   return (
     <nav className={styles.bar} data-mode="dark">
@@ -42,11 +53,17 @@ export function ControlBar() {
       <Stepper label="driver temperature" value={driverTemp} min={TEMP_MIN} max={TEMP_MAX} onChange={setDriverTemp} />
 
       <div className={styles.dock}>
-        {DOCK.map((app) => (
-          <Pressable key={app.name} className={styles.iconButton} aria-label={app.name}>
-            <img src={app.src} alt="" width={48} height={48} />
-          </Pressable>
-        ))}
+        {PINNED.map(app)}
+        <Pressable
+          className={styles.iconButton}
+          aria-label="All apps"
+          aria-expanded={quickActions}
+          onClick={toggleQuickActions}
+        >
+          <img src={allApps} alt="" width={42} height={42} className={styles.allApps} />
+        </Pressable>
+        <span className={styles.dockDivider} aria-hidden />
+        {RECENT.map(app)}
       </div>
 
       <Stepper

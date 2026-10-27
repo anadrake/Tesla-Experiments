@@ -2,7 +2,7 @@ import { useHud, type Mode } from './store';
 
 /**
  * Deep links: URL params mirror store state so any state can be opened directly
- * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widget=0|1|2&nav=typing|navigating
+ * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widget=0|1|2&nav=typing|navigating&overlay=apps
  */
 export function initUrlSync() {
   const params = new URLSearchParams(location.search);
@@ -14,6 +14,7 @@ export function initUrlSync() {
   if (params.get('music') === 'paused') useHud.setState({ playing: false });
   const nav = params.get('nav');
   if (nav === 'typing' || nav === 'navigating') useHud.setState({ nav });
+  if (params.get('overlay') === 'apps') useHud.setState({ quickActions: true });
   const widget = Number(params.get('widget'));
   if (widget >= 0 && widget <= 2) useHud.setState({ widgetPage: widget });
 
@@ -24,6 +25,8 @@ export function initUrlSync() {
     else p.delete('car');
     if (s.nav !== 'idle') p.set('nav', s.nav);
     else p.delete('nav');
+    if (s.quickActions) p.set('overlay', 'apps');
+    else p.delete('overlay');
     if (s.widgetPage) p.set('widget', String(s.widgetPage));
     else p.delete('widget');
     history.replaceState(null, '', `${location.pathname}?${p}`);

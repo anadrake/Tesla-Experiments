@@ -25,7 +25,7 @@ const MAP_H = 1080;
  * Sits in the Main slot at x = panel width (630, or 116 when the panel collapses — Map Parked · Expanded),
  * animating with the panel (0.4s). Tiles stay centred on the map, like Figma's re-centred map instance.
  * State=Driving (navigating): route on the tiles, turn list under the Navigate field, trip card bottom-left —
- * morphing in from 0% / 40px like Figma's Default→Driving Smart Animate. Tapping the map closes the keyboard.
+ * morphing in from 0% / 40px like Figma's Default→Driving Smart Animate. Tapping the map closes overlays.
  */
 const MORPH_IN = { initial: { opacity: 0, y: 40 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 40 } };
 
@@ -33,7 +33,7 @@ export function MapView() {
   const view = useHud((s) => s.carView);
   const left = mapLeft(view, useHud(isDriving));
   const navigating = useHud((s) => s.nav === 'navigating');
-  const closeKeyboard = useHud((s) => s.closeKeyboard);
+  const closeOverlays = useHud((s) => s.closeOverlays);
   const width = DISPLAY_W - left;
   return (
     <motion.section
@@ -43,7 +43,7 @@ export function MapView() {
       transition={transition.screen}
       aria-label="Map"
     >
-      <MapTiles width={width} height={MAP_H} onTap={closeKeyboard}>
+      <MapTiles width={width} height={MAP_H} onTap={closeOverlays}>
         <RouteLayer />
       </MapTiles>
 

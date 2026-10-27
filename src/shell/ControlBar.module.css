@@ -25,6 +25,17 @@
   gap: var(--space-48);
 }
 
+.allApps {
+  border-radius: var(--radius-sm);
+}
+
+/* Figma: 22px hairline between All apps and recents (bar is pinned dark) */
+.dockDivider {
+  width: var(--stroke-2);
+  height: 22px;
+  background: var(--color-border-default);
+}
+
 .volume {
   display: flex;
   align-items: center;

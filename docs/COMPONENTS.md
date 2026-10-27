@@ -11,7 +11,7 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Stepper (Bare) | `4230:76` | `src/components/Stepper/` | ✅ P1 | Cabin temp ‹ 72 ›, 60–84 |
 | Airbag-off badge | `4221:19111` | `src/components/AirbagBadge/` | ✅ P1 | Fixed colors, Nunito Bold 12 |
 | Display Shell | Shell & System | `src/shell/DisplayShell.tsx` | ✅ P1 | Main / Left / Overlay slots + control bar |
-| Control Bar | `4273:375` | `src/shell/ControlBar.tsx` | ✅ P1 | Pinned dark (`data-mode="dark"`) |
+| Control Bar | `4273:375` | `src/shell/ControlBar.tsx` | ✅ P5 | Pinned dark; dock = pinned · All apps · divider · recents |
 | Map (State=Default) | `4690:41395` | `src/screens/Map/Map.tsx` | ✅ P1 | Turn list / trip card (State=Driving) → P3 |
 | Map Tiles | `4269:2425` (Light `4269:2423`, Dark `4269:2424`) | `src/screens/Map/MapTiles.tsx` | ✅ P1 | 2× exports, pan + pinch |
 | Map Top Bar (items) | `4259:114` | `src/shell/StatusCluster.tsx` | ✅ P2 | One instance for all screens; items move/fade between Map and Car status (Q8). Tap clock = Day/Night. Map keeps only the gradient |
@@ -31,6 +31,8 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Car Render Scene=Driving | `4479:49839` | `src/components/CarPanel/DrivingScene.tsx` | ✅ P4 | Road lines, beam, lead + ego car; % layout scales Panel → Full |
 | Speed + Speed Limit Sign + compact Direction Primary | in Car Status Panel (Driving) | `src/components/CarPanel/SpeedCluster.tsx` | ✅ P4 | Enlarged in the 220 rail |
 | Chicklet (Music / Odometer / Tire) | `4596:70708` / `70712` / `70716` | `WidgetBar.tsx` (`chicklet="large"`) | ✅ P4 | Driving collapsed rail |
+| Quick Actions | `4273:450` | `src/overlays/QuickActions/` | ✅ P5 | Pinned dark; climate tiles toggle |
+| App Tile | `4231:398` | `src/components/AppTile/` | ✅ P5 | Default / Pressed; On = blue glyph (Q14) |
 
 Icon node IDs: see [ICONS.md](ICONS.md).
 
