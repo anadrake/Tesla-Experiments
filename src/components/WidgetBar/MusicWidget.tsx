@@ -1,6 +1,6 @@
 import album from '../../assets/media/album-vampire.png';
 import spotifySource from '../../assets/media/spotify-source.svg';
-import favorite from '../../assets/media/favorite.svg';
+import favoriteIcon from '../../assets/media/favorite.svg';
 import previous from '../../assets/media/previous.svg';
 import pause from '../../assets/media/pause.svg';
 import play from '../../assets/media/play.svg';
@@ -14,11 +14,16 @@ import styles from './WidgetBar.module.css';
 
 export const TRACK = { title: 'Vampire', artist: 'Olivia Rodrigo', progress: 0.32 };
 
-/** Figma ".Widget" Widget=Music, Size=Full. Album art tap → collapse to pill; play/pause toggles. */
+/**
+ * Figma ".Widget" Widget=Music, Size=Full. Album art tap → collapse to pill; play/pause toggles.
+ * Favorite toggles (Q12): Figma has no active state, so "on" = muted → strong icon color.
+ */
 export function MusicWidget() {
   const playing = useHud((s) => s.playing);
   const togglePlaying = useHud((s) => s.togglePlaying);
   const toggleCollapsed = useHud((s) => s.toggleMusicCollapsed);
+  const favorite = useHud((s) => s.favorite);
+  const toggleFavorite = useHud((s) => s.toggleFavorite);
 
   return (
     <div className={styles.music}>
@@ -35,8 +40,8 @@ export function MusicWidget() {
             {TRACK.artist}
           </p>
         </div>
-        <Pressable className={styles.mediaButton} aria-label="Favorite">
-          <Icon src={favorite} size={40} color="var(--color-icon-muted)" />
+        <Pressable className={styles.mediaButton} aria-label="Favorite" aria-pressed={favorite} onClick={toggleFavorite}>
+          <Icon src={favoriteIcon} size={40} color={favorite ? 'var(--color-icon-strong)' : 'var(--color-icon-muted)'} />
         </Pressable>
       </div>
 

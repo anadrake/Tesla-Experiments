@@ -23,8 +23,8 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q7 | Car callouts order | ✅ Part name small on top, **state bold** below ("Frunk / **Open**", "Trunk / **Open**") — on every screen |
 | Q9 | Tokens: `border-subtle` is #414141 in both modes (darker than `border-default` in Light; same as `surface-panel` in Dark, so invisible on panels). `surface-selected` = `surface-sunken` in Light. Intended? | open — low priority, revisit when a component uses them |
 | Q10 | Clock live vs static | ✅ Keep live — "nice addition" |
-| Q11 | Widget bar: Figma has 3 swipeable widgets (Music / Odometer / Tire Pressure). Built all three with horizontal swipe; dots hidden (screens use Dot Nav=Hidden). Want dots shown? | open |
-| Q12 | Favorite star: Figma has no active state — should it toggle (e.g. filled/primary)? Currently press feedback only. | open |
+| Q11 | Widget dots | ✅ Dots appear while swiping and fade out after ~1.5s idle |
+| Q12 | Favorite star | ✅ Toggles; on = `icon-strong`, off = `icon-muted` (no Figma active state) |
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
@@ -38,6 +38,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-26 — Q11: widget dots only while scrolling, fade after idle. Q12: favorite should toggle.
 - 2026-10-26 — P1 review: looks good. Keep the live clock. **Map image feels small** → generate a bigger, nicer map with Snazzy Maps (snazzymaps.com) styling — scheduled for Phase 7, not now.
 - 2026-10-26 — Initial brief: working iPad prototype from GitHub, match Figma visuals/UX/layout/interactions/motion, easy to extend via vibe coding, phased plan first, keep this log, reviewer agent checks every step, ask about design intent, Figma prototype may have bugs — don't assume inconsistencies are correct.
 

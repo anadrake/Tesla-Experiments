@@ -32,6 +32,8 @@ export interface HudState {
   musicCollapsed: boolean;
   togglePlaying: () => void;
   toggleMusicCollapsed: () => void;
+  favorite: boolean;
+  toggleFavorite: () => void;
 }
 
 const systemMode = (): Mode =>
@@ -55,4 +57,6 @@ export const useHud = create<HudState>()((set) => ({
   musicCollapsed: false,
   togglePlaying: () => set((s) => ({ playing: !s.playing })),
   toggleMusicCollapsed: () => set((s) => ({ musicCollapsed: !s.musicCollapsed })),
+  favorite: false,
+  toggleFavorite: () => set((s) => ({ favorite: !s.favorite })),
 }));

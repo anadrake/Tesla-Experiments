@@ -251,3 +251,27 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ---- Dot nav (Figma .Dot 4367:37979): 10px, 8px apart, 6px under the window ---- */
+.dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(192px + 6px);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+  pointer-events: none;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-content-tertiary);
+  transition: background-color var(--duration-fast) var(--easing-standard);
+}
+
+.dot[data-selected] {
+  background: var(--color-icon-strong);
+}
