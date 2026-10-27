@@ -13,6 +13,13 @@ export type CarView = 'panel' | 'full' | 'collapsed';
 export type NavState = 'idle' | 'typing' | 'navigating';
 export const DEFAULT_DESTINATION = 'Tesla Headquarters';
 
+/**
+ * Driving ⇔ navigating (Q6: Map Driving = Navigating; Q13: a trip switches the panel to Driving).
+ * Typing over an active trip still counts as driving.
+ */
+export const isDriving = (s: Pick<HudState, 'nav' | 'resumeTrip'>) =>
+  s.nav === 'navigating' || (s.nav === 'typing' && s.resumeTrip);
+
 export const TEMP_MIN = 60;
 export const TEMP_MAX = 84;
 
@@ -55,6 +62,8 @@ export interface HudState {
   /** Enter / shortcut: start a trip to `to` (or the typed query, or the Figma default). */
   startTrip: (to?: string) => void;
   endTrip: () => void;
+  /** PRND tap (Q5): P ⇄ D — starts a trip to the default destination, or ends the current one. */
+  toggleDrive: () => void;
 }
 
 const systemMode = (): Mode =>
@@ -104,5 +113,11 @@ export const useHud = create<HudState>()((set) => ({
       query: '',
       resumeTrip: false,
     })),
-  endTrip: () => set({ nav: 'idle' }),
+  endTrip: () => set({ nav: 'idle', resumeTrip: false }),
+  toggleDrive: () =>
+    set((s) =>
+      isDriving(s)
+        ? { nav: 'idle', resumeTrip: false }
+        : { nav: 'navigating', destination: DEFAULT_DESTINATION, query: '', resumeTrip: false },
+    ),
 }));

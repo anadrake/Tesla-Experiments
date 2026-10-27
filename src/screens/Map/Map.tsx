@@ -4,10 +4,10 @@ import traffic from '../../assets/icons/traffic.svg';
 import location from '../../assets/icons/location.svg';
 import supercharger from '../../assets/icons/supercharger.svg';
 import { motion } from 'motion/react';
-import { MAP_LEFT } from '../../components/CarPanel/geometry';
+import { mapLeft } from '../../components/CarPanel/geometry';
 import { Icon } from '../../components/Icon/Icon';
 import { Pressable } from '../../components/Pressable/Pressable';
-import { useHud } from '../../state/store';
+import { isDriving, useHud } from '../../state/store';
 import { transition } from '../../tokens/motion';
 import { AnimatePresence } from 'motion/react';
 import { TripCardActive } from '../../components/Navigation/TripCardActive';
@@ -30,7 +30,8 @@ const MAP_H = 1080;
 const MORPH_IN = { initial: { opacity: 0, y: 40 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 40 } };
 
 export function MapView() {
-  const left = MAP_LEFT[useHud((s) => s.carView)];
+  const view = useHud((s) => s.carView);
+  const left = mapLeft(view, useHud(isDriving));
   const navigating = useHud((s) => s.nav === 'navigating');
   const closeKeyboard = useHud((s) => s.closeKeyboard);
   const width = DISPLAY_W - left;

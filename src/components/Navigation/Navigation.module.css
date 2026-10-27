@@ -8,7 +8,7 @@
   white-space: nowrap;
 }
 
-.turnList p {
+.current p {
   margin: 0;
 }
 
@@ -25,6 +25,8 @@
 
 .current {
   position: relative;
+  color: var(--color-content-primary);
+  font-feature-settings: 'liga' 0, 'rclt' 0;
   height: 139px;
   padding: var(--space-24);
   background: var(--color-surface-floating);
@@ -72,7 +74,9 @@
 
 /* ---- Trip Card / Active ---- */
 .tripCard {
-  width: 464px;
+  width: 100%;
+  min-width: 400px;
+  max-width: 464px;
   height: 192px;
   display: flex;
   flex-direction: column;

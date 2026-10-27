@@ -1,0 +1,15 @@
+.scene {
+  position: absolute;
+  pointer-events: none;
+}
+
+.scene img {
+  position: absolute;
+  max-width: none;
+}
+
+.lead {
+  object-fit: contain;
+  object-position: bottom;
+  opacity: 0.6;
+}

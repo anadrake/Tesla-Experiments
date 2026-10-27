@@ -7,7 +7,9 @@
   align-items: center;
   gap: var(--space-4);
   color: var(--color-content-tertiary);
-  pointer-events: none;
+  /* bigger hit area than the 18px glyphs */
+  margin: 0 -12px;
+  padding: 0 12px;
 }
 
 .gearActive {

@@ -320,3 +320,60 @@
 .chickletTire p {
   margin: 0;
 }
+
+/* ---- Chicklet (Driving, 220 rail): 200×208 frame, card centred at the top ---- */
+.chickletFrame {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.chickletLarge {
+  position: relative;
+  width: 188px;
+  height: 186px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-floating);
+  box-shadow: var(--elevation-panel);
+  color: var(--color-content-primary);
+}
+
+.chickletLarge[data-page='1'] {
+  width: 186px;
+  height: 185px;
+}
+
+/* Progress strip along the bottom of the album art (played = inverse, rest = canvas) */
+.chickletProgress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 177px;
+  height: 9px;
+  background: var(--color-surface-canvas);
+}
+
+.chickletProgress > span {
+  display: block;
+  height: 100%;
+  background: var(--color-surface-inverse);
+}
+
+.chickletText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 20px;
+  font-feature-settings: 'liga' 0;
+}
+
+.chickletText p {
+  margin: 0;
+}
+
+.chickletTireLarge {
+  gap: 7px;
+  padding: 20px 22px;
+}

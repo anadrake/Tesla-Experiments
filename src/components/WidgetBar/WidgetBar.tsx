@@ -15,13 +15,14 @@ import styles from './WidgetBar.module.css';
  * Figma "Dynamic Widget Bar" (4416:12286), Dot Nav=Hidden.
  * Open: 600×192 window, swipe horizontally between Music / Odometer / Tire Pressure.
  * Dot nav (Q11): appears while swiping, fades out after DOTS_IDLE_MS without scrolling.
- * Mini Chicklet (Collapsed panel): shows the widget that was active when the panel collapsed
- * (Music 4666:74587, Odometer 4666:74579, Tire Pressure 4666:74583). Taps fall through to the panel (→ Panel).
+ * Collapsed panel shows the active widget as a Chicklet — taps fall through to the panel (→ Panel):
+ *   mini  (Parked, 116 rail):  Music 4666:74587 · Odometer 4666:74579 · Tire 4666:74583
+ *   large (Driving, 220 rail): Music 4596:70708 · Odometer 4596:70712 · Tire 4596:70716
  * Collapsed (music): 382×64 pill — tap to expand. Size change = duration/base.
  */
 const DOTS_IDLE_MS = 1500;
 
-export function WidgetBar({ chicklet = false }: { chicklet?: boolean }) {
+export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   const collapsed = useHud((s) => s.musicCollapsed);
   const toggle = useHud((s) => s.toggleMusicCollapsed);
   const page = useHud((s) => s.widgetPage);
@@ -37,7 +38,40 @@ export function WidgetBar({ chicklet = false }: { chicklet?: boolean }) {
   };
   useEffect(() => () => clearTimeout(idle.current), []);
 
-  if (chicklet) {
+  if (chicklet === 'large') {
+    return (
+      <div className={styles.chickletFrame}>
+        <motion.div key={page} className={styles.chickletLarge} data-page={page} {...presets.popIn} transition={transition.open}>
+          {page === 0 && (
+            <>
+              <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
+              <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
+              <span className={styles.chickletProgress}>
+                <span style={{ width: `${TRACK.progress * 100}%` }} />
+              </span>
+            </>
+          )}
+          {page === 1 && (
+            <div className={styles.chickletText}>
+              <p className="text-title-l">Odometer</p>
+              <p className="text-title-m">
+                26,422 <span className={styles.unit}>miles</span>
+              </p>
+            </div>
+          )}
+          {page === 2 && (
+            <div className={`${styles.chickletText} ${styles.chickletTireLarge}`}>
+              <p className="text-title-l">Tire Pressure</p>
+              <p className="text-title-m">Front: 38,42psi</p>
+              <p className="text-title-m">Rear: 38,42psi</p>
+            </div>
+          )}
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (chicklet === 'mini') {
     return (
       <motion.div key={page} className={styles.chicklet} {...presets.popIn} transition={transition.open}>
         {page === 0 && (

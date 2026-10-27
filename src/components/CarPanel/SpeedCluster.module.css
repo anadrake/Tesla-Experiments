@@ -1,0 +1,53 @@
+.speed,
+.sign,
+.direction {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+.speed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  color: var(--color-content-secondary);
+}
+
+.value {
+  font: 500 var(--font-size-80) / 56px var(--font-family-ui);
+}
+
+/* Figma "Speed Limit Sign": 70×88 raised plate */
+.sign {
+  width: 70px;
+  height: 88px;
+  border-radius: 8px;
+  background: var(--color-surface-raised);
+  color: var(--color-content-primary);
+  text-align: center;
+}
+
+.signLabel {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 5px;
+  font: 500 13px / 1.2 var(--font-family-ui);
+  letter-spacing: 0.03em;
+}
+
+.signValue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 46px;
+  font: 400 32px / 40px var(--font-family-sign);
+}
+
+.direction {
+  width: 464px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}

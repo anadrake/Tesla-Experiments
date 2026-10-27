@@ -28,6 +28,9 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Trip Card / Active | `359:9155` | `src/components/Navigation/TripCardActive.tsx` | ✅ P3 | End Trip → idle; ⋯ press only |
 | Route layer | Map State=Driving › route | `src/screens/Map/RouteLayer.tsx` | ✅ P3 | In tile coords (pans/zooms); line draws from the car |
 | ThemedSvg | — | `src/components/ThemedSvg/` | ✅ P3 | Multi-tone SVGs: swap baked hex → token vars (`?raw` import) |
+| Car Render Scene=Driving | `4479:49839` | `src/components/CarPanel/DrivingScene.tsx` | ✅ P4 | Road lines, beam, lead + ego car; % layout scales Panel → Full |
+| Speed + Speed Limit Sign + compact Direction Primary | in Car Status Panel (Driving) | `src/components/CarPanel/SpeedCluster.tsx` | ✅ P4 | Enlarged in the 220 rail |
+| Chicklet (Music / Odometer / Tire) | `4596:70708` / `70712` / `70716` | `WidgetBar.tsx` (`chicklet="large"`) | ✅ P4 | Driving collapsed rail |
 
 Icon node IDs: see [ICONS.md](ICONS.md).
 

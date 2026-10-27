@@ -112,6 +112,7 @@
 
 .tripCard {
   position: absolute;
+  width: 464px;
   left: var(--space-16);
   bottom: 34px;
 }

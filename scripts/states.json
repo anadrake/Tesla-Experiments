@@ -58,6 +58,31 @@
       "name": "navigating-dark",
       "query": "mode=dark&nav=navigating",
       "ref": "navigating-dark.png"
+    },
+    {
+      "name": "car-status-driving-light",
+      "query": "mode=light&nav=navigating&car=full",
+      "ref": "car-status-driving-light.png"
+    },
+    {
+      "name": "car-status-driving-dark",
+      "query": "mode=dark&nav=navigating&car=full",
+      "ref": "car-status-driving-dark.png"
+    },
+    {
+      "name": "map-driving-expanded-light",
+      "query": "mode=light&nav=navigating&car=collapsed",
+      "ref": "map-driving-expanded-light.png"
+    },
+    {
+      "name": "map-driving-expanded-dark",
+      "query": "mode=dark&nav=navigating&car=collapsed",
+      "ref": "map-driving-expanded-dark.png"
+    },
+    {
+      "name": "navigating-expanded-dark",
+      "query": "mode=dark&nav=navigating&car=collapsed",
+      "ref": "navigating-expanded-dark.png"
     }
   ]
 }

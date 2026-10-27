@@ -107,3 +107,52 @@ export const telltales = pair(
   { left: 18, top: 84, width: 48, height: 198 },
   { left: 17, top: 127, width: 48, height: 198 },
 );
+
+/* ------------------------------------------------------------------ */
+/* State=Driving (Navigating / Car status driving / Map driving · Expanded) */
+/* ------------------------------------------------------------------ */
+
+/** Collapsed is wider while driving (room for the big speed + Chicklet). */
+const PANEL_WIDTH_DRIVING: Record<CarView, number> = { panel: 630, full: 1920, collapsed: 220 };
+export const panelWidth = (view: CarView, driving: boolean) => (driving ? PANEL_WIDTH_DRIVING : PANEL_WIDTH)[view];
+export const mapLeft = (view: CarView, driving: boolean) => (view === 'collapsed' ? (driving ? 220 : 116) : 630);
+
+/** Car Render Scene=Driving (633×746.5 component), scaled into the centre on Car status. */
+export const drivingScene = pair(
+  { left: 0, top: 187, width: 633, height: 746.5 },
+  { left: 549, top: 40, width: 822.9, height: 970.45 },
+);
+
+type Placed = { left: number; top: number; scale: number; opacity: number };
+const placed = (panel: Placed, full: Placed, collapsed: Placed): Record<CarView, Placed> => ({ panel, full, collapsed });
+
+/** Speed readout + speed-limit sign (anchor/top-left). The Collapsed rail shows them enlarged. */
+export const speed = placed(
+  { left: 19, top: 89, scale: 1, opacity: 1 },
+  { left: 19, top: 89, scale: 1, opacity: 1 },
+  { left: 19, top: 89, scale: 1.83, opacity: 1 },
+);
+export const speedSign = placed(
+  { left: 19, top: 192, scale: 1, opacity: 1 },
+  { left: 19, top: 192, scale: 1, opacity: 1 },
+  { left: 19, top: 265, scale: 1.98, opacity: 1 },
+);
+export const telltalesDriving = pair(
+  { left: 19, top: 296, width: 48, height: 160 },
+  { left: 19, top: 296, width: 48, height: 160 },
+  { left: 19, top: 455, width: 48, height: 160 },
+);
+/** Compact Direction Primary (464-wide card at 0.644) beside the speed. Off-rail (hidden) when collapsed. */
+export const directionCard = placed(
+  { left: 144, top: 72, scale: 0.644, opacity: 1 },
+  { left: 144, top: 72, scale: 0.644, opacity: 1 },
+  { left: 247, top: 65, scale: 0.644, opacity: 0 },
+);
+
+export const batteryDrivingCollapsed = {
+  gauge: { left: 220 - 24 - GAUGE_W, top: 22, width: GAUGE_W, height: 20, opacity: 1 },
+  percent: { left: 220 - 24 - GAUGE_W - 8 - 50, top: 21, width: 50, height: 22, opacity: 0 },
+};
+
+/** Chicklet (200×208) in the 220 rail while driving. */
+export const chickletLargeRect: Rect = { left: 10, top: 862, width: 200, height: 208, opacity: 1 };

@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="62.5" height="366" viewBox="0 0 62.5 366" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="Driving Outline" d="M22.2287 0C22.2287 43.5 22.2287 147 0 366L62.5 361C60.7383 121.266 49 102 38 0H22.2287Z" fill="url(#paint0_linear_0_4728)"/>
+<defs>
+<linearGradient id="paint0_linear_0_4728" x1="31.25" y1="0" x2="31.25" y2="366" gradientUnits="userSpaceOnUse">
+<stop stop-color="#ACACAC" stop-opacity="0.24"/>
+<stop offset="0.384615" stop-color="#606060"/>
+</linearGradient>
+</defs>
+</svg>

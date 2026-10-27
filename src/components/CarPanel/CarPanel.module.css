@@ -13,6 +13,13 @@
   position: absolute;
 }
 
+/* Full-panel layer used to fade a whole scene (Parked / Driving) — never clips */
+.group {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
 .fill {
   width: 100% !important;
   height: 100% !important;

@@ -7,9 +7,9 @@ import { AirbagBadge } from '../components/AirbagBadge/AirbagBadge';
 import { Icon } from '../components/Icon/Icon';
 import { Pressable } from '../components/Pressable/Pressable';
 import { toggleDayNight } from '../state/dayNight';
-import { useHud, type CarView } from '../state/store';
+import { isDriving, useHud, type CarView } from '../state/store';
 import { transition } from '../tokens/motion';
-import { MAP_LEFT } from '../components/CarPanel/geometry';
+import { mapLeft } from '../components/CarPanel/geometry';
 import styles from './StatusCluster.module.css';
 
 type Item = 'lock' | 'clock' | 'temp' | 'profile' | 'sentry' | 'airbag';
@@ -35,10 +35,10 @@ const width = (order: Item[], sizes: Record<Item, Size>, gap: number) =>
  * Positions per car view (Figma: Map Top Bar vs Car Status Panel Full anchors).
  * Q8: items never resize between screens — they only move and fade.
  */
-function layout(view: CarView, s: Record<Item, Size>): Record<Item, Pos> {
+function layout(view: CarView, driving: boolean, s: Record<Item, Size>): Record<Item, Pos> {
   if (view !== 'full') {
     // Map Top Bar: 24px in from the map's left edge (moves with the map when the panel collapses)
-    const r = row(['lock', 'clock', 'temp', 'profile'], s, MAP_LEFT[view] + 24, 32, 24);
+    const r = row(['lock', 'clock', 'temp', 'profile'], s, mapLeft(view, driving) + 24, 32, 24);
     const sentryLeft = r.profile!.left + s.profile.w + 24;
     return {
       ...(r as Record<Item, Pos>),
@@ -70,6 +70,7 @@ function useClock() {
  */
 export function StatusCluster() {
   const view = useHud((s) => s.carView);
+  const driving = useHud(isDriving);
   const time = useClock();
   const refs = useRef<Partial<Record<Item, HTMLDivElement | null>>>({});
   const [sizes, setSizes] = useState<Record<Item, Size> | null>(null);
@@ -85,7 +86,7 @@ export function StatusCluster() {
     document.fonts?.ready.then(measure);
   }, [time]);
 
-  const pos = sizes ? layout(view, sizes) : null;
+  const pos = sizes ? layout(view, driving, sizes) : null;
   const item = (id: Item, children: ReactNode) => (
     <motion.div
       key={id}
