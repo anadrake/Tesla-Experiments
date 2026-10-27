@@ -23,7 +23,7 @@ export function RouteLayer() {
             <motion.polyline
               points={POINTS}
               fill="none"
-              stroke="var(--primitive-yellow-500)"
+              stroke="var(--color-map-route)"
               strokeWidth={7}
               strokeLinecap="round"
               strokeLinejoin="round"

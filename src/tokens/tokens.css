@@ -85,9 +85,11 @@
   --color-bg-car-status-driving: var(--color-surface-panel);
   /* Toggled-on glyph (Quick Actions climate tiles, Q14): blue/600 on light, blue/300 on dark for contrast */
   --color-icon-active: #005aff;
+  /* Trip route line: the primary blue (Anastasiya, 2026-10-27; was primitive yellow/500) */
+  --color-map-route: var(--color-action-primary-bg-default);
 
   /* Primitive accents not yet aliased by a semantic token */
-  --primitive-yellow-500: #ffbd0a; /* route line */
+  --primitive-yellow-500: #ffbd0a;
   --primitive-teal-500: #2fccbb;
 
   /* Color — Light mode */
