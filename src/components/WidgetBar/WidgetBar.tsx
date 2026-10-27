@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import spotify from '../../assets/media/spotify.svg';
+import spotifyChip from '../../assets/media/spotify-chip.svg';
+import album from '../../assets/media/album-vampire.png';
 import arrowUp from '../../assets/icons/arrow-up.svg';
 import { useHud } from '../../state/store';
 import { presets, transition } from '../../tokens/motion';
@@ -13,11 +15,13 @@ import styles from './WidgetBar.module.css';
  * Figma "Dynamic Widget Bar" (4416:12286), Dot Nav=Hidden.
  * Open: 600×192 window, swipe horizontally between Music / Odometer / Tire Pressure.
  * Dot nav (Q11): appears while swiping, fades out after DOTS_IDLE_MS without scrolling.
+ * Mini Chicklet (4666:74587): 92×92 album art + Spotify badge, shown in the Collapsed panel.
+ * Its taps fall through to the panel (Collapsed tap → Panel).
  * Collapsed (music): 382×64 pill — tap to expand. Size change = duration/base.
  */
 const DOTS_IDLE_MS = 1500;
 
-export function WidgetBar() {
+export function WidgetBar({ chicklet = false }: { chicklet?: boolean }) {
   const collapsed = useHud((s) => s.musicCollapsed);
   const toggle = useHud((s) => s.toggleMusicCollapsed);
   const [page, setPage] = useState(0);
@@ -31,6 +35,15 @@ export function WidgetBar() {
     idle.current = setTimeout(() => setDotsVisible(false), DOTS_IDLE_MS);
   };
   useEffect(() => () => clearTimeout(idle.current), []);
+
+  if (chicklet) {
+    return (
+      <motion.div className={styles.chicklet} {...presets.popIn} transition={transition.open}>
+        <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
+        <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
+      </motion.div>
+    );
+  }
 
   return (
     <div className={styles.bar}>

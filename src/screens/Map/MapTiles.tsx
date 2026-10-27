@@ -1,27 +1,31 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import tilesDark from '../../assets/map/tiles-dark.jpg';
 import tilesLight from '../../assets/map/tiles-light.jpg';
 import { useStageScale } from '../../shell/Stage';
 import styles from './Map.module.css';
+import { capture } from '../../lib/pointer';
 
 const TILE = 1960; // Figma "map canvas" size
 const MAX_ZOOM = 3;
 
 interface Props {
-  /** Map viewport size in design px. */
+  /** Map viewport size in design px (target size; the tiles are CSS-centred so they follow width animations). */
   width: number;
   height: number;
-  /** Figma offset of the tile's top-left inside the map. */
-  baseLeft: number;
-  baseTop: number;
 }
+
+/** Figma "map canvas": centred on the map, offset (-1, -105). */
+const OFFSET_X = -1;
+const OFFSET_Y = -105;
 
 /**
  * Static Figma map tiles with one-finger pan and two-finger pinch zoom (Q2).
  * Both themes are stacked and cross-fade by opacity during the Day/Night dissolve.
  * Transforms are written straight to the DOM (no React re-render per pointer move).
  */
-export function MapTiles({ width, height, baseLeft, baseTop }: Props) {
+export function MapTiles({ width, height }: Props) {
+  const baseLeft = width / 2 + OFFSET_X - TILE / 2;
+  const baseTop = height / 2 + OFFSET_Y - TILE / 2;
   const scale = useStageScale();
   const layer = useRef<HTMLDivElement>(null);
   const view = useRef({ x: 0, y: 0, k: 1 });
@@ -43,6 +47,9 @@ export function MapTiles({ width, height, baseLeft, baseTop }: Props) {
     if (layer.current) layer.current.style.transform = `translate(${x}px, ${y}px) scale(${k})`;
   };
 
+  // Re-clamp when the map resizes (panel collapse/expand) so no edge is ever exposed.
+  useEffect(() => apply(view.current), [width, height]);
+
   const twoFinger = () => {
     const [a, b] = [...pointers.current.values()];
     return { dist: Math.hypot(a.x - b.x, a.y - b.y), mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 } };
@@ -55,7 +62,7 @@ export function MapTiles({ width, height, baseLeft, baseTop }: Props) {
   };
 
   const onDown = (e: React.PointerEvent) => {
-    e.currentTarget.setPointerCapture(e.pointerId);
+    capture(e);
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointers.current.size === 2) pinch.current = { dist: twoFinger().dist, k: view.current.k };
   };
@@ -93,7 +100,16 @@ export function MapTiles({ width, height, baseLeft, baseTop }: Props) {
       onPointerCancel={onUp}
       data-testid="map-tiles"
     >
-      <div ref={layer} className={styles.tiles} style={{ left: baseLeft, top: baseTop, width: TILE, height: TILE }}>
+      <div
+        ref={layer}
+        className={styles.tiles}
+        style={{
+          left: `calc(50% + ${OFFSET_X - TILE / 2}px)`,
+          top: `calc(50% + ${OFFSET_Y - TILE / 2}px)`,
+          width: TILE,
+          height: TILE,
+        }}
+      >
         <img className={styles.tileLight} src={tilesLight} alt="" draggable={false} />
         <img className={styles.tileDark} src={tilesDark} alt="" draggable={false} />
       </div>

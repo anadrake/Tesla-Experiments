@@ -14,37 +14,57 @@ import { Callouts } from './Callouts';
 import { PanelStatusBar, Telltales } from './PanelStatusBar';
 import { PANEL_WIDTH, bottom, scene } from './geometry';
 import styles from './CarPanel.module.css';
+import { capture } from '../../lib/pointer';
 
 const DRAG_THRESHOLD = 60; // design px
 /** Figma "bg": canvas beside the map; raised panel grey on Car status (the shadow ellipse becomes the floor). */
-const PANEL_BG = { panel: 'var(--color-surface-canvas)', full: 'var(--color-surface-panel)' } as const;
+const PANEL_BG = {
+  panel: 'var(--color-surface-canvas)',
+  full: 'var(--color-surface-panel)',
+  collapsed: 'var(--color-surface-canvas)',
+} as const;
 const TAP_SLOP = 10;
 
 /**
- * Figma "Car Status Panel", State=Parked. Lives in the Left slot.
- * Tap or horizontal drag switches Panel (630) ⇄ Full (Car status screen), 0.4s standard.
+ * Figma "Car Status Panel", State=Parked. Lives in the Left slot. All size changes: 0.4s standard.
+ *   Panel:     tap / drag right → Full · drag left on the handle (grab pill) → Collapsed
+ *   Full:      tap / drag left → Panel
+ *   Collapsed: tap / drag right → Panel   (Figma: "Collapsed taps back to Panel")
  * Interactive children opt out of the panel gesture with data-no-panel-gesture.
- * TODO P4: State=Driving. Handle drag → Collapsed (220) with Map Expanded.
+ * TODO P4: State=Driving.
  */
 export function CarPanel() {
   const view = useHud((s) => s.carView);
   const setCarView = useHud((s) => s.setCarView);
   const scale = useStageScale();
-  const start = useRef<{ x: number; y: number } | null>(null);
+  const start = useRef<{ x: number; y: number; onHandle: boolean } | null>(null);
 
   const onPointerDown = (e: React.PointerEvent) => {
-    if ((e.target as Element).closest('[data-no-panel-gesture]')) return;
-    start.current = { x: e.clientX, y: e.clientY };
+    const target = e.target as Element;
+    if (view !== 'collapsed' && target.closest('[data-no-panel-gesture]')) return;
+    start.current = { x: e.clientX, y: e.clientY, onHandle: !!target.closest('[data-panel-handle]') };
+    // Keep receiving the gesture when the finger leaves the panel (e.g. dragging right out of the 116px rail).
+    capture(e);
   };
 
   const onPointerUp = (e: React.PointerEvent) => {
     if (!start.current) return;
     const dx = (e.clientX - start.current.x) / scale;
     const dy = (e.clientY - start.current.y) / scale;
+    const { onHandle } = start.current;
     start.current = null;
-    if (Math.hypot(dx, dy) < TAP_SLOP) setCarView(view === 'panel' ? 'full' : 'panel');
-    else if (view === 'panel' && dx > DRAG_THRESHOLD) setCarView('full');
-    else if (view === 'full' && dx < -DRAG_THRESHOLD) setCarView('panel');
+    const tap = Math.hypot(dx, dy) < TAP_SLOP;
+    const right = dx > DRAG_THRESHOLD;
+    const left = dx < -DRAG_THRESHOLD;
+
+    if (view === 'panel') {
+      if (left && onHandle) setCarView('collapsed');
+      else if (tap || right) setCarView('full');
+    } else if (view === 'full') {
+      if (tap || left) setCarView('panel');
+    } else if (tap || right) {
+      setCarView('panel');
+    }
   };
 
   return (
@@ -102,11 +122,13 @@ export function CarPanel() {
       <Callouts view={view} />
 
       <PanelStatusBar view={view} />
-      <Telltales />
+      <Telltales view={view} />
 
       <div className={styles.divider} aria-hidden>
         <img src={divider} alt="" width={240} height={104} />
       </div>
+      {/* Figma "handle": transparent 64×320 hit area over the grab pill */}
+      <div className={styles.handle} data-panel-handle aria-hidden />
 
       <motion.div
         className={styles.layer}
@@ -115,7 +137,7 @@ export function CarPanel() {
         transition={transition.screen}
         data-no-panel-gesture
       >
-        <WidgetBar />
+        <WidgetBar chicklet={view === 'collapsed'} />
       </motion.div>
       <motion.div
         className={styles.layer}

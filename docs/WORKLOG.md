@@ -28,6 +28,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
+- 2026-10-26 — Collapsed panel built now (was P4): width 116 (from the Map Parked · Expanded screen; the component notes say 220/102 — the screen wins). Handle = transparent 64×320 hit area over the grab pill; only a left drag that STARTS on it collapses. Collapsed tap / drag right → Panel. Music becomes the 92×92 Mini Chicklet. Map left edge animates 630 → 116 with tiles re-centred (same as Figma's re-centred map instance). Panel uses pointer capture so drags can end outside it.
 - 2026-10-26 — P2: Panel ⇄ Full morph = per-layer rects from Figma (Panel: Map Parked; Full: Car status) animated with left/top/width/height/opacity, 0.4s standard. Same images in both modes (Car Render has no Light/Dark variants). Full bg = `surface-panel` with the `sunken` floor ellipse. Callout text 14/16 in both sizes. Collapsed 220px panel + handle drag moved to P4 (with Expanded screens).
 - 2026-10-26 — P1: Day/Night dissolve = 0.6s CSS color transitions on every element while `html.mode-switching` is set; map tiles cross-fade by opacity. (View Transitions was tried first and dropped: it routes all taps to the page root mid-transition, so rapid clock taps were lost.) Top-bar gradient snaps rather than fades (gradients can't transition) — minor. Clock is live (Q10). Light `--color-surface-glass` set to neutral-50 · 80% (see bugs).
 - 2026-10-26 — **Push to `main` after every phase** (standing approval from Anastasiya), starting with Phase 0.
@@ -38,6 +39,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-26 — Dragging left from the car panel handle should minimize the panel into its collapsed state (pulled forward from P4).
 - 2026-10-26 — Q11: widget dots only while scrolling, fade after idle. Q12: favorite should toggle.
 - 2026-10-26 — P1 review: looks good. Keep the live clock. **Map image feels small** → generate a bigger, nicer map with Snazzy Maps (snazzymaps.com) styling — scheduled for Phase 7, not now.
 - 2026-10-26 — Initial brief: working iPad prototype from GitHub, match Figma visuals/UX/layout/interactions/motion, easy to extend via vibe coding, phased plan first, keep this log, reviewer agent checks every step, ask about design intent, Figma prototype may have bugs — don't assume inconsistencies are correct.
@@ -65,6 +67,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Glyph SVGs come with mode-resolved colors → render via `Icon` (CSS mask) + token color. Map/top-bar icons = `--color-icon-strong`.
 - Component SVG exports carry page background + doc card → see COMPONENTS.md "Asset notes".
 - Motion layout/layoutId animations measure in screen px → wrong inside the scaled Stage. Use explicit `animate` targets in design px; measure with offsetWidth (unscaled).
+- Figma inconsistency: Car Status Panel description says Collapsed = 220 (size/panel/collapsed) or 102, but the Expanded screen uses 116. Built 116.
 - Car Status Panel keeps Panel + Full layers in one component (hidden layers at 0%) — the metadata of the Car status instance gives Full rects directly.
 - Widget bar: Music collapses to a 382×64 pill (Spotify · title · ↑); music Mini/Chicklet sizes exist for Collapsed panel (P4).
 - `docs/ICONS.md` = full icon node index (Icons page is big; don't re-read).
@@ -72,6 +75,9 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Key node IDs: Map Parked L/D `4300:1022`/`4300:1216`; Car status L/D `4300:18`/`4300:714`; Navigating L/D `4300:2833`/`4300:3474`; Quick actions L/D `4300:2105`/`4300:2520`; Settings Controls L/D `4300:21356`/`4300:21841`.
 
 ## Phase history
+### Phase 2 follow-up — Collapsed panel + Map Parked · Expanded (2026-10-26)
+- Built: 116px rail (PRND, gauge under PRND, telltales, grab pill, Mini Chicklet), handle drag-left to collapse, tap/drag-right back, map widens with re-centred tiles, status items follow the map edge.
+- Review: PASS WITH ISSUES. Fixed: pointer capture guarded (lib/pointer.ts). Watch on iPad: one unreproduced missed handle-drag ~0.7s after expanding. Known: Google "Map data ©" strip is baked into the Figma tile image at its far edge → goes away with the P7 map.
 ### Phase 2 — Car panel, widget bar, Car status (2026-10-26)
 - Built: Car Status Panel (PRND, battery, telltales, car render, callouts, grab pill), Dynamic Widget Bar (Music with play/pause + collapse pill, Odometer, Tire Pressure, swipe), Trip Card / Search, Car status Full view with tap/drag morph, StatusCluster (Q8). Icon index → docs/ICONS.md.
 - Review: PASS WITH ISSUES (all low). Fixed: panel floor shadow 40px lower. Kept: reflection 15% (= Figma). Open: Q11 dots, Q12 favorite.

@@ -6,8 +6,8 @@ import { create } from 'zustand';
  */
 export type Mode = 'light' | 'dark';
 
-/** Left car panel size: 630px panel beside the map, or Full (Car status screen). */
-export type CarView = 'panel' | 'full';
+/** Left car panel size: 630px panel beside the map, Full (Car status screen), or Collapsed rail (map expanded). */
+export type CarView = 'panel' | 'full' | 'collapsed';
 
 export const TEMP_MIN = 60;
 export const TEMP_MAX = 84;
@@ -25,7 +25,6 @@ export interface HudState {
 
   carView: CarView;
   setCarView: (v: CarView) => void;
-  toggleCarView: () => void;
 
   /** Music widget: playback + Full/collapsed (pill) size. */
   playing: boolean;
@@ -51,7 +50,6 @@ export const useHud = create<HudState>()((set) => ({
 
   carView: 'panel',
   setCarView: (carView) => set({ carView }),
-  toggleCarView: () => set((s) => ({ carView: s.carView === 'panel' ? 'full' : 'panel' })),
 
   playing: true,
   musicCollapsed: false,

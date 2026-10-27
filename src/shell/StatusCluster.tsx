@@ -9,13 +9,13 @@ import { Pressable } from '../components/Pressable/Pressable';
 import { toggleDayNight } from '../state/dayNight';
 import { useHud, type CarView } from '../state/store';
 import { transition } from '../tokens/motion';
+import { MAP_LEFT } from '../components/CarPanel/geometry';
 import styles from './StatusCluster.module.css';
 
 type Item = 'lock' | 'clock' | 'temp' | 'profile' | 'sentry' | 'airbag';
 type Size = { w: number; h: number };
 type Pos = { left: number; top: number; opacity: number };
 
-const MAP_LEFT = 630 + 24; // Map Top Bar padding, map starts at the panel edge
 const DISPLAY_W = 1920;
 
 /** Lay items out in a row with a gap, vertically centered on cy. */
@@ -36,8 +36,9 @@ const width = (order: Item[], sizes: Record<Item, Size>, gap: number) =>
  * Q8: items never resize between screens — they only move and fade.
  */
 function layout(view: CarView, s: Record<Item, Size>): Record<Item, Pos> {
-  if (view === 'panel') {
-    const r = row(['lock', 'clock', 'temp', 'profile'], s, MAP_LEFT, 32, 24);
+  if (view !== 'full') {
+    // Map Top Bar: 24px in from the map's left edge (moves with the map when the panel collapses)
+    const r = row(['lock', 'clock', 'temp', 'profile'], s, MAP_LEFT[view] + 24, 32, 24);
     const sentryLeft = r.profile!.left + s.profile.w + 24;
     return {
       ...(r as Record<Item, Pos>),

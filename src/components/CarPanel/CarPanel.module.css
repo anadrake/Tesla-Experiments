@@ -48,3 +48,12 @@
   transform: rotate(90deg);
   max-width: none;
 }
+
+.handle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 64px;
+  height: 320px;
+  transform: translateY(-50%);
+}

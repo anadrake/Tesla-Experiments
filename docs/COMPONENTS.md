@@ -16,11 +16,11 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Map Tiles | `4269:2425` (Light `4269:2423`, Dark `4269:2424`) | `src/screens/Map/MapTiles.tsx` | ✅ P1 | 2× exports, pan + pinch |
 | Map Top Bar (items) | `4259:114` | `src/shell/StatusCluster.tsx` | ✅ P2 | One instance for all screens; items move/fade between Map and Car status (Q8). Tap clock = Day/Night. Map keeps only the gradient |
 | Navigate Field | `4307:23243` | in `Map.tsx` | 🟡 P1 | Visual only; focus → Keyboard in P3 |
-| Car Status Panel (Parked) | `4268:3115` | `src/components/CarPanel/` | ✅ P2 | Panel ⇄ Full via tap/drag; rects in `geometry.ts`; bg canvas → surface-panel |
+| Car Status Panel (Parked) | `4268:3115` | `src/components/CarPanel/` | ✅ P2 | Panel ⇄ Full (tap/drag) ⇄ Collapsed 116 (handle drag left); rects in `geometry.ts` |
 | Status Bar (PRND + Battery) | `4259:102` | `CarPanel/PanelStatusBar.tsx` | ✅ P2 | PRND tap → P4 |
 | Telltales | `49:33482` etc | `CarPanel/PanelStatusBar.tsx` | ✅ P2 | status-success / status-danger |
 | Callouts | in panel | `CarPanel/Callouts.tsx` | ✅ P2 | Q7 part small / state bold |
-| Dynamic Widget Bar | `4416:12286` | `src/components/WidgetBar/` | ✅ P2 | Swipe Music / Odometer / Tire; music collapses to pill |
+| Dynamic Widget Bar | `4416:12286` | `src/components/WidgetBar/` | ✅ P2 | Swipe Music / Odometer / Tire + idle-fading dots; music → pill; Mini Chicklet `4666:74587` in Collapsed |
 | Trip Card / Search | `359:9111` | `src/components/TripCard/TripSearchCard.tsx` | 🟡 P2 | Visual; Navigate → P3 |
 
 Icon node IDs: see [ICONS.md](ICONS.md).

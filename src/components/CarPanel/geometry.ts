@@ -1,9 +1,11 @@
 import type { CarView } from '../../state/store';
 
 /**
- * Figma "Car Status Panel" (4268:3115) layer rects for Size=Panel (630) and Size=Full (1920),
+ * Figma "Car Status Panel" (4268:3115) layer rects for Size=Panel (630), Size=Full (1920)
+ * and Size=Collapsed (116 on the Map Parked · Expanded screen),
  * in display px. Same-named layers morph between sizes (Smart Animate 0.4s standard).
- * Source: Map Parked (Panel) and Car status (Full) screens. Opacity 0 = layer hidden in that size.
+ * Source: Map Parked (Panel), Car status (Full), Map Parked · Expanded (Collapsed) screens.
+ * Opacity 0 = layer hidden in that size. Collapsed defaults to the Panel rect, faded out.
  */
 // A type alias (not interface) so it's assignable to motion's `animate` target.
 export type Rect = {
@@ -14,10 +16,16 @@ export type Rect = {
   opacity?: number;
 };
 
-type Pair = Record<CarView, Rect>;
-const pair = (panel: Rect, full: Rect): Pair => ({ panel, full });
+type Rects = Record<CarView, Rect>;
+const pair = (panel: Rect, full: Rect, collapsed?: Rect): Rects => ({
+  panel: { opacity: 1, ...panel },
+  full: { opacity: 1, ...full },
+  collapsed: collapsed ? { opacity: 1, ...collapsed } : { ...panel, opacity: 0 },
+});
 
-export const PANEL_WIDTH: Record<CarView, number> = { panel: 630, full: 1920 };
+export const PANEL_WIDTH: Record<CarView, number> = { panel: 630, full: 1920, collapsed: 116 };
+/** Map (Main slot) left edge per view — the map widens when the panel collapses. */
+export const MAP_LEFT: Record<CarView, number> = { panel: 630, full: 630, collapsed: 116 };
 
 export const scene = {
   shadowPanel: pair(
@@ -57,12 +65,34 @@ export const callouts = {
 };
 
 export const bottom = {
-  widgetBar: pair({ left: 15, top: 848, width: 600, height: 208 }, { left: 448, top: 819, width: 600, height: 208 }),
+  widgetBar: pair(
+    { left: 15, top: 848, width: 600, height: 208 },
+    { left: 448, top: 819, width: 600, height: 208 },
+    { left: 13, top: 972, width: 92, height: 92 }, // Mini Chicklet
+  ),
   tripCard: pair(
     { left: 640, top: 848, width: 400, height: 192, opacity: 0 },
     { left: 1072, top: 819, width: 400, height: 192, opacity: 1 },
   ),
 };
 
-/** Top-left status bar: PRND left, battery right. */
-export const statusBarWidth: Record<CarView, number> = { panel: 630, full: 260 };
+/** Top-left status bar: PRND fixed at left 24; battery right-aligned (Panel/Full) or gauge under PRND (Collapsed). */
+const GAUGE_W = 48; // 45 + tip
+export const battery = {
+  gauge: pair(
+    { left: 630 - 24 - GAUGE_W, top: 22, width: GAUGE_W, height: 20 },
+    { left: 260 - 24 - GAUGE_W, top: 22, width: GAUGE_W, height: 20 },
+    { left: 24, top: 53, width: GAUGE_W, height: 20 },
+  ),
+  percent: pair(
+    { left: 630 - 24 - GAUGE_W - 8 - 50, top: 21, width: 50, height: 22 },
+    { left: 260 - 24 - GAUGE_W - 8 - 50, top: 21, width: 50, height: 22 },
+    { left: 24 - 8 - 50, top: 52, width: 50, height: 22, opacity: 0 },
+  ),
+};
+
+export const telltales = pair(
+  { left: 18, top: 84, width: 48, height: 198 },
+  { left: 18, top: 84, width: 48, height: 198 },
+  { left: 17, top: 127, width: 48, height: 198 },
+);

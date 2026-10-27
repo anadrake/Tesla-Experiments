@@ -275,3 +275,27 @@
 .dot[data-selected] {
   background: var(--color-icon-strong);
 }
+
+/* ---- Mini Chicklet (Collapsed panel) ---- */
+.chicklet {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-floating);
+  box-shadow: var(--elevation-panel);
+}
+
+.chickletArt {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 43px icon box, glyph inset 20% */
+.chickletBadge {
+  position: absolute;
+  left: 8.6px;
+  top: 8.6px;
+}
