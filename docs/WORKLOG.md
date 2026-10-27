@@ -6,9 +6,9 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 ---
 
 ## Current state
-- **Phase:** 6 — ✅ done (committed; awaiting push). Next: Phase 7 polish. Live site: https://anadrake.github.io/Tesla-Experiments/
-- **Last session:** 2026-10-26 — plan approved; Phase 0 scaffold, tokens, stage, deploy workflow, design-ref, reviewer agent
-- **Next step:** Anastasiya pushes + tries Settings on iPad → Phase 7 (polish: motion pass, iPad QA, Snazzy map imagery, offline fonts, README)
+- **Phase:** 7 — ✅ done (committed; awaiting push). All planned phases complete. Live site: https://anadrake.github.io/Tesla-Experiments/
+- **Last session:** 2026-10-27 — Phase 7: bundled fonts, PWA icons, motion pass, OSM map imagery + real route, README vibe-coding guide, full iPad QA sweep
+- **Next step:** Anastasiya pushes + tries on iPad (real-touch pinch/pan wasn't testable by the reviewer). Answer Q17. Then new features (customisable dock, more Settings pages, …)
 - **Carry-over:** read Notes page (`310:79790`) in pieces (whole-page fetch fails) — still not done
 
 ## Open questions
@@ -78,6 +78,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - `--color-surface-glass` resolves to `#000000f2` in BOTH modes via get_variable_defs, but the Light map ref shows a near-white location tag and the component's own fallback is neutral-50 · 80%. Built Light = `#f6f6f6cc`. Likely a missing Light value on the variable.
 
 ## Learnings
+- Render-map framing: the route must end inside the 1960 tile or the pin is unreachable (pan is clamped to the tile). If you move `DESTINATION`, adjust `CAR_FRACTION` so the car stays at `CAR_TILE_PX` on the same road.
 - Figma Screens "Read me" documents the whole prototype wiring and motion tokens — treat as the UX spec.
 - Display = 1920×1080 stage (Left 630 / Main / Overlay slots) + 120px control bar = 1920×1200.
 - Tokens are clean Figma variables (`--color-*`, `--space-*`, `--radius-*`, `--font-size-*`, `--size-*`) with Light/Dark modes; Inter font.
@@ -109,6 +110,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Key node IDs: Map Parked L/D `4300:1022`/`4300:1216`; Car status L/D `4300:18`/`4300:714`; Navigating L/D `4300:2833`/`4300:3474`; Quick actions L/D `4300:2105`/`4300:2520`; Settings Controls L/D `4300:21356`/`4300:21841`.
 
 ## Phase history
+- **Phase 7 (2026-10-27):** @fontsource fonts, PWA icons/manifest, reduced-motion, OSM map tiles + OSRM route, README guide. QA sweep (reviewer, iPad + 1920, all states): PASS WITH ISSUES → fixed: destination off the tile (trip shortened to 34.0291,-118.3809, car fraction 0.56); OSM credit illegible → glass chip stacked above the location tag. Left as-is: label fragments at map edges (tile content). Not verified by tools: real-touch pinch/pan, keyboard typing walk.
 ### Phase 6b — Pedals & Steering, Display, Lights (2026-10-27)
 - Built: three pages with real copy, shared keyed settings across pages, Appearance driving the real app mode, ToggleButton + full-width segmented.
 - Review: PASS WITH ISSUES (low). Brightness/Auto sync verified manually. Slider default 50% vs Display ref 25% (Figma inconsistency, logged).

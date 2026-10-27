@@ -85,8 +85,10 @@ export function MapView() {
       </div>
 
       {/* Map imagery is Culver City (Figma's tag said San Francisco — see WORKLOG) */}
-      <div className={`${styles.locationTag} text-body-l`}>Culver City, CA</div>
-      <p className={`${styles.credit} text-body-s`}>© OpenStreetMap contributors</p>
+      <div className={styles.mapMeta}>
+        <p className={`${styles.credit} text-body-s`}>© OpenStreetMap contributors</p>
+        <div className={`${styles.locationTag} text-body-l`}>Culver City, CA</div>
+      </div>
     </motion.section>
   );
 }

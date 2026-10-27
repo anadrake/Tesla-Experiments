@@ -137,14 +137,25 @@
   max-width: none;
 }
 
-/* Open-data credit (ODbL requires it) — kept small and quiet */
-.credit {
+/* Bottom-right stack: open-data credit (ODbL requires it) above the location tag */
+.mapMeta {
   position: absolute;
-  left: var(--space-16);
-  bottom: var(--space-8);
-  margin: 0;
-  color: var(--color-content-tertiary);
+  right: var(--space-24);
+  bottom: var(--space-24);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-8);
   pointer-events: none;
+}
+
+.credit {
+  margin: 0;
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-glass);
+  color: var(--color-content-secondary);
+  white-space: nowrap;
 }
 .controls {
   right: 26px;
@@ -171,13 +182,9 @@
 }
 
 .locationTag {
-  position: absolute;
-  right: var(--space-24);
-  bottom: var(--space-24);
   padding: var(--space-8) var(--space-16);
   border-radius: var(--radius-sm);
   background: var(--color-surface-glass);
   color: var(--color-content-secondary);
   white-space: nowrap;
-  pointer-events: none;
 }

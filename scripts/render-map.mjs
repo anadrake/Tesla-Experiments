@@ -9,14 +9,14 @@ import { writeFileSync } from 'node:fs';
 
 /** Trip on Washington Blvd, Culver City (the area the Figma map shows). [lng, lat] */
 const ORIGIN = [-118.399, 34.018];
-const DESTINATION = [-118.37, 34.033];
+const DESTINATION = [-118.3809, 34.0291]; // close enough that the pin lands on the 1960 tile
 const ZOOM = 15.9; // ≈ the street density of the Figma map tiles
 /** Draw everything (labels, road widths) this much bigger than the default style, like the Figma map. */
 const SCALE = 1.75;
 const CSS_SIZE = Math.round(1960 / SCALE);
 /** Where the car sits on the 1960 tile so it lands where the Figma nav arrow is on screen. */
 const CAR_TILE_PX = [962, 806];
-const CAR_FRACTION = 0.38; // how far along the route the car is
+const CAR_FRACTION = 0.56; // how far along the route the car is
 
 const PALETTES = {
   light: { bg: '#f3f3f3', park: '#e7e7e7', water: '#dcdcdc', building: '#ebebeb', minor: '#ffffff', major: '#ffffff', casing: '#dadada', label: '#8c8c8c', halo: '#f3f3f3', rail: '#d6d6d6' },

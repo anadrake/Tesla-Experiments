@@ -1,6 +1,6 @@
 # Tesla Center HUD — Phased Build Plan
 
-**Status:** ✅ Approved 2026-10-26. Phases 0–6 done; Phase 7 (polish) in progress. (Asset export moved from P0 into the phase that first uses each asset.)
+**Status:** ✅ Approved 2026-10-26. Phases 0–7 done. (Asset export moved from P0 into the phase that first uses each asset.)
 **Source of truth:** [Figma — Tesla Dashboard UI Component Library](https://www.figma.com/design/L4iGjQC6AbgfNfqCAxQnh9/) (file key `L4iGjQC6AbgfNfqCAxQnh9`)
 **Working log:** [WORKLOG.md](WORKLOG.md) — feedback, decisions, learnings, Figma bugs.
 
