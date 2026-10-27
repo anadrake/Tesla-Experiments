@@ -20,10 +20,10 @@ import styles from './CarPanel.module.css';
 import { capture } from '../../lib/pointer';
 
 const DRAG_THRESHOLD = 60; // design px
-/** Figma "bg": canvas beside the map; raised panel grey on Car status (the shadow ellipse becomes the floor). */
+/** Figma "bg": canvas in every size (Full was surface/panel until Anastasiya darkened it, 2026-10-27). */
 const PANEL_BG = {
   panel: 'var(--color-surface-canvas)',
-  full: 'var(--color-surface-panel)',
+  full: 'var(--color-surface-canvas)',
   collapsed: 'var(--color-surface-canvas)',
 } as const;
 /** Driving Car status: no lighter "stage" in Dark — same dark as the panel (Anastasiya). */
@@ -103,12 +103,11 @@ export function CarPanel() {
         >
           <Icon src={shadowPanel} color="var(--color-surface-sunken)" className={styles.fill} />
         </motion.div>
-        <motion.div
-          className={`${styles.layer} ${styles.shadowFull}`}
-          initial={false}
-          animate={scene.shadowFull[view]}
-          transition={transition.screen}
-        />
+        <motion.div className={styles.layer} initial={false} animate={scene.shadowFull[view]} transition={transition.screen}>
+          <div className={styles.shadowMask}>
+            <div className={styles.shadowFull} />
+          </div>
+        </motion.div>
 
         <motion.img
           className={`${styles.layer} ${styles.render}`}

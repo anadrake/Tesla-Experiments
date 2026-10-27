@@ -34,7 +34,7 @@ export const scene = {
   ),
   shadowFull: pair(
     { left: -270, top: 760, width: 1170, height: 260, opacity: 0 },
-    { left: -547, top: 671, width: 3014, height: 678, opacity: 1 },
+    { left: -318, top: 671, width: 2556, height: 678, opacity: 1 },
   ),
   renderPanel: pair(
     { left: 22, top: 443, width: 544, height: 307, opacity: 1 },
@@ -44,10 +44,10 @@ export const scene = {
     { left: 45, top: 467, width: 540, height: 270, opacity: 0 },
     { left: 440, top: 250, width: 1040, height: 520, opacity: 1 },
   ),
-  /** Flipped + rotated reflection under the Full render. */
+  /** Flipped + rotated reflection under the Full render (Figma: 6% so it reads as a floor reflection). */
   reflection: pair(
     { left: 50, top: 641, width: 540, height: 270, opacity: 0 },
-    { left: 487, top: 584, width: 1040, height: 520, opacity: 0.15 },
+    { left: 450, top: 584, width: 1040, height: 520, opacity: 0.06 },
   ),
 };
 

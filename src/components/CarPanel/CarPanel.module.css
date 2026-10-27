@@ -25,10 +25,34 @@
   height: 100% !important;
 }
 
+/* Figma "Mask group" over "shadow · full" (2556×678 ellipse, layer blur 70.7). The mask box is 2995×679 at
+   (-349, -48) of the ellipse — in % so it follows the Panel ⇄ Full morph. Alpha radial gradient: faint under
+   the car, full strength at the far edges; nothing outside the box shows (blur included, as in Figma). */
+.shadowMask {
+  position: absolute;
+  left: -13.65%;
+  top: -7.08%;
+  width: 117.18%;
+  height: 100.15%;
+  --shadow-mask: radial-gradient(
+    43.74% 90.43% at 54.29% -10.97%,
+    rgb(0 0 0 / 0.2) 7.3%,
+    rgb(0 0 0 / 0.59) 59.2%,
+    rgb(0 0 0) 100%
+  );
+  -webkit-mask-image: var(--shadow-mask);
+  mask-image: var(--shadow-mask);
+}
+
 .shadowFull {
+  position: absolute;
+  left: 11.65%;
+  top: 7.07%;
+  width: 85.34%;
+  height: 99.85%;
   border-radius: 50%;
   background: var(--color-surface-sunken);
-  filter: blur(18px);
+  filter: blur(35px);
 }
 
 .render {
