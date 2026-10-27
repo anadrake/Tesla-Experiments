@@ -93,6 +93,26 @@
       "name": "quick-actions-dark",
       "query": "mode=dark&overlay=apps",
       "ref": "quick-actions-dark.png"
+    },
+    {
+      "name": "settings-controls-light",
+      "query": "mode=light&settings=controls",
+      "ref": "settings-controls-light.png"
+    },
+    {
+      "name": "settings-controls-dark",
+      "query": "mode=dark&settings=controls",
+      "ref": "settings-controls-dark.png"
+    },
+    {
+      "name": "settings-search-light",
+      "query": "mode=light&settings=search",
+      "ref": "settings-search-light.png"
+    },
+    {
+      "name": "settings-search-dark",
+      "query": "mode=dark&settings=search",
+      "ref": "settings-search-dark.png"
     }
   ]
 }

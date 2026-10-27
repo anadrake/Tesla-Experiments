@@ -53,6 +53,8 @@
   --size-icon-40: 40px;
   --size-icon-48: 48px;
   --size-touch-min: 64px;
+  --size-control-sm: 40px;
+  --size-control-md: 64px;
   --size-control-lg: 86px;
   --size-tile-md: 110px;
   --size-tile-lg: 160px;
@@ -104,13 +106,17 @@
   --color-content-tertiary: #a2a3a5;
   --color-content-on-accent: #ffffff;
   --color-icon-strong: #414141;
-  --color-icon-default: #d0d1d2;
+  --color-icon-default: #757575;
   --color-icon-muted: #a2a3a5;
   --color-icon-on-accent: #ffffff;
-  --color-border-subtle: #414141;
+  --color-border-subtle: #e0e0e0;
   --color-border-default: #d0d1d2;
   --color-border-strong: #757575;
   --color-action-primary-bg-default: #005aff;
+  --color-action-secondary-bg-default: #d0d1d2;
+  --color-content-accent: #005aff;
+  --color-control-track-off: #d0d1d2;
+  --color-control-knob: #ffffff;
   --color-border-focus: #005aff;
   --color-state-pressed-overlay: #00000014;
   --color-status-danger: #ed4e3b;
@@ -146,6 +152,9 @@
   --color-border-default: #757575;
   --color-border-strong: #d0d1d2;
   --color-border-focus: #8fb4ff;
+  --color-action-secondary-bg-default: #5c5c5c;
+  --color-content-accent: #8fb4ff;
+  --color-control-track-off: #5c5c5c;
   --color-state-pressed-overlay: #ffffff14; /* Dark value not in Figma vars (8% black is invisible on dark) — assumed 8% white */
   --color-shadow-panel-1: #0000001a;
   --color-shadow-panel-2: #00000014;
@@ -178,4 +187,5 @@
 .text-label-button { font: 500 var(--font-size-20) / 1.2 var(--font-family-ui); letter-spacing: 0.02em; }
 .text-map-label-l { font: 600 18px / 1.2 var(--font-family-map); letter-spacing: 0.03em; }
 .text-map-street-s { font: 600 12px / 1.2 var(--font-family-map); letter-spacing: 0.03em; }
+.text-overline { font: 600 var(--font-size-18) / 1.2 var(--font-family-ui); letter-spacing: 0.06em; text-transform: uppercase; }
 .text-body-s { font: 500 var(--font-size-14) / 1.2 var(--font-family-ui); letter-spacing: 0; }

@@ -34,10 +34,11 @@ const RECENT = [
  * Figma "Control Bar" (4273:375). Always dark — the component pins Color mode to Dark,
  * so this subtree sets data-mode="dark" regardless of the app mode.
  * Dock: pinned apps · All apps (opens Quick Actions) | recent apps.
- * TODO P6: car icon opens Settings. Later: customizable pinned apps, live recents.
+ * Car icon toggles Settings. Later: customizable pinned apps, live recents.
  */
 export function ControlBar() {
-  const { driverTemp, passengerTemp, setDriverTemp, setPassengerTemp, quickActions, toggleQuickActions } = useHud();
+  const { driverTemp, passengerTemp, setDriverTemp, setPassengerTemp, quickActions, toggleQuickActions, settingsOpen, toggleSettings } =
+    useHud();
   const app = (a: { name: string; src: string }) => (
     <Pressable key={a.name} className={styles.iconButton} aria-label={a.name}>
       <img src={a.src} alt="" width={48} height={48} />
@@ -46,7 +47,7 @@ export function ControlBar() {
 
   return (
     <nav className={styles.bar} data-mode="dark">
-      <Pressable className={styles.iconButton} aria-label="Vehicle controls">
+      <Pressable className={styles.iconButton} aria-label="Settings" aria-expanded={settingsOpen} onClick={toggleSettings}>
         <Icon src={car} color="var(--color-icon-strong)" />
       </Pressable>
 

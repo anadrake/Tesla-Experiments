@@ -1,8 +1,8 @@
-import { useHud, type Mode } from './store';
+import { SETTINGS_PAGES, useHud, type Mode, type SettingsPage } from './store';
 
 /**
  * Deep links: URL params mirror store state so any state can be opened directly
- * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widget=0|1|2&nav=typing|navigating&overlay=apps
+ * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widget=0|1|2&nav=typing|navigating&overlay=apps&settings=<page>
  */
 export function initUrlSync() {
   const params = new URLSearchParams(location.search);
@@ -15,6 +15,9 @@ export function initUrlSync() {
   const nav = params.get('nav');
   if (nav === 'typing' || nav === 'navigating') useHud.setState({ nav });
   if (params.get('overlay') === 'apps') useHud.setState({ quickActions: true });
+  const page = params.get('settings');
+  if (page && (SETTINGS_PAGES as readonly string[]).includes(page))
+    useHud.setState({ settingsOpen: true, settingsPage: page as SettingsPage });
   const widget = Number(params.get('widget'));
   if (widget >= 0 && widget <= 2) useHud.setState({ widgetPage: widget });
 
@@ -27,6 +30,8 @@ export function initUrlSync() {
     else p.delete('nav');
     if (s.quickActions) p.set('overlay', 'apps');
     else p.delete('overlay');
+    if (s.settingsOpen) p.set('settings', s.settingsPage);
+    else p.delete('settings');
     if (s.widgetPage) p.set('widget', String(s.widgetPage));
     else p.delete('widget');
     history.replaceState(null, '', `${location.pathname}?${p}`);

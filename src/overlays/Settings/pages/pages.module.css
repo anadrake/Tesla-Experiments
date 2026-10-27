@@ -1,0 +1,5 @@
+.tileRow {
+  display: flex;
+  gap: var(--space-24);
+  width: 100%;
+}

@@ -22,6 +22,14 @@ export const isDriving = (s: Pick<HudState, 'nav' | 'resumeTrip'>) =>
 
 export type ClimateAction = 'frontDefrost' | 'rearDefrost' | 'leftSeat' | 'heatedSteering' | 'wipers';
 
+/** Settings nav tree pages (Figma Navtree 4258:39). 6a: search, controls. 6b: pedals, display, lights. */
+export const SETTINGS_PAGES = [
+  'search', 'controls', 'pedals', 'charging', 'autopilot', 'locks', 'lights',
+  'display', 'trips', 'navigation', 'safety', 'service', 'software', 'upgrades',
+] as const;
+export type SettingsPage = (typeof SETTINGS_PAGES)[number];
+export type SettingValue = string | number | boolean;
+
 export const TEMP_MIN = 60;
 export const TEMP_MAX = 84;
 
@@ -73,6 +81,18 @@ export interface HudState {
   closeOverlays: () => void;
   climate: Record<ClimateAction, boolean>;
   toggleClimate: (a: ClimateAction) => void;
+
+  /** Settings window (car icon in the control bar). */
+  settingsOpen: boolean;
+  settingsPage: SettingsPage;
+  toggleSettings: () => void;
+  setSettingsPage: (p: SettingsPage) => void;
+  /**
+   * Every settings control reads/writes here by key (e.g. 'controls.headlights').
+   * Defaults live with each page; unset keys fall back to them.
+   */
+  settings: Record<string, SettingValue>;
+  setSetting: (key: string, value: SettingValue) => void;
 }
 
 const systemMode = (): Mode =>
@@ -93,7 +113,7 @@ export const useHud = create<HudState>()((set) => ({
   setCarView: (carView) =>
     set((s) => ({
       carView,
-      ...(carView === 'full' ? { quickActions: false } : {}),
+      ...(carView === 'full' ? { quickActions: false, settingsOpen: false } : {}),
       ...(carView === 'full' && s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
     })),
 
@@ -111,7 +131,8 @@ export const useHud = create<HudState>()((set) => ({
   query: '',
   destination: DEFAULT_DESTINATION,
   resumeTrip: false,
-  openKeyboard: () => set((s) => ({ nav: 'typing', query: '', resumeTrip: s.nav === 'navigating', quickActions: false })),
+  openKeyboard: () =>
+    set((s) => ({ nav: 'typing', query: '', resumeTrip: s.nav === 'navigating', quickActions: false, settingsOpen: false })),
   closeKeyboard: () =>
     set((s) => (s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {})),
   typeText: (text) => set((s) => ({ query: s.query + text })),
@@ -132,17 +153,26 @@ export const useHud = create<HudState>()((set) => ({
     ),
 
   quickActions: false,
-  // Opening the launcher closes the keyboard (one overlay at a time)
+  // One overlay at a time: opening one closes the keyboard and the others
   toggleQuickActions: () =>
-    set((s) => ({
-      quickActions: !s.quickActions,
-      ...(s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
-    })),
-  closeOverlays: () =>
-    set((s) => ({
-      quickActions: false,
-      ...(s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
-    })),
+    set((s) => ({ ...closeAll(s), quickActions: !s.quickActions })),
+  closeOverlays: () => set((s) => closeAll(s)),
   climate: { frontDefrost: false, rearDefrost: false, leftSeat: false, heatedSteering: false, wipers: false },
   toggleClimate: (a) => set((s) => ({ climate: { ...s.climate, [a]: !s.climate[a] } })),
+
+  settingsOpen: false,
+  settingsPage: 'controls',
+  toggleSettings: () => set((s) => ({ ...closeAll(s), settingsOpen: !s.settingsOpen })),
+  setSettingsPage: (settingsPage) => set({ settingsPage }),
+  settings: {},
+  setSetting: (key, value) => set((s) => ({ settings: { ...s.settings, [key]: value } })),
 }));
+
+/** State patch that closes every overlay (keyboard resumes a trip if one was active). */
+function closeAll(s: HudState): Partial<HudState> {
+  return {
+    quickActions: false,
+    settingsOpen: false,
+    ...(s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
+  };
+}

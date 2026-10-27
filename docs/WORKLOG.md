@@ -6,9 +6,9 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 ---
 
 ## Current state
-- **Phase:** 5 — ✅ done (committed; awaiting push). Live site: https://anadrake.github.io/Tesla-Experiments/
+- **Phase:** 6a — ✅ done (committed). 6b next: Pedals & Steering, Display, Lights. Live site: https://anadrake.github.io/Tesla-Experiments/
 - **Last session:** 2026-10-26 — plan approved; Phase 0 scaffold, tokens, stage, deploy workflow, design-ref, reviewer agent
-- **Next step:** Anastasiya pushes, answers Q14 → Phase 6 (Settings)
+- **Next step:** Anastasiya pushes + tries Settings; answer Q15/Q16 → 6b
 - **Carry-over:** read Notes page (`310:79790`) in pieces (whole-page fetch fails) — still not done
 
 ## Open questions
@@ -21,15 +21,18 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q5 | Parked ⇄ Driving switch | ✅ Tap PRND in the status bar |
 | Q6 | Map Driving vs Navigating | ✅ Intentional duplicates — driving = navigating for now; keep as-is |
 | Q7 | Car callouts order | ✅ Part name small on top, **state bold** below ("Frunk / **Open**", "Trunk / **Open**") — on every screen |
-| Q9 | Tokens: `border-subtle` is #414141 in both modes (darker than `border-default` in Light; same as `surface-panel` in Dark, so invisible on panels). `surface-selected` = `surface-sunken` in Light. Intended? | open — low priority, revisit when a component uses them |
+| Q9 | ✅ Fixed in Figma (Light border-subtle now #e0e0e0). Tokens: `border-subtle` is #414141 in both modes (darker than `border-default` in Light; same as `surface-panel` in Dark, so invisible on panels). `surface-selected` = `surface-sunken` in Light. Intended? | open — low priority, revisit when a component uses them |
 | Q10 | Clock live vs static | ✅ Keep live — "nice addition" |
 | Q11 | Widget dots | ✅ Dots appear while swiping and fade out after ~1.5s idle |
 | Q12 | Favorite star | ✅ Toggles; on = `icon-strong`, off = `icon-muted` (no Figma active state) |
 | Q13 | Trip ⇄ Driving | ✅ Starting a trip switches the panel to Driving; End Trip goes back to Parked |
-| Q14 | Climate tiles in Quick Actions toggle, but App Tile has no On state in Figma. Built: glyph turns blue when on (`--color-icon-active`: blue/600 light, blue/300 dark — #005aff was too faint on the dark glass). OK, or another treatment (e.g. red for heat)? | open |
+| Q14 | ✅ Blue on-state approved. Climate tiles in Quick Actions toggle, but App Tile has no On state in Figma. Built: glyph turns blue when on (`--color-icon-active`: blue/600 light, blue/300 dark). | ✅ |
+| Q15 | Settings / Search page uses Figma placeholder copy ("Field Text", "Text For Title Here", "Tab 1/2", "Option"). Built as designed. Want real copy (e.g. highlighted Display/Lights settings)? | open |
+| Q16 | Undesigned settings categories (Charging, Autopilot, Locks, Trips, Navigation, Safety, Service, Software, Upgrades) show the panel header with an empty body. OK, or a "coming soon" note? | open |
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
+- 2026-10-27 — P6a: Settings window (car icon) = navtree + Settings Panel at (630, 64), slides up (slow + standard); one overlay at a time with keyboard / Quick Actions; closes on car icon, map/panel tap. All controls store values in `settings[key]` via `useSetting` (deep link `?settings=<page>`). Select has no menu design → a tap steps to the next option. Brightness "Auto" toggles primary ⇄ secondary. Tokens synced to current Figma vars (Light icon-default #757575, border-subtle #e0e0e0; new content-accent, control-track-off, control-knob, action-secondary, size-control-sm/md, Label/Overline).
 - 2026-10-27 — P5: dock = pinned (Phone, Music, Bluetooth, Spotify, Camera) · All apps · divider · recents (Zoom, Calendar) — static lists for now. All apps toggles Quick Actions (Move in from bottom, base + enter; exit base + exit). Closes on: All apps again, map tap, panel → Car status, opening the keyboard (one overlay at a time; opening QA also closes the keyboard). Climate tiles toggle (state kept); app tiles press only. Deep link `?overlay=apps`.
 - 2026-10-26 — P4: driving ≡ navigating (`isDriving` selector). PRND tap toggles P ⇄ D = start trip (default destination) / end trip, from any panel size. Driving panel: road scene (Car Render Scene=Driving), speed 80px + speed-limit sign + compact Direction Primary (0.644), telltales without seatbelt. Collapsed while driving = 220 rail with enlarged speed/sign and the 200px Chicklet (Figma Map Driving · Expanded). Car status while driving shows **Trip Card / Active** (Figma shows Search there — consistent with driving = navigating). Parked ⇄ Driving cross-fades the scene (0.4s). Hidden Car status trip card is `inert`.
 - 2026-10-26 — P3: nav state idle → typing → navigating (deep link `?nav=`). Keyboard uses the Keyboard component's own spec (duration/slow + easing/enter) over the read-me's 0.25s. Tap map closes the keyboard; expanding the panel closes it too ("overlay slides away"); typing over an active trip resumes it on close. Enter: destination = typed text, else "Tesla Headquarters". Car status Navigate → map + keyboard; Home / Work → start trip. Route draws outward from the car (0.6s enter); turn list + trip card morph in from 0% / +40px (0.4s standard). Nav arrow rotated −27° along the route (as in the reference).
@@ -96,10 +99,14 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Nav maneuver icons are two-tone → `ThemedSvg` (raw SVG with hex → token swap); masks only work for one color.
 - Pointer capture on the panel steals `click` from child buttons — controls must opt out of the panel gesture *before* capture.
 - Playwright role queries ignore `inert`; scope locators (e.g. to the Map region) in tests.
+- Scrolling flex columns squash children (flex-shrink 1) instead of scrolling — set `flex-shrink: 0` on scroll-body children.
 - `npm run shots` uses installed Google Chrome via playwright-core (no browser download).
 - Key node IDs: Map Parked L/D `4300:1022`/`4300:1216`; Car status L/D `4300:18`/`4300:714`; Navigating L/D `4300:2833`/`4300:3474`; Quick actions L/D `4300:2105`/`4300:2520`; Settings Controls L/D `4300:21356`/`4300:21841`.
 
 ## Phase history
+### Phase 6a — Settings window, Controls, Search (2026-10-27)
+- Built: Settings window (car icon), navtree (14 categories), Settings Panel header + scrolling body, Controls + Search pages, settings control library (tiles, switch, checkbox, segmented, select, slider, button, field group, setting row…) with keyed persistence.
+- Review: PASS WITH ISSUES. Fixed: scroll body squashed the Search field (44 → 64px). Remaining ≈15px vertical offset on Search vs ref (within ref measuring error). Reviewer's aria-current note was wrong (present).
 ### Phase 5 — Quick Actions + updated dock (2026-10-27)
 - Built: new dock (pinned · All apps · divider · recents), Quick Actions overlay (climate toggles, app grid), App Tile, one-overlay-at-a-time rules, map/panel close.
 - Review: PASS WITH ISSUES (low). Fixed: toggled glyph contrast on dark (new `--color-icon-active`). Reviewer's dialog-role note was wrong (role + label present); console items were stale HMR.
