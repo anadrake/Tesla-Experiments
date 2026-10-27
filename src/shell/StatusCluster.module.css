@@ -1,0 +1,29 @@
+.cluster {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--color-content-primary);
+  white-space: nowrap;
+}
+
+.item {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.item > * {
+  pointer-events: auto;
+}
+
+.clock {
+  /* text stays Body/L; padding only grows the hit area */
+  margin: -20px -12px;
+  padding: 20px 12px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}

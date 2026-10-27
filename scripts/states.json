@@ -2,6 +2,10 @@
   "_comment": "Every reviewable prototype state. name → URL query. ref = design-ref file to compare against.",
   "states": [
     { "name": "map-parked-light", "query": "mode=light", "ref": "map-parked-light.png" },
-    { "name": "map-parked-dark", "query": "mode=dark", "ref": "map-parked-dark.png" }
+    { "name": "map-parked-dark", "query": "mode=dark", "ref": "map-parked-dark.png" },
+    { "name": "car-status-light", "query": "mode=light&car=full", "ref": "car-status-light.png" },
+    { "name": "car-status-dark", "query": "mode=dark&car=full", "ref": "car-status-dark.png" },
+    { "name": "map-parked-dark-music-collapsed", "query": "mode=dark&music=collapsed" },
+    { "name": "map-parked-light-paused", "query": "mode=light&music=paused" }
   ]
 }

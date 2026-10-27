@@ -1,0 +1,50 @@
+.panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: var(--stage-h);
+  overflow: hidden;
+  box-shadow: 1px 1px 12px 0 var(--color-shadow-panel-3), -2px -2px 20px 0 var(--color-shadow-panel-2),
+    5px -3px 30px 0 var(--color-shadow-panel-1);
+  touch-action: none;
+}
+
+.layer {
+  position: absolute;
+}
+
+.fill {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.shadowFull {
+  border-radius: 50%;
+  background: var(--color-surface-sunken);
+  filter: blur(18px);
+}
+
+.render {
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* Grab pill on the right edge (Figma "divider", 136px line + glow), vertically centered */
+.divider {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 0;
+  height: 136px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.divider img {
+  position: absolute;
+  /* line sits 47px from the left / 55px from the top of the 240×104 export; rotate it upright */
+  left: -117px;
+  top: 21px;
+  transform: rotate(90deg);
+  max-width: none;
+}

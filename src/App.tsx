@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { DisplayShell } from './shell/DisplayShell';
 import { Stage } from './shell/Stage';
 import { MapView } from './screens/Map/Map';
+import { CarPanel } from './components/CarPanel/CarPanel';
+import { StatusCluster } from './shell/StatusCluster';
 import { useHud } from './state/store';
 import { initUrlSync } from './state/url';
 
@@ -16,8 +18,7 @@ export function App() {
 
   return (
     <Stage>
-      {/* TODO P2: left = <CarPanel /> (PRND, battery, car, music bar) */}
-      <DisplayShell main={<MapView />} />
+      <DisplayShell main={<MapView />} left={<CarPanel />} status={<StatusCluster />} />
     </Stage>
   );
 }

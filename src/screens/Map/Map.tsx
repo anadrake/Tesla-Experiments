@@ -7,7 +7,6 @@ import supercharger from '../../assets/icons/supercharger.svg';
 import { Icon } from '../../components/Icon/Icon';
 import { Pressable } from '../../components/Pressable/Pressable';
 import { MapTiles } from './MapTiles';
-import { MapTopBar } from './MapTopBar';
 import styles from './Map.module.css';
 
 const PANEL_W = 630; // --size-panel-default
@@ -24,7 +23,8 @@ export function MapView() {
     <section className={styles.map} style={{ left: PANEL_W, width: MAP_W }} aria-label="Map">
       <MapTiles width={MAP_W} height={MAP_H} baseLeft={MAP_W / 2 - 1 - 980} baseTop={MAP_H / 2 - 105 - 980} />
 
-      <MapTopBar />
+      {/* Map Top Bar background; its items live in shell/StatusCluster so they can move between screens (Q8) */}
+      <div className={styles.topBar} />
 
       <Pressable className={styles.navigateField} aria-label="Navigate" whileTap={{ scale: 0.99 }}>
         <Icon src={search} color="var(--color-content-secondary)" />

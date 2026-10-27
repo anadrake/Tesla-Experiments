@@ -1,0 +1,253 @@
+.bar {
+  position: relative;
+  width: 600px;
+  height: 208px;
+}
+
+/* ---- Open: window + swipeable list ---- */
+.window {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 192px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-floating);
+  box-shadow: var(--elevation-panel);
+}
+
+.list {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
+}
+
+.list::-webkit-scrollbar {
+  display: none;
+}
+
+.page {
+  flex: none;
+  width: 600px;
+  height: 100%;
+  scroll-snap-align: start;
+  color: var(--color-content-primary);
+}
+
+.page p {
+  margin: 0;
+}
+
+/* ---- Music (Full) ---- */
+.music {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.track {
+  flex: 1 0 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+  padding-right: var(--space-24);
+  overflow: hidden;
+}
+
+.art {
+  height: 100%;
+  aspect-ratio: 1;
+  flex: none;
+  overflow: hidden;
+}
+
+.art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.meta {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-feature-settings: 'liga' 0;
+}
+
+.source {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-content-secondary);
+  white-space: nowrap;
+}
+
+.sourceIcon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+}
+
+.progress {
+  position: relative;
+  height: 4px;
+  flex: none;
+}
+
+.rail,
+.played {
+  position: absolute;
+  left: 0;
+  top: calc(50% - 0.5px);
+  height: 3px;
+  transform: translateY(-50%);
+}
+
+.rail {
+  right: 0;
+  background: var(--color-surface-sunken);
+}
+
+.played {
+  background: var(--color-icon-strong);
+}
+
+.knob {
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-icon-strong);
+  transform: translateY(-50%);
+}
+
+.controls {
+  flex: 1 0 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-32);
+}
+
+.mediaButton {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  /* 64px hit area */
+  margin: -12px;
+  padding: 12px;
+  box-sizing: content-box;
+}
+
+/* ---- Odometer / Tire ---- */
+.odometer {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  padding: 20px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  white-space: nowrap;
+}
+
+.stat {
+  font-feature-settings: 'liga' 0;
+}
+
+.unit {
+  color: var(--color-content-tertiary);
+}
+
+.tirePressure {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  height: 100%;
+  padding: 20px 30px;
+}
+
+.tirePressure > .column {
+  align-self: stretch;
+  justify-content: space-between;
+}
+
+.recommended {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.carInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 351px;
+  height: 100%;
+}
+
+.tireColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.tire {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  white-space: nowrap;
+}
+
+/* ---- Collapsed pill ---- */
+.pill {
+  position: absolute;
+  left: 109px;
+  right: 109px;
+  top: 127px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 29px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-floating);
+  box-shadow: var(--elevation-panel);
+  color: var(--color-content-primary);
+}
+
+.pillIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+}
+
+.pillTitle {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

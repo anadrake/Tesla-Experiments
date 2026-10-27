@@ -122,7 +122,8 @@ Rough size: S ≈ one short session, M ≈ one full session.
 
 ### Phase 4 — Driving mode (S–M)
 - Map Driving, driving left panel (speed, speed limit, next-turn card, lane/road viz)
-- Car status Driving (full road view) via tap/drag; Navigating Expanded, Map Driving Expanded
+- Car status Driving (full road view) via tap/drag; Navigating Expanded, Map Driving Expanded, **Map Parked Expanded**
+- **Collapsed panel (220px)**: drag the panel handle left → panel collapses, map expands (moved here from P2 — it belongs with the Expanded screens)
 - Tap PRND in the status bar toggles Parked ⇄ Driving (Q5)
 - Map Driving and Navigating are intentional duplicates for now — build once, reuse (Q6)
 - ✅ Done when: all driving screens reachable and matching design-ref

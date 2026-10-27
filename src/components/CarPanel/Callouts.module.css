@@ -1,0 +1,34 @@
+.layer {
+  position: absolute;
+  pointer-events: none;
+}
+
+.fill {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.center {
+  display: grid;
+  place-items: center;
+}
+
+.line {
+  background: var(--color-content-tertiary);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.part {
+  color: var(--color-content-tertiary);
+}
+
+.state {
+  font: 700 var(--font-size-16) / 1.2 var(--font-family-ui);
+  letter-spacing: 0.01em;
+  color: var(--color-content-primary);
+}

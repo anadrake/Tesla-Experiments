@@ -14,9 +14,18 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Control Bar | `4273:375` | `src/shell/ControlBar.tsx` | ✅ P1 | Pinned dark (`data-mode="dark"`) |
 | Map (State=Default) | `4690:41395` | `src/screens/Map/Map.tsx` | ✅ P1 | Turn list / trip card (State=Driving) → P3 |
 | Map Tiles | `4269:2425` (Light `4269:2423`, Dark `4269:2424`) | `src/screens/Map/MapTiles.tsx` | ✅ P1 | 2× exports, pan + pinch |
-| Map Top Bar | `4259:114` | `src/screens/Map/MapTopBar.tsx` | ✅ P1 | Tap clock = Day/Night |
+| Map Top Bar (items) | `4259:114` | `src/shell/StatusCluster.tsx` | ✅ P2 | One instance for all screens; items move/fade between Map and Car status (Q8). Tap clock = Day/Night. Map keeps only the gradient |
 | Navigate Field | `4307:23243` | in `Map.tsx` | 🟡 P1 | Visual only; focus → Keyboard in P3 |
+| Car Status Panel (Parked) | `4268:3115` | `src/components/CarPanel/` | ✅ P2 | Panel ⇄ Full via tap/drag; rects in `geometry.ts`; bg canvas → surface-panel |
+| Status Bar (PRND + Battery) | `4259:102` | `CarPanel/PanelStatusBar.tsx` | ✅ P2 | PRND tap → P4 |
+| Telltales | `49:33482` etc | `CarPanel/PanelStatusBar.tsx` | ✅ P2 | status-success / status-danger |
+| Callouts | in panel | `CarPanel/Callouts.tsx` | ✅ P2 | Q7 part small / state bold |
+| Dynamic Widget Bar | `4416:12286` | `src/components/WidgetBar/` | ✅ P2 | Swipe Music / Odometer / Tire; music collapses to pill |
+| Trip Card / Search | `359:9111` | `src/components/TripCard/TripSearchCard.tsx` | 🟡 P2 | Visual; Navigate → P3 |
+
+Icon node IDs: see [ICONS.md](ICONS.md).
 
 ## Asset notes
 - Figma **component exports** (`download_assets` on a component node) include the Icons page background and the documentation card. Strip `<rect … fill="#2F2F2F"/>`, the `1680×3936` page rect, and the first `<path d="M-…" fill="#F0F0F0"/>`. Done for `src/assets/apps/*`.
+- Some exports are broken (e.g. `shadow · full` had infinite filter bounds) → rebuild those in CSS.
 - Glyph SVGs from `get_design_context` have colors resolved for the frame's mode → always render through `Icon` with a token color.

@@ -1,0 +1,71 @@
+.bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: var(--size-touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-24);
+  pointer-events: none;
+}
+
+.gear {
+  display: flex;
+  gap: var(--space-4);
+  color: var(--color-content-tertiary);
+}
+
+.gearActive {
+  font-weight: 600;
+  color: var(--color-content-primary);
+}
+
+.battery {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  color: var(--color-content-secondary);
+}
+
+.gauge {
+  position: relative;
+  width: 45px;
+  height: 20px;
+  border: var(--stroke-2) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.level {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  height: 12px;
+  border-radius: var(--radius-xs);
+  background: var(--color-icon-default);
+}
+
+.gauge[data-low] .level {
+  background: var(--color-status-danger);
+}
+
+.tip {
+  position: absolute;
+  right: -3px;
+  top: 6px;
+  width: 3px;
+  height: 8px;
+  background: var(--color-border-strong);
+}
+
+.telltales {
+  position: absolute;
+  left: 18px;
+  top: 84px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;
+}
