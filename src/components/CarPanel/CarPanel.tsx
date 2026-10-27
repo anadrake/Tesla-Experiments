@@ -12,7 +12,7 @@ import { TripSearchCard } from '../TripCard/TripSearchCard';
 import { WidgetBar } from '../WidgetBar/WidgetBar';
 import { Callouts } from './Callouts';
 import { PanelStatusBar, Telltales } from './PanelStatusBar';
-import { PANEL_WIDTH, bottom, scene } from './geometry';
+import { PANEL_WIDTH, bottom, chickletRect, scene } from './geometry';
 import styles from './CarPanel.module.css';
 import { capture } from '../../lib/pointer';
 
@@ -36,6 +36,7 @@ const TAP_SLOP = 10;
 export function CarPanel() {
   const view = useHud((s) => s.carView);
   const setCarView = useHud((s) => s.setCarView);
+  const widgetPage = useHud((s) => s.widgetPage);
   const scale = useStageScale();
   const start = useRef<{ x: number; y: number; onHandle: boolean } | null>(null);
 
@@ -133,7 +134,7 @@ export function CarPanel() {
       <motion.div
         className={styles.layer}
         initial={false}
-        animate={bottom.widgetBar[view]}
+        animate={view === 'collapsed' ? chickletRect(widgetPage) : bottom.widgetBar[view]}
         transition={transition.screen}
         data-no-panel-gesture
       >

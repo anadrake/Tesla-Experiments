@@ -15,8 +15,8 @@ import styles from './WidgetBar.module.css';
  * Figma "Dynamic Widget Bar" (4416:12286), Dot Nav=Hidden.
  * Open: 600×192 window, swipe horizontally between Music / Odometer / Tire Pressure.
  * Dot nav (Q11): appears while swiping, fades out after DOTS_IDLE_MS without scrolling.
- * Mini Chicklet (4666:74587): 92×92 album art + Spotify badge, shown in the Collapsed panel.
- * Its taps fall through to the panel (Collapsed tap → Panel).
+ * Mini Chicklet (Collapsed panel): shows the widget that was active when the panel collapsed
+ * (Music 4666:74587, Odometer 4666:74579, Tire Pressure 4666:74583). Taps fall through to the panel (→ Panel).
  * Collapsed (music): 382×64 pill — tap to expand. Size change = duration/base.
  */
 const DOTS_IDLE_MS = 1500;
@@ -24,12 +24,13 @@ const DOTS_IDLE_MS = 1500;
 export function WidgetBar({ chicklet = false }: { chicklet?: boolean }) {
   const collapsed = useHud((s) => s.musicCollapsed);
   const toggle = useHud((s) => s.toggleMusicCollapsed);
-  const [page, setPage] = useState(0);
+  const page = useHud((s) => s.widgetPage);
+  const setPage = useHud((s) => s.setWidgetPage);
   const [dotsVisible, setDotsVisible] = useState(false);
   const idle = useRef<ReturnType<typeof setTimeout>>();
 
   const onScrollPage = (p: number) => {
-    setPage(p);
+    if (p !== page) setPage(p);
     setDotsVisible(true);
     clearTimeout(idle.current);
     idle.current = setTimeout(() => setDotsVisible(false), DOTS_IDLE_MS);
@@ -38,9 +39,20 @@ export function WidgetBar({ chicklet = false }: { chicklet?: boolean }) {
 
   if (chicklet) {
     return (
-      <motion.div className={styles.chicklet} {...presets.popIn} transition={transition.open}>
-        <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
-        <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
+      <motion.div key={page} className={styles.chicklet} {...presets.popIn} transition={transition.open}>
+        {page === 0 && (
+          <>
+            <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
+            <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
+          </>
+        )}
+        {page === 1 && <p className={`text-title-m ${styles.chickletOdometer}`}>26,422</p>}
+        {page === 2 && (
+          <div className={`text-title-m ${styles.chickletTire}`}>
+            <p>38,42</p>
+            <p>38,42</p>
+          </div>
+        )}
       </motion.div>
     );
   }
@@ -67,7 +79,7 @@ export function WidgetBar({ chicklet = false }: { chicklet?: boolean }) {
           </motion.button>
         ) : (
           <motion.div key="window" className={styles.window} {...presets.popIn} transition={transition.open}>
-            <InfoPages onScrollPage={onScrollPage} />
+            <InfoPages initialPage={page} onScrollPage={onScrollPage} />
           </motion.div>
         )}
       </AnimatePresence>

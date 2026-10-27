@@ -33,6 +33,10 @@ export interface HudState {
   toggleMusicCollapsed: () => void;
   favorite: boolean;
   toggleFavorite: () => void;
+
+  /** Active widget in the widget bar (0 Music, 1 Odometer, 2 Tire Pressure) — remembered across sizes. */
+  widgetPage: number;
+  setWidgetPage: (page: number) => void;
 }
 
 const systemMode = (): Mode =>
@@ -57,4 +61,7 @@ export const useHud = create<HudState>()((set) => ({
   toggleMusicCollapsed: () => set((s) => ({ musicCollapsed: !s.musicCollapsed })),
   favorite: false,
   toggleFavorite: () => set((s) => ({ favorite: !s.favorite })),
+
+  widgetPage: 0,
+  setWidgetPage: (widgetPage) => set({ widgetPage }),
 }));

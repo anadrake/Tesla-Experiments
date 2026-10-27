@@ -279,8 +279,8 @@
 /* ---- Mini Chicklet (Collapsed panel) ---- */
 .chicklet {
   position: relative;
-  width: 92px;
-  height: 92px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   border-radius: var(--radius-lg);
   background: var(--color-surface-floating);
@@ -298,4 +298,25 @@
   position: absolute;
   left: 8.6px;
   top: 8.6px;
+}
+
+/* Odometer Mini Chicklet 96×92: value only, inset 15/20 */
+.chickletOdometer {
+  margin: 0;
+  padding: 20px 15px;
+  color: var(--color-content-primary);
+  font-feature-settings: 'liga' 0;
+}
+
+/* Tire Pressure Mini Chicklet 98×98: front/rear pairs, inset 22/20 */
+.chickletTire {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 20px 22px;
+  color: var(--color-content-primary);
+}
+
+.chickletTire p {
+  margin: 0;
 }

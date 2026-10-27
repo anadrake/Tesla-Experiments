@@ -64,6 +64,17 @@ export const callouts = {
   charge: pair({ left: 561, top: 521, width: 31.5, height: 30 }, { left: 1496, top: 414, width: 26, height: 25 }),
 };
 
+/** Mini Chicklet size per widget (Music, Odometer, Tire Pressure); centred in the rail, 16px from the bottom. */
+const CHICKLET = [
+  { width: 92, height: 92 },
+  { width: 96, height: 92 },
+  { width: 98, height: 98 },
+];
+export const chickletRect = (page: number): Rect => {
+  const c = CHICKLET[page] ?? CHICKLET[0];
+  return { left: (116 - c.width) / 2 + 1, top: 1080 - 16 - c.height, ...c, opacity: 1 };
+};
+
 export const bottom = {
   widgetBar: pair(
     { left: 15, top: 848, width: 600, height: 208 },
