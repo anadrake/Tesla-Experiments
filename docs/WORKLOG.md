@@ -6,9 +6,9 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 ---
 
 ## Current state
-- **Phase:** 6a — ✅ done (committed). 6b next: Pedals & Steering, Display, Lights. Live site: https://anadrake.github.io/Tesla-Experiments/
+- **Phase:** 6 — ✅ done (committed; awaiting push). Next: Phase 7 polish. Live site: https://anadrake.github.io/Tesla-Experiments/
 - **Last session:** 2026-10-26 — plan approved; Phase 0 scaffold, tokens, stage, deploy workflow, design-ref, reviewer agent
-- **Next step:** 6b — Pedals & Steering, Display, Lights (they show Coming soon until built)
+- **Next step:** Anastasiya pushes + tries Settings on iPad → Phase 7 (polish: motion pass, iPad QA, Snazzy map imagery, offline fonts, README)
 - **Carry-over:** read Notes page (`310:79790`) in pieces (whole-page fetch fails) — still not done
 
 ## Open questions
@@ -32,6 +32,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
+- 2026-10-27 — P6b: Pedals / Display / Lights built per Figma with real copy replacing placeholder rows (Q15 applied). Shared keys keep pages in sync: `controls.headlights` + `controls.autoHighBeam` (Controls ⇄ Lights ⇄ Search), `controls.brightness` + `controls.brightnessAuto` (Controls ⇄ Display), `display.nightShift` (Search ⇄ Display). Display › Appearance (Light / Dark / Auto) drives the real app mode via the Day/Night dissolve. Latching buttons (Front Fog, Ambient Lights, Screen Clean Mode, Auto) = Primary when on, Secondary when off.
 - 2026-10-27 — P6a: Settings window (car icon) = navtree + Settings Panel at (630, 64), slides up (slow + standard); one overlay at a time with keyboard / Quick Actions; closes on car icon, map/panel tap. All controls store values in `settings[key]` via `useSetting` (deep link `?settings=<page>`). Select has no menu design → a tap steps to the next option. Brightness "Auto" toggles primary ⇄ secondary. Tokens synced to current Figma vars (Light icon-default #757575, border-subtle #e0e0e0; new content-accent, control-track-off, control-knob, action-secondary, size-control-sm/md, Label/Overline).
 - 2026-10-27 — P5: dock = pinned (Phone, Music, Bluetooth, Spotify, Camera) · All apps · divider · recents (Zoom, Calendar) — static lists for now. All apps toggles Quick Actions (Move in from bottom, base + enter; exit base + exit). Closes on: All apps again, map tap, panel → Car status, opening the keyboard (one overlay at a time; opening QA also closes the keyboard). Climate tiles toggle (state kept); app tiles press only. Deep link `?overlay=apps`.
 - 2026-10-26 — P4: driving ≡ navigating (`isDriving` selector). PRND tap toggles P ⇄ D = start trip (default destination) / end trip, from any panel size. Driving panel: road scene (Car Render Scene=Driving), speed 80px + speed-limit sign + compact Direction Primary (0.644), telltales without seatbelt. Collapsed while driving = 220 rail with enlarged speed/sign and the 200px Chicklet (Figma Map Driving · Expanded). Car status while driving shows **Trip Card / Active** (Figma shows Search there — consistent with driving = navigating). Parked ⇄ Driving cross-fades the scene (0.4s). Hidden Car status trip card is `inert`.
@@ -105,6 +106,9 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Key node IDs: Map Parked L/D `4300:1022`/`4300:1216`; Car status L/D `4300:18`/`4300:714`; Navigating L/D `4300:2833`/`4300:3474`; Quick actions L/D `4300:2105`/`4300:2520`; Settings Controls L/D `4300:21356`/`4300:21841`.
 
 ## Phase history
+### Phase 6b — Pedals & Steering, Display, Lights (2026-10-27)
+- Built: three pages with real copy, shared keyed settings across pages, Appearance driving the real app mode, ToggleButton + full-width segmented.
+- Review: PASS WITH ISSUES (low). Brightness/Auto sync verified manually. Slider default 50% vs Display ref 25% (Figma inconsistency, logged).
 ### Phase 6a — Settings window, Controls, Search (2026-10-27)
 - Built: Settings window (car icon), navtree (14 categories), Settings Panel header + scrolling body, Controls + Search pages, settings control library (tiles, switch, checkbox, segmented, select, slider, button, field group, setting row…) with keyed persistence.
 - Review: PASS WITH ISSUES. Fixed: scroll body squashed the Search field (44 → 64px). Remaining ≈15px vertical offset on Search vs ref (within ref measuring error). Reviewer's aria-current note was wrong (present).

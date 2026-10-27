@@ -18,7 +18,7 @@ const RECORDING = { svg: recording, colors: { '#D0D1D2': 'var(--color-content-se
 
 /** Figma Settings / Controls body. */
 export function ControlsPage() {
-  const [autoBrightness, setAutoBrightness] = useSetting('controls.brightnessAuto', false);
+  const [autoBrightness, setAutoBrightness] = useSetting('controls.brightnessAuto', true);
   return (
     <>
       <div className={styles.tileRow}>

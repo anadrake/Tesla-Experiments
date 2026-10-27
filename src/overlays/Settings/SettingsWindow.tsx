@@ -10,6 +10,9 @@ import { transition } from '../../tokens/motion';
 import { NAV_ITEMS } from './navItems';
 import { ComingSoonPage } from './pages/ComingSoonPage';
 import { ControlsPage } from './pages/ControlsPage';
+import { DisplayPage } from './pages/DisplayPage';
+import { LightsPage } from './pages/LightsPage';
+import { PedalsPage } from './pages/PedalsPage';
 import { SearchPage } from './pages/SearchPage';
 import styles from './SettingsWindow.module.css';
 
@@ -20,6 +23,9 @@ import styles from './SettingsWindow.module.css';
 const PAGES: Partial<Record<SettingsPage, () => JSX.Element>> = {
   search: SearchPage,
   controls: ControlsPage,
+  pedals: PedalsPage,
+  display: DisplayPage,
+  lights: LightsPage,
 };
 
 /**
@@ -30,7 +36,6 @@ const PAGES: Partial<Record<SettingsPage, () => JSX.Element>> = {
 export function SettingsWindow() {
   const page = useHud((s) => s.settingsPage);
   const setPage = useHud((s) => s.setSettingsPage);
-  // 6b registers pedals / display / lights; until then they fall back to Coming soon too.
   const Page = PAGES[page] ?? ComingSoonPage;
 
   return (

@@ -35,10 +35,28 @@ export function Checkbox({ setting, initial = false, label }: { setting: string;
 }
 
 /** Segmented Control (4229:168): single choice, selected segment is the raised one. */
-export function SegmentedControl({ setting, options, initial, width }: { setting: string; options: string[]; initial: string; width?: number }) {
-  const [value, set] = useSetting(setting, initial);
+export function SegmentedControl({
+  setting,
+  options,
+  initial,
+  width,
+  value: controlled,
+  onChange,
+}: {
+  setting?: string;
+  options: string[];
+  initial: string;
+  /** px, or 'fill' for full row width (Pedals, Display, Lights pages). */
+  width?: number | 'fill';
+  /** Controlled mode (e.g. Appearance drives the app mode instead of a stored setting). */
+  value?: string;
+  onChange?: (v: string) => void;
+}) {
+  const [stored, setStored] = useSetting(setting ?? '', initial);
+  const value = controlled ?? stored;
+  const set = onChange ?? setStored;
   return (
-    <div className={styles.segmented} role="radiogroup" style={width ? { width } : undefined}>
+    <div className={styles.segmented} role="radiogroup" style={width ? { width: width === 'fill' ? '100%' : width } : undefined}>
       {options.map((o) => (
         <button key={o} type="button" role="radio" aria-checked={o === value} className={`${styles.segment} text-title-l`} data-on={o === value || undefined} onClick={() => set(o)}>
           {o}
@@ -93,6 +111,25 @@ export function Slider({ setting, initial = 50, icon }: { setting: string; initi
 export function Button({ children, onPress, variant = 'primary', width = 158 }: { children: ReactNode; onPress?: () => void; variant?: 'primary' | 'secondary'; width?: number }) {
   return (
     <motion.button type="button" className={`${styles.button} text-title-l`} data-variant={variant} style={{ width }} onClick={onPress} whileTap={{ scale: 0.97 }} transition={transition.press}>
+      {children}
+    </motion.button>
+  );
+}
+
+/** Button that latches: Primary (blue) when on, Secondary (gray) when off — Front Fog, Ambient Lights, Auto. */
+export function ToggleButton({ setting, initial = false, children, width = 370 }: { setting: string; initial?: boolean; children: ReactNode; width?: number }) {
+  const [on, set] = useSetting(setting, initial);
+  return (
+    <motion.button
+      type="button"
+      aria-pressed={on}
+      className={`${styles.button} text-title-m`}
+      data-variant={on ? 'primary' : 'secondary'}
+      style={{ width }}
+      onClick={() => set(!on)}
+      whileTap={{ scale: 0.98 }}
+      transition={transition.press}
+    >
       {children}
     </motion.button>
   );

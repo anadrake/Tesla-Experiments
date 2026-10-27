@@ -113,6 +113,36 @@
       "name": "settings-search-dark",
       "query": "mode=dark&settings=search",
       "ref": "settings-search-dark.png"
+    },
+    {
+      "name": "settings-pedals-light",
+      "query": "mode=light&settings=pedals",
+      "ref": "settings-pedals-light.png"
+    },
+    {
+      "name": "settings-pedals-dark",
+      "query": "mode=dark&settings=pedals",
+      "ref": "settings-pedals-dark.png"
+    },
+    {
+      "name": "settings-display-light",
+      "query": "mode=light&settings=display",
+      "ref": "settings-display-light.png"
+    },
+    {
+      "name": "settings-display-dark",
+      "query": "mode=dark&settings=display",
+      "ref": "settings-display-dark.png"
+    },
+    {
+      "name": "settings-lights-light",
+      "query": "mode=light&settings=lights",
+      "ref": "settings-lights-light.png"
+    },
+    {
+      "name": "settings-lights-dark",
+      "query": "mode=dark&settings=lights",
+      "ref": "settings-lights-dark.png"
     }
   ]
 }
