@@ -1,0 +1,35 @@
+.keyboard {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-48);
+  padding: var(--space-48) 0;
+  background: var(--color-surface-panel);
+  box-shadow: 1px 1px 12px 0 var(--color-shadow-panel-3), -2px -2px 20px 0 var(--color-shadow-panel-2),
+    5px -3px 30px 0 var(--color-shadow-panel-1);
+}
+
+.letters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-12);
+}
+
+.indent {
+  padding-left: var(--space-48);
+}
+
+/* Row 4 spans the full letters width (row 1: 10 keys + backspace) */
+.fill {
+  width: calc(10 * 104px + 160px + 10 * var(--space-12));
+}

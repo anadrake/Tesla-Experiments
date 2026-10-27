@@ -1,0 +1,146 @@
+.secondary {
+  color: var(--color-content-secondary);
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.turnList p {
+  margin: 0;
+}
+
+/* ---- Turn List (464 wide, top-left of the map under the Navigate field) ---- */
+.turnList {
+  width: 464px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: 1px 1px 12px 0 var(--color-shadow-panel-3), -2px -2px 20px 0 var(--color-shadow-panel-2),
+    5px -3px 30px 0 var(--color-shadow-panel-1);
+  color: var(--color-content-primary);
+  font-feature-settings: 'liga' 0, 'rclt' 0;
+}
+
+.current {
+  position: relative;
+  height: 139px;
+  padding: var(--space-24);
+  background: var(--color-surface-floating);
+  box-shadow: 1px 1px 12px 0 var(--color-shadow-panel-3), -2px -2px 20px 0 var(--color-shadow-panel-2),
+    5px -3px 30px 0 var(--color-shadow-panel-1);
+}
+
+.turnIcon {
+  position: absolute;
+  left: var(--space-24);
+  top: calc(var(--space-24) + 10px);
+  width: 80px;
+  height: 70px;
+}
+
+.currentLabels {
+  margin-left: 83px;
+  width: 333px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.next {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-16) var(--space-24);
+  background: var(--color-surface-floating);
+}
+
+.nextIcon {
+  flex: none;
+  width: 80px;
+  height: 70px;
+}
+
+.nextRow {
+  width: 335px;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-16);
+  color: var(--color-content-secondary);
+}
+
+/* ---- Trip Card / Active ---- */
+.tripCard {
+  width: 464px;
+  height: 192px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-floating);
+  box-shadow: var(--elevation-panel);
+  color: var(--color-content-primary);
+  font-feature-settings: 'liga' 0;
+}
+
+.tripInfo {
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: 0 var(--space-24);
+  opacity: 0.9;
+}
+
+.tripRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+}
+
+.range {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.battery {
+  width: 32px;
+  height: 15px;
+}
+
+.rule {
+  height: 2px;
+  flex: none;
+  background: var(--color-border-default);
+}
+
+.tripActions {
+  flex: 1 0 0;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-24);
+  color: var(--color-content-secondary);
+  opacity: 0.9;
+}
+
+.endTrip {
+  width: 280px;
+  height: 100%;
+}
+
+.divider {
+  width: 2px;
+  height: 48px;
+  background: var(--color-surface-sunken);
+}
+
+.more {
+  flex: 1;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}

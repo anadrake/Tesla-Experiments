@@ -1,0 +1,22 @@
+.key {
+  flex: none;
+  width: 104px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-field);
+  color: var(--color-content-primary);
+  font-feature-settings: 'liga' 0;
+}
+
+.action {
+  min-width: 100px;
+  padding: 0 var(--space-20);
+}
+
+.key[data-pressed] {
+  background-image: var(--overlay-pressed);
+}

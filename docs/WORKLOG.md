@@ -6,9 +6,9 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 ---
 
 ## Current state
-- **Phase:** 2 — ✅ done (committed; awaiting push). Live site: https://anadrake.github.io/Tesla-Experiments/
+- **Phase:** 3 — ✅ done (committed; awaiting push). Live site: https://anadrake.github.io/Tesla-Experiments/
 - **Last session:** 2026-10-26 — plan approved; Phase 0 scaffold, tokens, stage, deploy workflow, design-ref, reviewer agent
-- **Next step:** Anastasiya pushes + tests on iPad (tap/drag panel, music, widget swipe) → Phase 3 (navigation flow)
+- **Next step:** Anastasiya pushes + tests the nav flow on iPad, answers Q13 → Phase 4 (Driving)
 - **Carry-over:** read Notes page (`310:79790`) in pieces (whole-page fetch fails) — still not done
 
 ## Open questions
@@ -25,9 +25,11 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q10 | Clock live vs static | ✅ Keep live — "nice addition" |
 | Q11 | Widget dots | ✅ Dots appear while swiping and fade out after ~1.5s idle |
 | Q12 | Favorite star | ✅ Toggles; on = `icon-strong`, off = `icon-muted` (no Figma active state) |
+| Q13 | Starting a trip: Figma's Navigating screen shows the Driving left panel (speed, lane view). Should Enter also switch Parked → Driving (P4), or stay parked until PRND is tapped? | open |
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
+- 2026-10-26 — P3: nav state idle → typing → navigating (deep link `?nav=`). Keyboard uses the Keyboard component's own spec (duration/slow + easing/enter) over the read-me's 0.25s. Tap map closes the keyboard; expanding the panel closes it too ("overlay slides away"); typing over an active trip resumes it on close. Enter: destination = typed text, else "Tesla Headquarters". Car status Navigate → map + keyboard; Home / Work → start trip. Route draws outward from the car (0.6s enter); turn list + trip card morph in from 0% / +40px (0.4s standard). Nav arrow rotated −27° along the route (as in the reference).
 - 2026-10-26 — Active widget lives in the store (`widgetPage`, deep link `?widget=`). Collapsed rail (116) shows the **Mini Chicklet** of that widget (Music 92², Odometer 96×92, Tire 98²); the 200px Chicklet doesn't fit the rail — reserved for a wider collapsed size if one is designed later. Expanding restores the list on the same widget.
 - 2026-10-26 — Collapsed panel built now (was P4): width 116 (from the Map Parked · Expanded screen; the component notes say 220/102 — the screen wins). Handle = transparent 64×320 hit area over the grab pill; only a left drag that STARTS on it collapses. Collapsed tap / drag right → Panel. Music becomes the 92×92 Mini Chicklet. Map left edge animates 630 → 116 with tiles re-centred (same as Figma's re-centred map instance). Panel uses pointer capture so drags can end outside it.
 - 2026-10-26 — P2: Panel ⇄ Full morph = per-layer rects from Figma (Panel: Map Parked; Full: Car status) animated with left/top/width/height/opacity, 0.4s standard. Same images in both modes (Car Render has no Light/Dark variants). Full bg = `surface-panel` with the `sunken` floor ellipse. Callout text 14/16 in both sizes. Collapsed 220px panel + handle drag moved to P4 (with Expanded screens).
@@ -50,6 +52,8 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Map Driving screen visually identical to Navigating → not a bug, intentional duplicate (Q6)
 - Car status callout label/value order flips between Frunk and Trunk. → Q7
 - Car status status bar has enlarged time/temp/profile → **bug**; use Map-screen sizes (Q8)
+- Keyboard timing: component says duration/slow (0.4s) + easing/enter; Screens read-me says opening controls = 0.25s. Built 0.4s per component.
+- Keyboard screen field shows "Tesla Supercharger" but the Navigating trip card shows "Tesla Headquarters". Built: card shows whatever was typed.
 - `--color-surface-glass` resolves to `#000000f2` in BOTH modes via get_variable_defs, but the Light map ref shows a near-white location tag and the component's own fallback is neutral-50 · 80%. Built Light = `#f6f6f6cc`. Likely a missing Light value on the variable.
 
 ## Learnings
@@ -73,10 +77,17 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Car Status Panel keeps Panel + Full layers in one component (hidden layers at 0%) — the metadata of the Car status instance gives Full rects directly.
 - Widget bar: Music collapses to a 382×64 pill (Spotify · title · ↑); music Mini/Chicklet sizes exist for Collapsed panel (P4).
 - `docs/ICONS.md` = full icon node index (Icons page is big; don't re-read).
+- Vite inlines small SVGs as data URLs — select images by class, not by `src`, in tests.
+- A broad `.tiles img { width: 100% }` rule stretched the route image (wrong angle) — scope image rules to their class.
+- Nav maneuver icons are two-tone → `ThemedSvg` (raw SVG with hex → token swap); masks only work for one color.
 - `npm run shots` uses installed Google Chrome via playwright-core (no browser download).
 - Key node IDs: Map Parked L/D `4300:1022`/`4300:1216`; Car status L/D `4300:18`/`4300:714`; Navigating L/D `4300:2833`/`4300:3474`; Quick actions L/D `4300:2105`/`4300:2520`; Settings Controls L/D `4300:21356`/`4300:21841`.
 
 ## Phase history
+### Phase 3 — Navigation flow (2026-10-26)
+- Built: Keyboard overlay + Key, Navigate field Default/Focused, Enter → Navigating (route draw, pins, nav arrow, turn list, active trip card), End Trip, Car status Navigate/Home/Work, tap map to close, typing over a trip resumes it.
+- Review: PASS WITH ISSUES (low). Pointer-capture error was a stale hot-reload module (guard already in place). Hex values in ThemedSvg/TripCardActive are source→token maps (intended). Keyboard shots show an empty focused field (no preset text) — intended.
+- Not verified on iPad: pinch with route, key press feel.
 ### Phase 2 follow-up — Collapsed panel + Map Parked · Expanded (2026-10-26)
 - Built: 116px rail (PRND, gauge under PRND, telltales, grab pill, Mini Chicklet), handle drag-left to collapse, tap/drag-right back, map widens with re-centred tiles, status items follow the map edge.
 - Review: PASS WITH ISSUES. Fixed: pointer capture guarded (lib/pointer.ts). Watch on iPad: one unreproduced missed handle-drag ~0.7s after expanding. Known: Google "Map data ©" strip is baked into the Figma tile image at its far edge → goes away with the P7 map.

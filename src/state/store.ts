@@ -9,6 +9,10 @@ export type Mode = 'light' | 'dark';
 /** Left car panel size: 630px panel beside the map, Full (Car status screen), or Collapsed rail (map expanded). */
 export type CarView = 'panel' | 'full' | 'collapsed';
 
+/** Navigation flow: idle (browsing) → typing (keyboard up) → navigating (route, turn list, trip card). */
+export type NavState = 'idle' | 'typing' | 'navigating';
+export const DEFAULT_DESTINATION = 'Tesla Headquarters';
+
 export const TEMP_MIN = 60;
 export const TEMP_MAX = 84;
 
@@ -37,6 +41,20 @@ export interface HudState {
   /** Active widget in the widget bar (0 Music, 1 Odometer, 2 Tire Pressure) — remembered across sizes. */
   widgetPage: number;
   setWidgetPage: (page: number) => void;
+
+  nav: NavState;
+  /** Text in the Navigate field while typing. */
+  query: string;
+  destination: string;
+  /** Typing over an active trip returns to it when the keyboard closes without Enter. */
+  resumeTrip: boolean;
+  openKeyboard: () => void;
+  closeKeyboard: () => void;
+  typeText: (text: string) => void;
+  backspace: () => void;
+  /** Enter / shortcut: start a trip to `to` (or the typed query, or the Figma default). */
+  startTrip: (to?: string) => void;
+  endTrip: () => void;
 }
 
 const systemMode = (): Mode =>
@@ -53,7 +71,12 @@ export const useHud = create<HudState>()((set) => ({
   setPassengerTemp: (passengerTemp) => set({ passengerTemp }),
 
   carView: 'panel',
-  setCarView: (carView) => set({ carView }),
+  // Figma: expanding the panel slides an open overlay (keyboard) away.
+  setCarView: (carView) =>
+    set((s) => ({
+      carView,
+      ...(carView === 'full' && s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
+    })),
 
   playing: true,
   musicCollapsed: false,
@@ -64,4 +87,22 @@ export const useHud = create<HudState>()((set) => ({
 
   widgetPage: 0,
   setWidgetPage: (widgetPage) => set({ widgetPage }),
+
+  nav: 'idle',
+  query: '',
+  destination: DEFAULT_DESTINATION,
+  resumeTrip: false,
+  openKeyboard: () => set((s) => ({ nav: 'typing', query: '', resumeTrip: s.nav === 'navigating' })),
+  closeKeyboard: () =>
+    set((s) => (s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {})),
+  typeText: (text) => set((s) => ({ query: s.query + text })),
+  backspace: () => set((s) => ({ query: s.query.slice(0, -1) })),
+  startTrip: (to) =>
+    set((s) => ({
+      nav: 'navigating',
+      destination: to ?? (s.query.trim() || DEFAULT_DESTINATION),
+      query: '',
+      resumeTrip: false,
+    })),
+  endTrip: () => set({ nav: 'idle' }),
 }));

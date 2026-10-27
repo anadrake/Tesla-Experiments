@@ -1,0 +1,21 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="31" height="45" viewBox="0 0 31 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="pictogram/map/marker-park" clip-path="url(#clip0_0_4493)">
+<g id="Ellipse 2" filter="url(#filter0_f_0_4493)">
+<ellipse cx="15.5" cy="41.5" rx="4.5" ry="2.5" fill="black" fill-opacity="0.4"/>
+</g>
+<path id="Union" d="M15.5 3C22.4036 3 28 8.59644 28 15.5C28 18.3142 27.0694 20.9108 25.5 23C23 26.5 16.5 31 16.5 40C16.5 40.5523 16.0523 41 15.5 41C14.9477 41 14.5 40.5523 14.5 40C14.5 31 8 26.5 5.5 23C3.93058 20.9108 3 18.3142 3 15.5C3 8.59644 8.59644 3 15.5 3Z" fill="#25CB55" stroke-width="2" stroke-linejoin="bevel" stroke="#171717"/>
+<g id="&#240;&#159;&#166;&#134; icon &#34;tree&#34;">
+<path id="Vector" d="M22 21.2L18.75 16.7625H21.1875L17.9375 12.325H19.5625L15.5 7L11.4375 12.325H13.0625L9.8125 16.7625H12.25L9 21.2H14.6875V24.75H16.3125V21.2H22Z" fill="white"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_0_4493" x="9" y="37" width="13" height="9" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="1" result="effect1_foregroundBlur_0_4493"/>
+</filter>
+<clipPath id="clip0_0_4493">
+<rect width="31" height="45" fill="white"/>
+</clipPath>
+</defs>
+</svg>

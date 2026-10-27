@@ -38,6 +38,26 @@
       "name": "map-expanded-dark",
       "query": "mode=dark&car=collapsed",
       "ref": "map-parked-expanded-dark.png"
+    },
+    {
+      "name": "keyboard-light",
+      "query": "mode=light&nav=typing",
+      "ref": "keyboard-light.png"
+    },
+    {
+      "name": "keyboard-dark",
+      "query": "mode=dark&nav=typing",
+      "ref": "keyboard-dark.png"
+    },
+    {
+      "name": "navigating-light",
+      "query": "mode=light&nav=navigating",
+      "ref": "navigating-light.png"
+    },
+    {
+      "name": "navigating-dark",
+      "query": "mode=dark&nav=navigating",
+      "ref": "navigating-dark.png"
     }
   ]
 }

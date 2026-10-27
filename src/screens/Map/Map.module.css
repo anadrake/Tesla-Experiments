@@ -19,7 +19,8 @@
   will-change: transform;
 }
 
-.tiles img {
+.tileLight,
+.tileDark {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -66,6 +67,85 @@
   color: var(--color-content-secondary);
   text-align: left;
   font-feature-settings: 'liga' 0;
+}
+
+/* Focused: glass + focus ring + Elevation/Map (keyboard open) */
+.navigateField[data-focused] {
+  background: var(--color-surface-glass);
+  border: var(--stroke-2) solid var(--color-border-focus);
+  padding: calc(var(--space-16) - 2px) calc(var(--space-8) - 2px); /* ring sits inside the same 464 box */
+  box-shadow: var(--elevation-map-shadow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--color-content-primary);
+}
+
+.query {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.caret {
+  flex: none;
+  width: 2px;
+  height: 28px;
+  background: var(--color-border-focus);
+  animation: blink var(--duration-caret-blink) steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---- Navigating: turn list + trip card ride with the map's left edge ---- */
+.turnList {
+  position: absolute;
+  left: var(--space-16);
+  top: 168px;
+}
+
+.tripCard {
+  position: absolute;
+  left: var(--space-16);
+  bottom: 34px;
+}
+
+/* ---- Route layer (tile coordinates; Figma route container inset 18.93% 3.79% 3.93% 3.93% of 1960) ---- */
+.route {
+  position: absolute;
+  left: 77.03px;
+  top: 371.03px;
+  width: 1808.7px;
+  height: 1513.1px;
+  pointer-events: none;
+}
+
+.routeLineBox {
+  position: absolute;
+  left: 0.7px;
+  top: -504.08px;
+  width: 1797.6px;
+  height: 1944.06px;
+  display: grid;
+  place-items: center;
+}
+
+.routeLine {
+  width: 814.86px;
+  height: 1850.9px;
+  transform: rotate(39.3deg);
+  max-width: none;
+}
+
+.pin {
+  position: absolute;
+  max-width: none;
 }
 
 .controls {

@@ -74,6 +74,7 @@
   --easing-standard: cubic-bezier(0.2, 0, 0, 1);
   --easing-enter: cubic-bezier(0, 0, 0.2, 1);
   --easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --duration-caret-blink: 1060ms; /* not a Figma token — standard text caret blink */
 
   /* Primitive accents not yet aliased by a semantic token */
   --primitive-yellow-500: #ffbd0a; /* route line */
@@ -101,6 +102,7 @@
   --color-border-default: #d0d1d2;
   --color-border-strong: #757575;
   --color-action-primary-bg-default: #005aff;
+  --color-border-focus: #005aff;
   --color-status-danger: #ed4e3b;
   --color-status-success: #25cb55;
   --color-shadow-panel-1: #7575751a;
@@ -130,6 +132,7 @@
   --color-border-subtle: #414141;
   --color-border-default: #757575;
   --color-border-strong: #d0d1d2;
+  --color-border-focus: #8fb4ff;
   --color-shadow-panel-1: #0000001a;
   --color-shadow-panel-2: #00000014;
   --color-shadow-panel-3: #00000012;
@@ -141,6 +144,8 @@
     1px 1px 12px 2px var(--color-shadow-panel-3);
   --elevation-map-shadow: 2px 4px 4px 0 var(--color-shadow-map);
   --elevation-map-blur: blur(20px);
+  /* Key State=Pressed: 8% black over the key fill */
+  --overlay-pressed: linear-gradient(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.08));
 }
 
 /*

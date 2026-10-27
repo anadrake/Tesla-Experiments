@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import tilesDark from '../../assets/map/tiles-dark.jpg';
 import tilesLight from '../../assets/map/tiles-light.jpg';
 import { useStageScale } from '../../shell/Stage';
@@ -12,6 +12,10 @@ interface Props {
   /** Map viewport size in design px (target size; the tiles are CSS-centred so they follow width animations). */
   width: number;
   height: number;
+  /** Rendered in tile coordinates (route, pins) so they pan/zoom with the map. */
+  children?: ReactNode;
+  /** Tap (no drag) on the map. */
+  onTap?: () => void;
 }
 
 /** Figma "map canvas": centred on the map, offset (-1, -105). */
@@ -23,7 +27,7 @@ const OFFSET_Y = -105;
  * Both themes are stacked and cross-fade by opacity during the Day/Night dissolve.
  * Transforms are written straight to the DOM (no React re-render per pointer move).
  */
-export function MapTiles({ width, height }: Props) {
+export function MapTiles({ width, height, children, onTap }: Props) {
   const baseLeft = width / 2 + OFFSET_X - TILE / 2;
   const baseTop = height / 2 + OFFSET_Y - TILE / 2;
   const scale = useStageScale();
@@ -31,6 +35,7 @@ export function MapTiles({ width, height }: Props) {
   const view = useRef({ x: 0, y: 0, k: 1 });
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinch = useRef<{ dist: number; k: number } | null>(null);
+  const downAt = useRef<{ x: number; y: number } | null>(null);
 
   const clamp = (x: number, y: number, k: number) => {
     const half = TILE / 2;
@@ -64,6 +69,7 @@ export function MapTiles({ width, height }: Props) {
   const onDown = (e: React.PointerEvent) => {
     capture(e);
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    downAt.current = pointers.current.size === 1 ? { x: e.clientX, y: e.clientY } : null;
     if (pointers.current.size === 2) pinch.current = { dist: twoFinger().dist, k: view.current.k };
   };
 
@@ -87,6 +93,9 @@ export function MapTiles({ width, height }: Props) {
   };
 
   const onUp = (e: React.PointerEvent) => {
+    const d = downAt.current;
+    if (d && pointers.current.size === 1 && Math.hypot(e.clientX - d.x, e.clientY - d.y) / scale < 10) onTap?.();
+    downAt.current = null;
     pointers.current.delete(e.pointerId);
     if (pointers.current.size < 2) pinch.current = null;
   };
@@ -112,6 +121,7 @@ export function MapTiles({ width, height }: Props) {
       >
         <img className={styles.tileLight} src={tilesLight} alt="" draggable={false} />
         <img className={styles.tileDark} src={tilesDark} alt="" draggable={false} />
+        {children}
       </div>
     </div>
   );

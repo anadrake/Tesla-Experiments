@@ -21,7 +21,13 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Telltales | `49:33482` etc | `CarPanel/PanelStatusBar.tsx` | ✅ P2 | status-success / status-danger |
 | Callouts | in panel | `CarPanel/Callouts.tsx` | ✅ P2 | Q7 part small / state bold |
 | Dynamic Widget Bar | `4416:12286` | `src/components/WidgetBar/` | ✅ P2 | Swipe Music / Odometer / Tire + idle-fading dots; music → pill; Mini Chicklet `4666:74587` in Collapsed |
-| Trip Card / Search | `359:9111` | `src/components/TripCard/TripSearchCard.tsx` | 🟡 P2 | Visual; Navigate → P3 |
+| Trip Card / Search | `359:9111` | `src/components/TripCard/TripSearchCard.tsx` | ✅ P3 | Navigate → map + keyboard; Home/Work → trip |
+| Keyboard | `52:32037` | `src/overlays/Keyboard/` | ✅ P3 | Slides up (slow/enter); shift one-shot; ?#&, mic, cursor = press only |
+| Key | `4271:2318` | `src/components/Key/` | ✅ P3 | Character 104×88 / Action; Pressed = 8% overlay |
+| Turn List | `4299:81` | `src/components/Navigation/TurnList.tsx` | ✅ P3 | Two-tone nav icons via ThemedSvg |
+| Trip Card / Active | `359:9155` | `src/components/Navigation/TripCardActive.tsx` | ✅ P3 | End Trip → idle; ⋯ press only |
+| Route layer | Map State=Driving › route | `src/screens/Map/RouteLayer.tsx` | ✅ P3 | In tile coords (pans/zooms); line draws from the car |
+| ThemedSvg | — | `src/components/ThemedSvg/` | ✅ P3 | Multi-tone SVGs: swap baked hex → token vars (`?raw` import) |
 
 Icon node IDs: see [ICONS.md](ICONS.md).
 
