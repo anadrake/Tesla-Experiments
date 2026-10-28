@@ -43,9 +43,26 @@ interface DragState {
   target: GapTarget | null;
   /** Blink this card; `n` retriggers. */
   flash: { id: WidgetId; n: number } | null;
+  /** Card generation per app: a moved app gets a new card (it expands in like a new one) — see trackKey. */
+  gen: Partial<Record<WidgetId, number>>;
+  /**
+   * Last move: its old card (`key`) vanishes instantly instead of collapsing; `before` = it was left of the
+   * centred card, so the strip shifts one card to keep what you're looking at still. `n` retriggers.
+   */
+  moved: { key: string; before: boolean; n: number } | null;
 }
 
-export const useDrag = create<DragState>()(() => ({ source: null, phase: 'drag', target: null, flash: null }));
+export const useDrag = create<DragState>()(() => ({
+  source: null,
+  phase: 'drag',
+  target: null,
+  flash: null,
+  gen: {},
+  moved: null,
+}));
+
+/** React key of an app's track card (changes when the app is moved). */
+export const trackKey = (id: WidgetId, gen: DragState['gen']) => `${id}.${gen[id] ?? 0}`;
 
 /** Dragged item: centre (editor coords), scale, opacity, and the grab point relative to its centre. */
 export const ghost = {
@@ -223,6 +240,14 @@ export function dropDrag() {
   }
   const rest = at >= 0 ? track.filter((id) => id !== source.id) : track;
   const index = at >= 0 && gap > at ? gap - 1 : gap;
+  if (at >= 0) {
+    // A move looks like adding it new (Anastasiya): it expands into the gap; its old spot just goes, unseen.
+    const { gen, moved } = useDrag.getState();
+    useDrag.setState({
+      gen: { ...gen, [source.id]: (gen[source.id] ?? 0) + 1 },
+      moved: { key: trackKey(source.id, gen), before: at < useHud.getState().widgetPage, n: (moved?.n ?? 0) + 1 },
+    });
+  }
   setWidgetTrack([...rest.slice(0, index), source.id, ...rest.slice(index)]);
   setWidgetPage(index);
   // Into the new card, which pages to the centre: the icon fades into it; a dragged card grows back into place.
@@ -234,7 +259,7 @@ export function dropDrag() {
 export function resetDrag() {
   clearTimers();
   pinned = chasing = false;
-  useDrag.setState({ source: null, phase: 'drag', target: null });
+  useDrag.setState({ source: null, phase: 'drag', target: null, moved: null });
 }
 
 /** Client px → editor coords. */

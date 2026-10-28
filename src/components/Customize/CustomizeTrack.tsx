@@ -1,5 +1,5 @@
 import { AnimatePresence, animate, motion, useMotionValue } from 'motion/react';
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
 import closeIcon from '../../assets/icons/close.svg';
 import { capture } from '../../lib/pointer';
 import { useStageScale } from '../../shell/Stage';
@@ -20,9 +20,10 @@ import {
   shrinkGhost,
   startDrag,
   toEditor,
+  trackKey,
   useDrag,
 } from './drag';
-import { BAR, CARD_GAP, CARD_W, GAP_OPEN, SLOT, VIEW, gapInStrip, stripX } from './geometry';
+import { BAR, CARD_GAP, CARD_W, GAP_OPEN, PITCH, SLOT, VIEW, gapInStrip, stripX } from './geometry';
 import { chrome, frameBg, trackView } from './motion';
 import styles from './Customize.module.css';
 
@@ -46,6 +47,12 @@ interface PagerGesture {
   hold?: ReturnType<typeof setTimeout>;
   lifted?: boolean;
 }
+
+/** Removed (X) → collapses; moved elsewhere (`gone` = its key) → gone at once, the new card expands instead. */
+const exitCard = (key: string) => (gone: string | undefined) =>
+  gone === key
+    ? { opacity: 0, width: 0, marginRight: 0, transition: transition.cut }
+    : { opacity: 0, scale: 0.9, width: 0, marginRight: 0 };
 
 /** A track card's face: the widget at 0.81 (placeholders full size, as in sketch 4802:107503). */
 export function TrackCard({ id }: { id: WidgetId }) {
@@ -74,6 +81,8 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
   const target = useDrag((s) => s.target);
   const dragged = useDrag((s) => (s.source?.kind === 'track' ? s.source.id : null));
   const flash = useDrag((s) => s.flash);
+  const gen = useDrag((s) => s.gen);
+  const moved = useDrag((s) => s.moved);
   const scale = useStageScale();
   const x = useMotionValue(stripX(page));
   const drag = useRef<PagerGesture | null>(null);
@@ -82,6 +91,15 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
     // A swipe owns the strip; a lifted card doesn't (edge paging moves the strip under it).
     if (!drag.current || drag.current.lifted) animate(x, stripX(page), spring);
   }, [page, track.length, x]);
+
+  // A moved app's old card vanishes in this same frame; if it was left of the centred card, everything after it
+  // slides one card left — shift the strip back so nothing visibly jumps (then it pages to the new card as usual).
+  // (The page number may not change — e.g. it moves from left of the centred card to right of it — so page here.)
+  useLayoutEffect(() => {
+    if (!moved) return;
+    if (moved.before) x.jump(x.get() + PITCH);
+    animate(x, stripX(useHud.getState().widgetPage), spring);
+  }, [moved, x]);
 
   const active = track[page] ?? track[0];
   const remove = () => {
@@ -184,16 +202,17 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
           }}
         >
           <motion.div className={styles.strip} style={{ x }}>
-            <AnimatePresence initial={false}>
+            <AnimatePresence initial={false} custom={moved?.key}>
               {track.map((id, i) => (
                 <motion.div
-                  key={id}
+                  key={trackKey(id, gen)}
                   className={styles.slot}
                   data-track-widget={id}
                   data-active={id === active || undefined}
                   initial={{ opacity: 0, scale: 0.9, width: 0, marginRight: 0 }}
                   animate={{ opacity: 1, scale: 1, width: CARD_W, marginRight: CARD_GAP, x: shift(i) }}
-                  exit={{ opacity: 0, scale: 0.9, width: 0, marginRight: 0 }}
+                  variants={{ out: exitCard(trackKey(id, gen)) }}
+                  exit="out"
                   transition={{ ...transition.screen, x: spring }}
                 >
                   {/* The held card is lifted out (DragLayer draws it); its place stays until it's dropped */}

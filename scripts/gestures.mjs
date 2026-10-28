@@ -310,6 +310,11 @@ check('…and its card blinks', Math.min(...flashSamples) < 0.6, flashSamples.ma
 await open('customize=editing');
 await dragApp('tire', { x: GAP.right, y: GAP.y });
 check('duplicate into another gap moves it', param('widgets') === 'music,tire,odometer' && param('widget') === '1', page.url());
+check('…and it ends up centred, like a newly added app', await page.locator('[data-track-widget="tire"]').boundingBox().then((b) => Math.abs(b.x - 62) < 15));
+
+await open('customize=editing&widget=1');
+await dragApp('music', { x: GAP.right, y: GAP.y }); // Music (left of the centred card) → right of it: page stays 1
+check('move from left to right of the centred card pages to it', param('widgets') === 'odometer,music,tire' && (await page.locator('[data-track-widget="music"]').boundingBox().then((b) => Math.abs(b.x - 62) < 15)), page.url());
 
 await open('customize=editing');
 {
