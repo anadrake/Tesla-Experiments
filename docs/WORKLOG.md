@@ -6,9 +6,9 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 ---
 
 ## Current state
-- **Phase:** 7 — ✅ done (committed; awaiting push). All planned phases complete. Live site: https://anadrake.github.io/Tesla-Experiments/
-- **Last session:** 2026-10-27 — Phase 7: bundled fonts, PWA icons, motion pass, OSM map imagery + real route, README vibe-coding guide, full iPad QA sweep
-- **Next step:** Anastasiya pushes + tries on iPad (real-touch pinch/pan wasn't testable by the reviewer). Then new features (customisable dock, more Settings pages, …)
+- **Phase:** 7 — ✅ done. All planned phases complete; now iterating on Anastasiya's tweaks. Live site: https://anadrake.github.io/Tesla-Experiments/
+- **Last session:** 2026-10-27 — post-P7 tweaks: location tag back to "San Francisco, CA" (Q17), 2× bigger map (2×2 JPG grid) so you can pinch out, Safari warped-map fix, blue route line, Settings search opens the keyboard, Car status Full restyle from Figma (darker canvas bg, 6% reflection, masked floor shadow), Settings from Full → Panel, swipe down from the top of Settings closes it
+- **Next step:** Anastasiya pushes + tests on iPad — not yet verified with real touch: map pinch/pan, Settings swipe-to-close, keyboard typing in Settings search. Then new features (customisable dock, more Settings pages, Settings search filtering — deferred "not now")
 - **Carry-over:** read Notes page (`310:79790`) in pieces (whole-page fetch fails) — still not done
 
 ## Open questions
@@ -84,6 +84,8 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - `--color-surface-glass` resolves to `#000000f2` in BOTH modes via get_variable_defs, but the Light map ref shows a near-white location tag and the component's own fallback is neutral-50 · 80%. Built Light = `#f6f6f6cc`. Likely a missing Light value on the variable.
 
 ## Learnings
+- CSS `mask-image` clips to the element's own border box, so masking a blurred element cuts its blur off in a hard edge. Put the mask on a larger wrapper (like Figma's mask group) and the blurred shape inside it.
+- Swipe-to-close on a Motion element: drive `y` with a `useMotionValue` (start it at the enter offset so the open animation still runs), capture the pointer only after a small threshold so child taps keep working, and spring back with `animate(y, 0, …)`.
 - Don't lay out big images in a CSS grid with `1fr` tracks: `1fr` has an `auto` minimum, and Safari sized the tracks from the images' natural 2940px, so the live map looked warped on iPad (Chrome was fine). Give each map image explicit px boxes.
 - Render-map framing: the route must end inside the 1960 tile or the pin is unreachable (pan is clamped to the tile). If you move `DESTINATION`, adjust `CAR_FRACTION` so the car stays at `CAR_TILE_PX` on the same road.
 - Figma Screens "Read me" documents the whole prototype wiring and motion tokens — treat as the UX spec.
@@ -92,7 +94,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Screens page metadata is ~170k chars — never fetch whole pages; target node IDs. Foundations page (`342:18279`) is small and has the full Motion spec.
 - Motion spec (Foundations): instant 100 / fast 150 / base 250 / slow 400 / deliberate 600ms; standard `cubic-bezier(.2,0,0,1)`, enter `(0,0,.2,1)`, exit `(.4,0,1,1)`, spring m1 k300 c30.
 - Figma letterSpacing values are percent (1 → 0.01em). Map labels use Source Sans 3; everything else Inter.
-- Primitive yellow/500 `#FFBD0A` (route line) and teal/500 have no semantic token yet.
+- Primitive yellow/500 `#FFBD0A` (Figma's route line; we use primary blue now) and teal/500 have no semantic token yet.
 - Stage: centering a 1920px box with CSS grid fails when it's wider than the viewport (track grows) — use absolute + translate(-50%,-50%) scale().
 - Repo renamed to `Tesla-Experiments` (local folder + remote URL keep old spelling; GitHub redirects). Pages must be enabled (Settings › Pages › Source: GitHub Actions) or deploy-pages fails.
 - Git CLI on this Mac has no GitHub login (no gh, no SSH key); Anastasiya pushes via GitHub Desktop. Phase 0 pushed 2026-10-26 (`84cc715`).
@@ -117,6 +119,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Key node IDs: Map Parked L/D `4300:1022`/`4300:1216`; Car status L/D `4300:18`/`4300:714`; Navigating L/D `4300:2833`/`4300:3474`; Quick actions L/D `4300:2105`/`4300:2520`; Settings Controls L/D `4300:21356`/`4300:21841`.
 
 ## Phase history
+- **Post-P7 tweaks (2026-10-27):** see Decisions dated 2026-10-27 (map size/Safari fix, route colour, Settings search keyboard, Car status Full restyle, Settings from Full, swipe-to-close). Verified with screenshots + synthetic pointer tests in the browser; no reviewer run (small, targeted changes).
 - **Phase 7 (2026-10-27):** @fontsource fonts, PWA icons/manifest, reduced-motion, OSM map tiles + OSRM route, README guide. QA sweep (reviewer, iPad + 1920, all states): PASS WITH ISSUES → fixed: destination off the tile (trip shortened to 34.0291,-118.3809, car fraction 0.56); OSM credit illegible → glass chip stacked above the location tag. Left as-is: label fragments at map edges (tile content). Not verified by tools: real-touch pinch/pan, keyboard typing walk.
 ### Phase 6b — Pedals & Steering, Display, Lights (2026-10-27)
 - Built: three pages with real copy, shared keyed settings across pages, Appearance driving the real app mode, ToggleButton + full-width segmented.

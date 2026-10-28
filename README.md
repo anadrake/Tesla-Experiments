@@ -17,6 +17,8 @@ A tap-driven, web-based prototype of an in-car center display, built from my Fig
 | Swipe the widget bar | Music → Odometer → Tire pressure |
 | Tap **Navigate** | Keyboard; type and tap **Enter** to start navigating |
 | Tap the car icon in the dock | Settings (Controls, Pedals & Steering, Display, Lights, Search) |
+| Tap the Settings search field | Keyboard over the bottom of the screen |
+| Swipe down from the top of Settings | Close Settings |
 | Tap **All apps** | Quick Actions |
 | Pinch / drag the map | Zoom in, zoom out to the wider area, and pan |
 
@@ -34,7 +36,7 @@ Every push to `main` builds and deploys to GitHub Pages (`.github/workflows/depl
 ### Deep links
 Any state opens from URL params, which the reviewer and `npm run shots` rely on:
 
-`?mode=light|dark` · `car=full|collapsed` · `music=collapsed|paused` · `widget=0|1|2` · `nav=typing|navigating` · `overlay=apps` · `settings=<page>`
+`?mode=light|dark` · `car=full|collapsed` · `music=collapsed|paused` · `widget=0|1|2` · `nav=typing|navigating` · `overlay=apps` · `settings=<page>` · `keyboard=1` (with `settings=search`)
 
 e.g. `?mode=dark&nav=navigating&car=collapsed`
 
