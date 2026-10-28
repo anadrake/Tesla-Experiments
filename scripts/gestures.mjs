@@ -18,6 +18,8 @@ const check = (name, ok, detail = '') => {
 };
 const param = (k) => new URL(page.url()).searchParams.get(k);
 const open = async (query = '') => {
+  // Clear the saved track first, so one check's drop doesn't leak into the next page load.
+  await page.evaluate(() => localStorage.clear()).catch(() => {});
   await page.goto(`${base}?mode=light&${query}`, { waitUntil: 'networkidle' });
   await page.evaluate(() => localStorage.clear());
   await page.waitForTimeout(300);
@@ -237,6 +239,115 @@ const inertPreview = await page.evaluate(() => {
   return !!b?.closest('[inert]');
 });
 check('edit-mode widgets are previews (inert)', inertPreview, 'music card buttons are live');
+
+// --- 8.3 Drag & drop (editor = panel coords; the viewport is 1:1 with design px) ---
+/** Gap centres at page 0 (track 0 centred): left of card 0 / right of card 0. Card centre y 817. */
+const GAP = { left: 52, right: 558, y: 790 };
+const ghostGone = () => page.locator('[data-drag-ghost]').count().then((n) => n === 0);
+const pickerIcon = async (id) => {
+  const b = await page.locator(`[data-picker-app="${id}"] button > :first-child`).boundingBox();
+  return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+};
+/** Drag a picker app to (x, y), wait `dwell` ms there, release. */
+const dragApp = async (id, to, dwell = 500) => {
+  const from = await pickerIcon(id);
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(to.x, to.y - 80, { steps: 12 });
+  await page.mouse.move(to.x, to.y, { steps: 6 });
+  await page.waitForTimeout(dwell);
+  const target = await page.locator('[data-drop-target]').getAttribute('data-drop-target').catch(() => null);
+  await page.mouse.up();
+  await page.waitForTimeout(800);
+  return target;
+};
+
+await open('customize=editing');
+await page.mouse.move(...Object.values(await pickerIcon('camera')));
+await page.mouse.down();
+await page.mouse.move(GAP.right, GAP.y - 80, { steps: 12 });
+await page.mouse.move(GAP.right, GAP.y, { steps: 4 });
+await page.waitForTimeout(100);
+const early = await page.locator('[data-drop-target]').getAttribute('data-drop-target').catch(() => null);
+await page.waitForTimeout(500);
+const late = await page.locator('[data-drop-target]').getAttribute('data-drop-target').catch(() => null);
+const tileHidden = await page.locator('[data-picker-app="camera"]').evaluate((el) => getComputedStyle(el).visibility === 'hidden');
+check('drag near a gap: insertion bar, then drop slot', early === 'bar' && late === 'slot', `${early} → ${late}`);
+check('the dragged app leaves its picker tile', tileHidden);
+await page.mouse.up();
+await page.waitForTimeout(800);
+check('drop inserts it there and pages to it', param('widgets') === 'music,camera,odometer,tire' && param('widget') === '1', page.url());
+check('…the icon is gone and the tile is back', (await ghostGone()) && (await page.locator('[data-picker-app="camera"]').isVisible()));
+
+await open('customize=editing');
+await dragApp('energy', { x: 1200, y: 600 }); // over the map
+check('drop outside the track floats back (no change)', param('widgets') === null && (await ghostGone()), page.url());
+await dragApp('energy', { x: 315, y: 817 }); // on the centred card, between the gaps
+check('drop on a card (not a gap) floats back', param('widgets') === null && (await ghostGone()), page.url());
+
+await open('customize=editing');
+await page.mouse.click(...Object.values(await pickerIcon('energy')));
+check('tapping a picker app does nothing', param('widgets') === null && param('customize') === 'editing', page.url());
+
+await open('customize=editing');
+const flashSamples = [];
+{
+  const from = await pickerIcon('music');
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(GAP.right, GAP.y, { steps: 12 });
+  await page.waitForTimeout(500);
+  await page.mouse.up();
+  for (let i = 0; i < 12; i++) {
+    flashSamples.push(await page.locator('[data-track-widget="music"] > *').evaluate((el) => Number(getComputedStyle(el).opacity)));
+    await page.waitForTimeout(80);
+  }
+  await page.waitForTimeout(800);
+}
+check('duplicate next to itself: no change', param('widgets') === null && (await ghostGone()), page.url());
+check('…and its card blinks', Math.min(...flashSamples) < 0.6, flashSamples.map((v) => v.toFixed(2)).join(','));
+
+await open('customize=editing');
+await dragApp('tire', { x: GAP.right, y: GAP.y });
+check('duplicate into another gap moves it', param('widgets') === 'music,tire,odometer' && param('widget') === '1', page.url());
+
+await open('customize=editing');
+{
+  // Hold the centred card 0.3s → lifted; drag to the right end → the track pages; drop in the gap after Odometer.
+  await page.mouse.move(315, 817);
+  await page.mouse.down();
+  await page.waitForTimeout(450);
+  const lifted = (await page.locator('[data-drag-ghost="music"]').count()) === 1;
+  check('hold a track card 0.3s → it lifts', lifted);
+  await page.mouse.move(610, 817, { steps: 10 });
+  await page.waitForTimeout(900);
+  const stripMoved = await page.locator('[data-track-widget="odometer"]').boundingBox().then((b) => Math.abs(b.x + b.width / 2 - 315) < 30);
+  check('…dragging it to the track end pages the track', param('widget') === '1' && stripMoved, page.url());
+  await page.mouse.move(GAP.right, GAP.y, { steps: 6 });
+  await page.waitForTimeout(200);
+  await page.mouse.up();
+  await page.waitForTimeout(900);
+}
+check('…dropped in a gap: reordered', param('widgets') === 'odometer,music,tire' && param('widget') === '1' && (await ghostGone()), page.url());
+
+await open('customize=editing');
+await drag({ x: 315, y: 817 }, -200, 0, 10); // quick swipe on a card is still paging, not a hold
+check('a quick swipe on a card still pages', param('widget') === '1' && param('widgets') === null, page.url());
+
+await open('customize=editing');
+{
+  await page.mouse.move(315, 817);
+  await page.mouse.down();
+  await page.waitForTimeout(450);
+  await page.mouse.move(330, 830, { steps: 4 });
+  await page.mouse.up();
+  await page.waitForTimeout(800);
+}
+check('held card dropped where it was: no change', param('widgets') === null && (await ghostGone()), page.url());
+
+await open('customize=editing');
+await page.mouse.click(...Object.values(await pickerIcon('camera')));
+check('picker tile press state clears after a tap', (await page.locator('[data-picker-app="camera"] button[data-pressed]').count()) === 0);
 
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();

@@ -1,10 +1,12 @@
 import { AnimatePresence, motion } from 'motion/react';
-import type { RefObject } from 'react';
+import { useEffect, useRef, type RefObject } from 'react';
 import { useHud } from '../../state/store';
 import { bottom } from '../CarPanel/geometry';
 import { transition } from '../../tokens/motion';
 import { useDismissOnOutsideTap } from '../WidgetBar/useDismissOnOutsideTap';
 import { CustomizeTrack } from './CustomizeTrack';
+import { DragLayer } from './DragLayer';
+import { resetDrag } from './drag';
 import { chrome, picker, pickerClip } from './motion';
 import { WidgetPicker } from './WidgetPicker';
 import styles from './Customize.module.css';
@@ -27,6 +29,10 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
   const setCustomize = useHud((s) => s.setCustomize);
   const close = () => setCustomize('off');
   const full = view === 'full';
+  const editor = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!editing) resetDrag();
+  }, [editing]);
   useDismissOnOutsideTap(
     full ? (t) => !!(t as Element).closest?.('[data-customize-surface]') : panel,
     editing,
@@ -39,6 +45,7 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
         // Variants run the choreography in motion.ts; children inherit lifted / shown / rest, and the exit waits for them.
         <motion.div
           key="editor"
+          ref={editor}
           className={styles.editor}
           data-no-panel-gesture
           initial="lifted"
@@ -49,11 +56,11 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
           {/* Clipped at the edit frame's top edge, so the picker slides up out from behind the frame */}
           <motion.div className={styles.pickerClip} variants={pickerClip}>
             <motion.div className={styles.pickerLayer} variants={picker} data-customize-surface>
-              <WidgetPicker />
+              <WidgetPicker editor={editor} />
             </motion.div>
           </motion.div>
           <div className={styles.editLayer} data-customize-surface>
-            <CustomizeTrack />
+            <CustomizeTrack editor={editor} />
           </div>
           <motion.div className={styles.doneSlot} variants={chrome} data-customize-surface>
             <motion.button
@@ -66,6 +73,7 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
               Done
             </motion.button>
           </motion.div>
+          <DragLayer />
         </motion.div>
       )}
     </AnimatePresence>

@@ -7,7 +7,8 @@
  *   opening controls/overlays . duration.base  + easing.enter
  *   screen changes, panel morph duration.slow  + easing.standard
  *   Day/Night dissolve ........ duration.deliberate
- *   snap into place ........... springSnap (widget pull-up let-off)
+ *   snap into place ........... springSnap (widget pull-up let-off, dragged icons settling)
+ *   "already there" warning ... presets.flash + transition.flash (blinks 3×)
  */
 export const duration = {
   instant: 0.1,
@@ -41,6 +42,8 @@ export const transition = {
   close: { duration: duration.base, ease: easing.exit },
   screen: { duration: duration.slow, ease: easing.standard },
   dayNight: { duration: duration.deliberate, ease: easing.standard },
+  /** Three blinks, one `slow` each (presets.flash). */
+  flash: { duration: duration.slow * 3, ease: 'linear' },
 } as const;
 
 /** Figma animation styles (Motion/…) as motion variants. */
@@ -49,4 +52,6 @@ export const presets = {
   slideUpIn: { initial: { y: '100%' }, animate: { y: 0 }, exit: { y: '100%' } },
   slideInFromLeft: { initial: { x: '-100%' }, animate: { x: 0 }, exit: { x: '-100%' } },
   popIn: { initial: { opacity: 0, scale: 0.92 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.92 } },
+  /** Not a Figma style: the "already on the track" blink (Customize, Phase 8 — logged in WORKLOG). */
+  flash: { opacity: [1, 0.35, 1, 0.35, 1, 0.35, 1] as number[] },
 } as const;

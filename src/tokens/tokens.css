@@ -125,6 +125,7 @@
   --color-state-pressed-overlay: #00000014;
   --color-status-danger: #ed4e3b;
   --color-status-success: #25cb55;
+  --color-status-info: #005aff; /* Customize insertion bar / drop slot */
   --color-shadow-panel-1: #7575751a;
   --color-shadow-panel-2: #75757514;
   --color-shadow-panel-3: #41414112;
@@ -161,6 +162,7 @@
   --color-content-accent: #8fb4ff;
   --color-control-track-off: #5c5c5c;
   --color-state-pressed-overlay: #ffffff14; /* Dark value not in Figma vars (8% black is invisible on dark) — assumed 8% white */
+  --color-status-info: #8fb4ff;
   --color-shadow-panel-1: #0000001a;
   --color-shadow-panel-2: #00000014;
   --color-shadow-panel-3: #00000012;

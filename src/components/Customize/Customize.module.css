@@ -59,6 +59,11 @@
   justify-content: center;
 }
 
+/* Drag source: the tile's icon lifts out (drag.ts) */
+.pickerApp {
+  touch-action: none;
+}
+
 .pickerDivider {
   width: 391px;
   height: 1px;
@@ -133,8 +138,18 @@
 }
 
 .strip {
+  position: relative;
   display: flex;
   height: 100%;
+}
+
+/* Insertion bar / drop slot (size + opacity animated in CustomizeTrack) */
+.dropTarget {
+  position: absolute;
+  top: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-status-info);
+  pointer-events: none;
 }
 
 .slot {
@@ -200,4 +215,19 @@
 
 .done {
   composes: customize from '../WidgetBar/WidgetBar.module.css';
+}
+
+/* ---- Drag & drop (drag.ts) ---- */
+.ghost {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* A held track card, lifted (Q19) */
+.ghostCard > * {
+  position: relative;
+  box-shadow: var(--elevation-panel);
 }
