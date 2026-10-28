@@ -183,6 +183,24 @@
     {
       "name": "customize-revealed-full-light",
       "query": "mode=light&car=full&customize=revealed"
+    },
+    {
+      "name": "customize-editing-light",
+      "query": "mode=light&customize=editing",
+      "ref": "customize-editing-light.png"
+    },
+    {
+      "name": "customize-editing-dark",
+      "query": "mode=dark&customize=editing"
+    },
+    {
+      "name": "customize-editing-energy-light",
+      "query": "mode=light&customize=editing&widgets=music,energy,odometer,tire&widget=1",
+      "ref": "customize-dropped-light.png"
+    },
+    {
+      "name": "customize-editing-single-light",
+      "query": "mode=light&customize=editing&widgets=odometer"
     }
   ]
 }

@@ -397,6 +397,10 @@
   color: var(--color-content-primary);
 }
 
+.placeholder p {
+  margin: 0;
+}
+
 /* Placeholder chicklets: the app icon centred on the card */
 .chickletIcon {
   position: absolute;

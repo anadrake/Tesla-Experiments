@@ -14,7 +14,13 @@ export function InfoPages({ initialPage, onScrollPage }: { initialPage: number; 
   const list = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     if (list.current) list.current.scrollLeft = initialPage * PAGE_WIDTH;
-  }, []); // mount only: later page changes come from the user scrolling
+  }, []); // mount only: later page changes come from the user scrolling…
+  // …or from Customize mode (paging / deleting there while this list is hidden): follow without animating.
+  const page = useHud((s) => s.widgetPage);
+  useLayoutEffect(() => {
+    const el = list.current;
+    if (el && Math.round(el.scrollLeft / PAGE_WIDTH) !== page) el.scrollLeft = page * PAGE_WIDTH;
+  }, [page, track]);
 
   return (
     <div

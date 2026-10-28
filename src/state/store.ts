@@ -146,7 +146,14 @@ export const useHud = create<HudState>()((set) => ({
   setWidgetTrack: (widgetTrack) =>
     set((s) => (widgetTrack.length ? { widgetTrack, widgetPage: Math.min(s.widgetPage, widgetTrack.length - 1) } : {})),
   customize: 'off',
-  setCustomize: (customize) => set({ customize }),
+  // Editing happens in the Panel (the picker needs the panel's height), so Full drops back to Panel —
+  // like Settings from Full. One thing at a time: other overlays close.
+  setCustomize: (customize) =>
+    set((s) =>
+      customize === 'editing'
+        ? { customize, ...closeAll(s), ...(s.carView === 'full' ? { carView: 'panel' as const } : {}) }
+        : { customize },
+    ),
   widgetPage: 0,
   setWidgetPage: (widgetPage) => set({ widgetPage }),
 

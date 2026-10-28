@@ -158,6 +158,61 @@ await touchDrag(await barCentre(), -300, 10);
 const scrollAfter = await page.evaluate(() => document.querySelector('[class*="_list_"]').scrollLeft);
 check('touch: horizontal swipe still pages the widgets', scrollAfter > scrollBefore && param('customize') === null, `${scrollBefore}→${scrollAfter}`);
 
+// --- 8.2 Customize mode ---
+const editorVisible = () => page.getByText('Drag Icons to Panel to Customize').isVisible();
+const dotCount = () => page.locator('[class*="editFrame"] [class*="_dot_"]').count();
+const enterEditing = async () => {
+  await drag(await barCentre(), 0, -150);
+  await page.getByRole('button', { name: 'Customize' }).click();
+  await page.waitForTimeout(400);
+};
+await open();
+await enterEditing();
+check('Customize opens the editor', (await editorVisible()) && param('customize') === 'editing', page.url());
+await page.getByRole('button', { name: 'Done' }).click();
+await page.waitForTimeout(500);
+check('Done closes it and the bar comes back', !(await editorVisible()) && param('customize') === null && Math.abs(await liftY()) < 1, `y=${await liftY()}`);
+
+await enterEditing();
+await tap(1200, 600);
+check('tap outside the panel (map) closes, swallowed', param('customize') === null && param('nav') === null, page.url());
+
+await enterEditing();
+await tap(300, 150); // panel, outside the editor cards
+check('tap inside the panel (not a card) does nothing', param('customize') === 'editing' && param('car') === null, page.url());
+await tap(500, 1150); // control bar → outside the panel
+check('tap control bar closes', param('customize') === null && param('overlay') === null, page.url());
+
+await enterEditing();
+const view = await page.locator('[class*="editFrame"] [class*="_view_"]').boundingBox();
+const viewC = { x: view.x + view.width / 2, y: view.y + view.height / 2 };
+await drag(viewC, -150, 0);
+check('swipe the edit track → next widget', param('widget') === '1', `widget=${param('widget')}`);
+await drag(viewC, 150, 0);
+check('swipe back', param('widget') === null, `widget=${param('widget')}`);
+
+await page.getByRole('button', { name: 'Remove Music' }).click();
+await page.waitForTimeout(600);
+check('X removes the centred widget', param('widgets') === 'odometer,tire' && (await dotCount()) === 2, `widgets=${param('widgets')} dots=${await dotCount()}`);
+check('…saved for reload (Q24)', (await page.evaluate(() => localStorage.getItem('hud.widgetTrack'))) === 'odometer,tire');
+await page.getByRole('button', { name: /^Remove / }).click();
+await page.waitForTimeout(600);
+check('last widget has no X (never empty, Q18)', (await page.getByRole('button', { name: /^Remove / }).count()) === 0 && param('widgets') === 'tire', `widgets=${param('widgets')}`);
+await page.getByRole('button', { name: 'Done' }).click();
+await page.waitForTimeout(500);
+check('bar shows the remaining widget after Done', await page.locator('[data-widget="tire"]').first().isVisible());
+
+await open('car=full');
+await enterEditing();
+check('Customize from Full → Panel + editor', param('car') === null && (await editorVisible()), page.url());
+
+await open('customize=editing');
+const inertPreview = await page.evaluate(() => {
+  const b = document.querySelector('[data-track-widget="music"] button');
+  return !!b?.closest('[inert]');
+});
+check('edit-mode widgets are previews (inert)', inertPreview, 'music card buttons are live');
+
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();
 process.exitCode = failed ? 1 : 0;

@@ -1,0 +1,173 @@
+/* Customize mode — Figma Sketches 4766:94038 (frames 4802:103107 / 4802:104649). Panel coordinates (630×1080). */
+.editor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.editor > * {
+  pointer-events: auto;
+}
+
+/* ---- Picker card ("Add Apps Frame" 4802:104691: 18,307 · 599×324) ---- */
+.pickerLayer {
+  position: absolute;
+  left: 18px;
+  top: 307px;
+  width: 599px;
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-24);
+  padding: var(--space-16) 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-floating);
+  box-shadow: var(--elevation-panel);
+  color: var(--color-content-primary);
+}
+
+.pickerTitle {
+  margin: 0;
+}
+
+.pickerGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-24);
+}
+
+.pickerRow {
+  display: flex;
+  justify-content: center;
+}
+
+.pickerDivider {
+  width: 391px;
+  height: 1px;
+  background: var(--color-border-default);
+}
+
+/* ---- Edit frame (4802:104705: 16,670 · 598×322) ---- */
+.editLayer {
+  position: absolute;
+  left: 16px;
+  top: 670px;
+  width: 598px;
+  height: 322px;
+}
+
+.editFrame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-floating);
+  box-shadow: var(--elevation-panel);
+  color: var(--color-content-primary);
+}
+
+.closeSlot {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+}
+
+/* 48px glyph in a 64px touch target */
+.close {
+  display: grid;
+  place-items: center;
+  width: var(--size-touch-min);
+  height: var(--size-touch-min);
+  margin-top: -8px;
+  border: none;
+  background: none;
+}
+
+/* "list" 2,69 · 594 wide: cards 486.43×155.7 (600×192 at 0.8107), 20 apart */
+.view {
+  position: absolute;
+  left: 2px;
+  top: 69px;
+  width: 594px;
+  height: 156px;
+  touch-action: none;
+}
+
+.strip {
+  display: flex;
+  height: 100%;
+}
+
+.slot {
+  position: relative;
+  flex: none;
+  height: 100%;
+}
+
+.card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 486.43px;
+  height: 155.66px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-floating);
+  box-shadow: var(--elevation-panel);
+}
+
+.cardContent {
+  width: 600px;
+  height: 192px;
+  transform: scale(0.8107);
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+/* "label" 239,171 in the list → top 240 in the frame */
+.trackLabel {
+  position: absolute;
+  top: 240px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+}
+
+/* "Page Indicator" top 293 */
+.dots {
+  position: absolute;
+  top: 293px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+}
+
+.dot {
+  composes: dot from '../WidgetBar/WidgetBar.module.css';
+}
+
+/* ---- Done: same place and style as Customize (anchor/bottom 342 → 1012) ---- */
+.doneSlot {
+  position: absolute;
+  top: 1012px;
+  left: 15px;
+  width: 600px;
+  display: flex;
+  justify-content: center;
+}
+
+.done {
+  composes: customize from '../WidgetBar/WidgetBar.module.css';
+}

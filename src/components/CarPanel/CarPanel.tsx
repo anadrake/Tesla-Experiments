@@ -10,6 +10,7 @@ import { presets, transition } from '../../tokens/motion';
 import { TripCardActive } from '../Navigation/TripCardActive';
 import { Icon } from '../Icon/Icon';
 import { TripSearchCard } from '../TripCard/TripSearchCard';
+import { CustomizeEditor } from '../Customize/CustomizeEditor';
 import { WIDGETS } from '../WidgetBar/registry';
 import { WidgetBar } from '../WidgetBar/WidgetBar';
 import { Callouts } from './Callouts';
@@ -53,11 +54,15 @@ export function CarPanel() {
     if (tripLayer.current) tripLayer.current.inert = view !== 'full';
   }, [view]);
   const start = useRef<{ x: number; y: number; onHandle: boolean } | null>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const editing = useHud((s) => s.customize === 'editing');
 
   const onPointerDown = (e: React.PointerEvent) => {
     const target = e.target as Element;
     // Controls opt out (and must not lose their tap to pointer capture). In the rail the Chicklet opts back in.
     if (target.closest('[data-no-panel-gesture]')) return;
+    // Customize mode: the panel holds still (no Full / collapse) — only the editor is live.
+    if (editing) return;
     start.current = { x: e.clientX, y: e.clientY, onHandle: !!target.closest('[data-panel-handle]') };
     // Keep receiving the gesture when the finger leaves the panel (e.g. dragging right out of the 116px rail).
     capture(e);
@@ -85,6 +90,7 @@ export function CarPanel() {
 
   return (
     <motion.section
+      ref={panelRef}
       className={styles.panel}
       aria-label="Car status"
       initial={false}
@@ -179,6 +185,7 @@ export function CarPanel() {
           </motion.div>
         </AnimatePresence>
       </motion.div>
+      <CustomizeEditor panel={panelRef} />
     </motion.section>
   );
 }

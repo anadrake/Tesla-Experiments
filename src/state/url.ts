@@ -49,7 +49,8 @@ export function initUrlSync() {
     useHud.setState({ widgetPage: widget });
 
   const customize = params.get('customize');
-  if (customize === 'revealed' || customize === 'editing') useHud.setState({ customize });
+  // Through the action, so editing gets the same rules as a tap (Full → Panel, other overlays close).
+  if (customize === 'revealed' || customize === 'editing') useHud.getState().setCustomize(customize);
 
   let savedTrack = useHud.getState().widgetTrack;
 

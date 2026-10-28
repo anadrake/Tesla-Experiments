@@ -51,7 +51,12 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   });
   const reveal = useTransform(y, [0, -LIFT], [0, 1]);
   const buttonY = useTransform(y, [0, -LIFT], [LIFT / 4, 0]);
-  useDismissOnOutsideTap(root, revealed, () => setCustomize('off'));
+  useDismissOnOutsideTap(root, revealed && customize === 'revealed', () => setCustomize('off'));
+  // While editing, the editor (CustomizeEditor) replaces the bar and the Customize button.
+  const editing = revealed && customize === 'editing';
+  useEffect(() => {
+    if (root.current) root.current.inert = editing; // React 18 types lack `inert`
+  }, [editing]);
   // Leaving the Panel / Full view or starting to drive drops customization.
   useEffect(() => {
     if (!canCustomize && customize !== 'off') setCustomize('off');
@@ -137,7 +142,15 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   }
 
   return (
-    <div ref={root} className={styles.bar} {...handlers}>
+    <motion.div
+      ref={root}
+      className={styles.bar}
+      {...handlers}
+      initial={false}
+      animate={{ opacity: editing ? 0 : 1 }}
+      transition={editing ? transition.close : transition.open}
+      style={{ pointerEvents: editing ? 'none' : undefined }}
+    >
       <motion.div className={styles.lift} style={{ y }}>
         <AnimatePresence initial={false} mode="popLayout">
           {collapsed ? (
@@ -192,6 +205,6 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
           Customize
         </motion.button>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
