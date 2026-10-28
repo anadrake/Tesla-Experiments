@@ -185,3 +185,61 @@ Rough size: S ≈ one short session, M ≈ one full session.
 - Notes page couldn't be read in one pass (too large) — will read in chunks in Phase 0.
 
 ## 9. Open questions → see WORKLOG "Open questions"
+
+---
+
+# Phase 8 — Widget customization (✅ approved 2026-10-27)
+
+**Source:** Figma Sketches `4766:94038` (6 light-mode wireframes, 2026-10-27):
+Default `4802:103110` → Swipe up exposes Customize `4802:103109` → Tap customize `4802:103107` → Drag widget (insertion bar) `4802:103108` → Drag widget (slot opens) `4802:103453` → Dropped, placeholder widget `4802:104649`.
+Sketches are wireframes: build with existing tokens/components (Dark derived from Light tokens), ask where intent is unclear.
+
+## The flow
+1. **Pull up** on the widget bar (Panel size **and** Full car view, Q22; Parked only). Heavy at first, then it "lets off" and snaps up into place (compound bow). The bar lifts and a **Customize** button appears under it. Release early → springs back.
+2. **Customize** → edit mode: picker card ("Drag Icons to Panel to Customize": Quick Actions, Music, Odometer, Tire Pressure · divider · Calendar, Camera, Energy Usage); track shrinks (486px cards, neighbours peek), close **X** above the centred widget, its name below, dots always visible, **Done** under the panel.
+3. **Drag** an icon from the picker onto the track: blue insertion bar between widgets, then the gap opens into a blue drop slot; drop → widget inserted (placeholder "<App> Widget Coming Soon" for apps without a widget). Drop outside → icon floats back.
+4. **Drop targets are gaps only** (never onto a widget). Nearing a gap shows the blue insertion strip; it then opens into the slot. **Already on the track:** a gap touching its own position → nothing changes, its widget flashes a few times while the icon floats back; any other gap → moves it there (Q20).
+5. **Delete** with X (no X on the last widget — the track is never empty, Q18). **Reorder:** hold a track widget 0.3s → it lifts (dragged state), then drag to a gap (Q19).
+   *Later, not in Phase 8:* a deleted Music widget reappears while music is playing. **Done** or tap outside the panel → exit.
+
+## Architecture
+- `store.ts`: `widgetTrack: WidgetId[]` (default `music, odometer, tire`), `widgetPage` becomes an index into it; `customize: 'off' | 'revealed' | 'editing'`; actions `insertWidget / moveWidget / removeWidget`.
+- `components/WidgetBar/registry.ts`: one entry per app — `{ id, label, icon, Widget, Chicklet? }`. Missing `Widget` → `PlaceholderWidget`. Adding a real widget later = one registry line.
+- `components/WidgetBar/` gets `usePullUp` (gesture + bow physics), `WidgetPicker`, `CustomizeTrack`, `useDragDrop` (pointer-driven, works in the scaled Stage — design px, not screen px).
+- `motion.ts`: new `spring.snap` (stiffer, light overshoot) for the let-off snap and float-back; `flash` keyframes for the duplicate warning. Logged as new motion tokens (Figma has one spring).
+- `url.ts`: `?customize=revealed|editing&widgets=music,energy,…`; `states.json` entries per state.
+- `scripts/gestures.mjs` (new): Playwright script that drives pull-up, drag-insert, duplicate drop, reorder and delete with real pointer events and asserts the store — the reviewer runs it every phase.
+
+## Phases (each ends: reviewer agents → fix → you test on iPad → WORKLOG → commit + push)
+
+### 8.0 — References & data model (S)
+- Save the 6 sketches to `design-ref/customize-*.png`; pull exact specs (sizes, spacing, icon nodes) for the picker, track and buttons; export Energy Usage / Quick Actions / Odometer / Tire icons.
+- Widget registry + `widgetTrack` in the store; track renders from it (placeholder widget + chicklet). No visible change with the default track.
+- Review: **regression** — existing widget states still match; `?widgets=` deep link renders a placeholder.
+
+### 8.1 — Pull-up gesture + Customize button (M)
+- Axis-locked gesture on the widget bar: horizontal stays native scroll-snap paging, vertical (after ~10px) takes over.
+- Bow curve: resistance ramps up to a "let-off" point (~55% of travel), then the bar snaps to the revealed position with `spring.snap`; below it, release springs back. Constants in one place to tune on iPad.
+- Revealed state: Customize button under the bar; pull down / tap elsewhere hides it.
+- Review: shots of `customize-revealed`; gesture script checks early release → back, past let-off → revealed, horizontal swipe still pages.
+
+### 8.2 — Customize mode layout (M)
+- Picker card, shrunken track with peek, X / label / dots, Done; enter + exit transitions (`transition.open/close`); Light + Dark.
+- Delete with X (card collapses, track closes the gap). Done / map tap / panel tap outside → exit.
+- Panel morph, collapse and the other overlays are blocked/closed while editing.
+- Review: `customize-editing-{light,dark}` vs sketch 3; delete flow; exit paths.
+
+### 8.3 — Drag & drop (L)
+- Lift icon from the picker (follows the finger in design px), insertion bar → slot opens → drop inserts and pages to the new widget; edge auto-scroll while dragging near the track ends; drop outside floats back.
+- Duplicate rule (move vs. no-op + flash ×3 + float back). Reorder by dragging a track widget.
+- Review: `customize-drag-*` vs sketches 4–6; gesture script covers insert, duplicate-adjacent, duplicate-move, reorder, cancel.
+
+### 8.4 — Integration & polish (S)
+- Chicklets for new widgets in the Collapsed/Driving rail, persistence, reduced motion, Driving behaviour, COMPONENTS/README/WORKLOG.
+- Full reviewer sweep (all states, iPad letterbox) + regression of earlier phases.
+
+## Review agents per phase
+Two `hud-reviewer` runs in parallel after each phase:
+1. **Fidelity** — `npm run shots` of the phase's states vs `design-ref/customize-*` (and Figma nodes above); Light + Dark; token/motion grep.
+2. **Function** — runs `scripts/gestures.mjs`, then walks the flows by hand in the built-in browser at iPad size; edge cases listed in the phase.
+I triage both reports, fix, and log the result in WORKLOG before you test on the iPad.

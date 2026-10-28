@@ -1,8 +1,27 @@
 import { SETTINGS_PAGES, useHud, type Mode, type SettingsPage } from './store';
+import { DEFAULT_TRACK, parseTrack } from './widgets';
+
+const TRACK_KEY = 'hud.widgetTrack';
+
+/** localStorage can throw (private mode, blocked storage) — persistence is best-effort. */
+function loadTrack() {
+  try {
+    return parseTrack(localStorage.getItem(TRACK_KEY));
+  } catch {
+    return null;
+  }
+}
+function saveTrack(track: readonly string[]) {
+  try {
+    localStorage.setItem(TRACK_KEY, track.join(','));
+  } catch {
+    /* ignore */
+  }
+}
 
 /**
  * Deep links: URL params mirror store state so any state can be opened directly
- * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widget=0|1|2&nav=typing|navigating&overlay=apps&settings=<page>&keyboard=1 (Settings search typing)
+ * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widgets=music,energy,…&widget=<index>&nav=typing|navigating&overlay=apps&settings=<page>&keyboard=1 (Settings search typing)
  */
 export function initUrlSync() {
   const params = new URLSearchParams(location.search);
@@ -22,10 +41,16 @@ export function initUrlSync() {
       settingsPage: page as SettingsPage,
       settingsTyping: page === 'search' && params.get('keyboard') === '1',
     });
+  // Widget track: ?widgets= wins over the saved track (Q24), so shots/deep links are reproducible.
+  const track = parseTrack(params.get('widgets')) ?? loadTrack();
+  if (track) useHud.getState().setWidgetTrack(track);
   const widget = Number(params.get('widget'));
-  if (widget >= 0 && widget <= 2) useHud.setState({ widgetPage: widget });
+  if (Number.isInteger(widget) && widget >= 0 && widget < useHud.getState().widgetTrack.length)
+    useHud.setState({ widgetPage: widget });
 
-  useHud.subscribe((s) => {
+  let savedTrack = useHud.getState().widgetTrack;
+
+  const sync = (s: ReturnType<typeof useHud.getState>) => {
     const p = new URLSearchParams(location.search);
     p.set('mode', s.mode);
     if (s.carView !== 'panel') p.set('car', s.carView);
@@ -38,8 +63,16 @@ export function initUrlSync() {
     else p.delete('settings');
     if (s.settingsTyping) p.set('keyboard', '1');
     else p.delete('keyboard');
+    if (s.widgetTrack !== savedTrack) {
+      savedTrack = s.widgetTrack;
+      saveTrack(s.widgetTrack);
+    }
+    if (s.widgetTrack.join() !== DEFAULT_TRACK.join()) p.set('widgets', s.widgetTrack.join(','));
+    else p.delete('widgets');
     if (s.widgetPage) p.set('widget', String(s.widgetPage));
     else p.delete('widget');
     history.replaceState(null, '', `${location.pathname}?${p}`);
-  });
+  };
+  sync(useHud.getState()); // normalise the URL on load (e.g. a saved track, a stale empty param)
+  useHud.subscribe(sync);
 }

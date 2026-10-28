@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { DEFAULT_TRACK, type WidgetId } from './widgets';
 
 /**
  * Single app store. Every prototype flow is a state change here.
@@ -55,7 +56,10 @@ export interface HudState {
   favorite: boolean;
   toggleFavorite: () => void;
 
-  /** Active widget in the widget bar (0 Music, 1 Odometer, 2 Tire Pressure) — remembered across sizes. */
+  /** Widgets on the track, in order (Phase 8 customization). Never empty (Q18). Persisted (Q24). */
+  widgetTrack: WidgetId[];
+  setWidgetTrack: (track: WidgetId[]) => void;
+  /** Active widget = index into widgetTrack — remembered across sizes. */
   widgetPage: number;
   setWidgetPage: (page: number) => void;
 
@@ -130,6 +134,9 @@ export const useHud = create<HudState>()((set) => ({
   favorite: false,
   toggleFavorite: () => set((s) => ({ favorite: !s.favorite })),
 
+  widgetTrack: DEFAULT_TRACK,
+  setWidgetTrack: (widgetTrack) =>
+    set((s) => (widgetTrack.length ? { widgetTrack, widgetPage: Math.min(s.widgetPage, widgetTrack.length - 1) } : {})),
   widgetPage: 0,
   setWidgetPage: (widgetPage) => set({ widgetPage }),
 

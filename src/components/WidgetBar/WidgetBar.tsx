@@ -7,13 +7,14 @@ import arrowUp from '../../assets/icons/arrow-up.svg';
 import { useHud } from '../../state/store';
 import { presets, transition } from '../../tokens/motion';
 import { Icon } from '../Icon/Icon';
-import { InfoPages, PAGE_COUNT } from './pages';
+import { InfoPages } from './pages';
+import { WidgetIcon, type WidgetId } from './registry';
 import { TRACK } from './MusicWidget';
 import styles from './WidgetBar.module.css';
 
 /**
  * Figma "Dynamic Widget Bar" (4416:12286), Dot Nav=Hidden.
- * Open: 600×192 window, swipe horizontally between Music / Odometer / Tire Pressure.
+ * Open: 600×192 window, swipe horizontally between the widgets on `widgetTrack` (registry.tsx).
  * Dot nav (Q11): appears while swiping, fades out after DOTS_IDLE_MS without scrolling.
  * Collapsed panel shows the active widget as a Chicklet — taps fall through to the panel (→ Panel):
  *   mini  (Parked, 116 rail):  Music 4666:74587 · Odometer 4666:74579 · Tire 4666:74583
@@ -21,11 +22,16 @@ import styles from './WidgetBar.module.css';
  * Collapsed (music): 382×64 pill — tap to expand. Size change = duration/base.
  */
 const DOTS_IDLE_MS = 1500;
+/** Widgets with a designed Chicklet; the rest show their app icon (placeholder). */
+const BESPOKE_CHICKLETS = new Set<WidgetId>(['music', 'odometer', 'tire']);
 
 export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
-  const collapsed = useHud((s) => s.musicCollapsed);
+  // The music pill only exists while Music is on the track.
+  const collapsed = useHud((s) => s.musicCollapsed && s.widgetTrack.includes('music'));
   const toggle = useHud((s) => s.toggleMusicCollapsed);
+  const track = useHud((s) => s.widgetTrack);
   const page = useHud((s) => s.widgetPage);
+  const active = track[page] ?? track[0];
   const setPage = useHud((s) => s.setWidgetPage);
   const [dotsVisible, setDotsVisible] = useState(false);
   const idle = useRef<ReturnType<typeof setTimeout>>();
@@ -41,8 +47,8 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   if (chicklet === 'large') {
     return (
       <div className={styles.chickletFrame}>
-        <motion.div key={page} className={styles.chickletLarge} data-page={page} {...presets.popIn} transition={transition.open}>
-          {page === 0 && (
+        <motion.div key={active} className={styles.chickletLarge} data-widget={active} {...presets.popIn} transition={transition.open}>
+          {active === 'music' && (
             <>
               <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
               <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
@@ -51,7 +57,7 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
               </span>
             </>
           )}
-          {page === 1 && (
+          {active === 'odometer' && (
             <div className={styles.chickletText}>
               <p className="text-title-l">Odometer</p>
               <p className="text-title-m">
@@ -59,12 +65,17 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
               </p>
             </div>
           )}
-          {page === 2 && (
+          {active === 'tire' && (
             <div className={`${styles.chickletText} ${styles.chickletTireLarge}`}>
               <p className="text-title-l">Tire Pressure</p>
               <p className="text-title-m">Front: 38,42psi</p>
               <p className="text-title-m">Rear: 38,42psi</p>
             </div>
+          )}
+          {!BESPOKE_CHICKLETS.has(active) && (
+            <span className={styles.chickletIcon}>
+              <WidgetIcon id={active} />
+            </span>
           )}
         </motion.div>
       </div>
@@ -73,19 +84,24 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
 
   if (chicklet === 'mini') {
     return (
-      <motion.div key={page} className={styles.chicklet} {...presets.popIn} transition={transition.open}>
-        {page === 0 && (
+      <motion.div key={active} className={styles.chicklet} {...presets.popIn} transition={transition.open}>
+        {active === 'music' && (
           <>
             <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
             <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
           </>
         )}
-        {page === 1 && <p className={`text-title-m ${styles.chickletOdometer}`}>26,422</p>}
-        {page === 2 && (
+        {active === 'odometer' && <p className={`text-title-m ${styles.chickletOdometer}`}>26,422</p>}
+        {active === 'tire' && (
           <div className={`text-title-m ${styles.chickletTire}`}>
             <p>38,42</p>
             <p>38,42</p>
           </div>
+        )}
+        {!BESPOKE_CHICKLETS.has(active) && (
+          <span className={styles.chickletIcon}>
+            <WidgetIcon id={active} />
+          </span>
         )}
       </motion.div>
     );
@@ -124,8 +140,8 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
         animate={{ opacity: dotsVisible && !collapsed ? 1 : 0 }}
         transition={dotsVisible ? transition.toggle : transition.close}
       >
-        {Array.from({ length: PAGE_COUNT }, (_, i) => (
-          <span key={i} className={styles.dot} data-selected={i === page || undefined} />
+        {track.map((id, i) => (
+          <span key={id} className={styles.dot} data-selected={i === page || undefined} />
         ))}
       </motion.div>
     </div>

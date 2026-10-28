@@ -1,5 +1,5 @@
 {
-  "_comment": "Every reviewable prototype state. name \u2192 URL query. ref = design-ref file to compare against.",
+  "_comment": "Every reviewable prototype state. name → URL query. ref = design-ref file to compare against.",
   "states": [
     {
       "name": "map-parked-light",
@@ -153,6 +153,23 @@
       "name": "settings-lights-dark",
       "query": "mode=dark&settings=lights",
       "ref": "settings-lights-dark.png"
+    },
+    {
+      "name": "widgets-placeholder-light",
+      "query": "mode=light&widgets=music,energy,odometer,tire&widget=1",
+      "ref": "customize-dropped-light.png"
+    },
+    {
+      "name": "widgets-placeholder-dark",
+      "query": "mode=dark&widgets=music,energy,odometer,tire&widget=1"
+    },
+    {
+      "name": "widgets-placeholder-collapsed-light",
+      "query": "mode=light&car=collapsed&widgets=energy,music"
+    },
+    {
+      "name": "widgets-placeholder-collapsed-dark",
+      "query": "mode=dark&car=collapsed&widgets=calendar,music"
     }
   ]
 }

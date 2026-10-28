@@ -6,7 +6,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 ---
 
 ## Current state
-- **Phase:** 7 — ✅ done. All planned phases complete; now iterating on Anastasiya's tweaks. Live site: https://anadrake.github.io/Tesla-Experiments/
+- **Phase:** 8 — Widget customization: plan approved 2026-10-27 (docs/PLAN.md › Phase 8); 8.0 ✅ (data model, placeholder, refs). Next: 8.1 pull-up gesture + Customize button. P0–7 ✅ done. Live site: https://anadrake.github.io/Tesla-Experiments/
 - **Last session:** 2026-10-27 — post-P7 tweaks: location tag back to "San Francisco, CA" (Q17), 2× bigger map (2×2 JPG grid) so you can pinch out, Safari warped-map fix, blue route line, Settings search opens the keyboard, Car status Full restyle from Figma (darker canvas bg, 6% reflection, masked floor shadow), Settings from Full → Panel, swipe down from the top of Settings closes it
 - **Next step:** Anastasiya pushes + tests on iPad — not yet verified with real touch: map pinch/pan, Settings swipe-to-close, keyboard typing in Settings search. Then new features (customisable dock, more Settings pages, Settings search filtering — deferred "not now")
 - **Carry-over:** read Notes page (`310:79790`) in pieces (whole-page fetch fails) — still not done
@@ -30,9 +30,18 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q15 | Search page copy | ✅ Real copy: Night Shift, Text Size, Sentry Mode (+ Ask each time), 24-Hour Clock, Show Battery Percentage, Distance Units, Auto High Beam (shares `controls.autoHighBeam` with the Controls tile) |
 | Q16 | Undesigned categories | ✅ "Coming soon" body (category icon + "<Category> — coming soon" + "This section hasn't been designed yet.") |
 | Q17 | Location tag: Figma says "San Francisco, CA" but the map (old and new) is Culver City / LA. Built "Culver City, CA". | ✅ 2026-10-27: use "San Francisco, CA" as in Figma (map art stays Culver City) |
+| Q18 | Customization: X deletes the centred widget? Minimum 1 widget? | ✅ X deletes; the track can never be empty (last widget has no X). **Later (not now):** if Music was deleted and music starts playing, the Music widget appears on the track only while it plays |
+| Q19 | Reorder on the track | ✅ Hold 0.3s → widget enters a dragged state (lifts up a bit), then drag; a plain swipe still pages |
+| Q20 | Drop targets + duplicates | ✅ You only ever drop into a **gap**, never onto a widget. Getting near a gap shows the blue insertion strip previewing the drop. Duplicate dropped into a gap touching its own position = no-op + flash + float back; any other gap = move. Picker always shows every app |
+| Q21 | How long the revealed Customize button stays | ✅ Until tap elsewhere / pull down; no timer |
+| Q22 | Where you can customize | ✅ Panel **and** the expanded car view (Full / Car status), same gesture. Not in the Collapsed rail. Driving not covered → assume Parked only |
+| Q23 | Sketch fidelity | ✅ Build with existing tokens/components, derive Dark |
+| Q24 | Persist the track | ✅ Yes (localStorage) |
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
+- 2026-10-27 — P8.0: widget track is data (`widgetTrack` ids, `widgetPage` = index). Registry `WidgetBar/registry.tsx` = one row per picker app (Quick Actions, Music, Odometer, Tire · Calendar, Camera, Energy Usage). No designed widget → placeholder card "<App> Widget Coming Soon" (icon + Body/M) and an icon chicklet in the rails. Deep link `?widgets=a,b,c`; the track persists in localStorage `hud.widgetTrack` (URL wins, so shots stay reproducible; a URL track isn't saved until it's edited). Music pill only applies while Music is on the track. Picker glyphs from the sketch tiles → `src/assets/widgets/`; Energy pictogram is a stretched PNG fill, as in Figma.
+- 2026-10-27 — Widget customization flow (Figma Sketches `4766:94038`): phased plan 8.0–8.4 drafted in PLAN.md; two reviewer runs per phase (fidelity + function) and a new Playwright gesture script.
 - 2026-10-27 — Swipe down from the top of Settings (top 112px, header height) closes it (Anastasiya). The window follows the finger; >160px or a quick flick closes, otherwise it springs back. The drag only takes over after 10px down, so taps on the top nav items still work.
 - 2026-10-27 — Opening Settings from the Full car view switches the car panel to Panel first (Anastasiya); closing Settings stays on Panel.
 - 2026-10-27 — Car status Full (Figma update by Anastasiya): bg is `surface/canvas` in every size (Dark #171717, Light #fafafa; was `surface/panel`); reflection 6% opacity at x450; floor "shadow · full" is a 2556×678 ellipse, blur 70.7, under Figma's "Mask group" alpha radial gradient (faint under the car → solid at the edges). The mask box is larger than the ellipse (Figma mask-no-clip), so code wraps the blurred ellipse in a %-sized mask box — a mask on the ellipse itself clipped its blur into a hard arc. design-ref car-status-{light,dark} re-captured.
@@ -57,6 +66,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-27 — Q18–Q20 answered (customization: delete/min 1, hold-to-lift reorder, gap-only drops). Future note: Music widget reappears while music plays even if deleted.
 - 2026-10-27 — Q15: make the Search page copy real. Q16: add a coming-soon state for undesigned settings categories.
 - 2026-10-27 — Updated Control Bar in Figma: Quick Actions open from the **All apps** icon; apps right of the divider = recently used; apps left of All apps = customizable (functionality later).
 - 2026-10-27 — Dark mode, Driving: expanding to Car status shouldn't lighten the background; keep the panel's dark. Done via app token `--color-bg-car-status-driving` (Light = surface-panel unchanged, Dark = surface-canvas). Parked Car status unchanged. Side effect: the compact turn card is now visible in Dark.
@@ -119,6 +129,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - Key node IDs: Map Parked L/D `4300:1022`/`4300:1216`; Car status L/D `4300:18`/`4300:714`; Navigating L/D `4300:2833`/`4300:3474`; Quick actions L/D `4300:2105`/`4300:2520`; Settings Controls L/D `4300:21356`/`4300:21841`.
 
 ## Phase history
+- **Phase 8.0 (2026-10-27):** widget registry + track data model, placeholder widget/chicklets, `?widgets=` + persistence, sketch refs `design-ref/customize-*`. Reviews: fidelity PASS; function PASS WITH ISSUES (low) → fixed music pill without Music, URL normalised on load. Not verified: real finger swipe (tool limit).
 - **Post-P7 tweaks (2026-10-27):** see Decisions dated 2026-10-27 (map size/Safari fix, route colour, Settings search keyboard, Car status Full restyle, Settings from Full, swipe-to-close). Verified with screenshots + synthetic pointer tests in the browser; no reviewer run (small, targeted changes).
 - **Phase 7 (2026-10-27):** @fontsource fonts, PWA icons/manifest, reduced-motion, OSM map tiles + OSRM route, README guide. QA sweep (reviewer, iPad + 1920, all states): PASS WITH ISSUES → fixed: destination off the tile (trip shortened to 34.0291,-118.3809, car fraction 0.56); OSM credit illegible → glass chip stacked above the location tag. Left as-is: label fragments at map edges (tile content). Not verified by tools: real-touch pinch/pan, keyboard typing walk.
 ### Phase 6b — Pedals & Steering, Display, Lights (2026-10-27)

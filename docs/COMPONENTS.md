@@ -21,6 +21,7 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Telltales | `49:33482` etc | `CarPanel/PanelStatusBar.tsx` | ✅ P2 | status-success / status-danger |
 | Callouts | in panel | `CarPanel/Callouts.tsx` | ✅ P2 | Q7 part small / state bold |
 | Dynamic Widget Bar | `4416:12286` | `src/components/WidgetBar/` | ✅ P2 | Swipe Music / Odometer / Tire + idle-fading dots; music → pill; Mini Chicklet `4666:74587` in Collapsed |
+| Widget registry + Placeholder widget | Sketches `4766:94038` (placeholder `4802:107503`, picker tiles in Add Apps Frame) | `src/components/WidgetBar/registry.tsx`, ids in `src/state/widgets.ts` | ✅ P8.0 | One entry per app (label, icon, group, Widget?, mini size). No Widget → "<App> Widget Coming Soon"; chicklet = app icon. Track = `widgetTrack` (`?widgets=`, localStorage) |
 | Trip Card / Search | `359:9111` | `src/components/TripCard/TripSearchCard.tsx` | ✅ P3 | Navigate → map + keyboard; Home/Work → trip |
 | Keyboard | `52:32037` | `src/overlays/Keyboard/` | ✅ P3 | Slides up (slow/enter); shift one-shot; ?#&, mic, cursor = press only |
 | Key | `4271:2318` | `src/components/Key/` | ✅ P3 | Character 104×88 / Action; Pressed = 8% overlay |

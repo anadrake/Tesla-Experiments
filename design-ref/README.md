@@ -22,3 +22,14 @@ Remember: Figma may contain bugs — check `docs/WORKLOG.md` › "Figma bugs" be
 | settings-pedals | 4300:22334 | 4300:22991 |
 | settings-display | 4300:23649 | 4300:24320 |
 | settings-lights | 4300:24992 | 4300:25689 |
+
+## Widget customization sketches (Phase 8)
+Figma Sketches `4766:94038` — **light only, wireframes**, captured 2026-10-27 at 1280 wide. These frames are the **1920×1080 stage only (no control bar)**, so they are 1280×720 (revealed: 1280×768, includes a 23px frame border) — compare the top 1080 design px of a shot.
+
+| File | Sketch frame |
+|---|---|
+| customize-revealed-light | Swipe up exposes Customize `4802:103109` |
+| customize-editing-light | Tap customize `4802:103107` |
+| customize-drag-bar-light | Drag widget, insertion bar `4802:103108` |
+| customize-drag-slot-light | Drag widget, slot opens `4802:103453` |
+| customize-dropped-light | Dropped, placeholder widget `4802:104649` |

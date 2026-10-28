@@ -340,7 +340,7 @@
   color: var(--color-content-primary);
 }
 
-.chickletLarge[data-page='1'] {
+.chickletLarge[data-widget='odometer'] {
   width: 186px;
   height: 185px;
 }
@@ -376,4 +376,31 @@
 .chickletTireLarge {
   gap: 7px;
   padding: 20px 22px;
+}
+
+/* ---- Pictogram app icons (fixed colors; Energy art is stretched to the tile like Figma) ---- */
+.pictogram {
+  display: block;
+  flex: none;
+  object-fit: fill;
+  border-radius: var(--radius-lg);
+}
+
+/* ---- Placeholder widget (Sketch "<App> Widget Coming Soon", 4802:107503) ---- */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  height: 100%;
+  color: var(--color-content-primary);
+}
+
+/* Placeholder chicklets: the app icon centred on the card */
+.chickletIcon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
 }

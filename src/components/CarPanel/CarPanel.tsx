@@ -10,6 +10,7 @@ import { presets, transition } from '../../tokens/motion';
 import { TripCardActive } from '../Navigation/TripCardActive';
 import { Icon } from '../Icon/Icon';
 import { TripSearchCard } from '../TripCard/TripSearchCard';
+import { WIDGETS } from '../WidgetBar/registry';
 import { WidgetBar } from '../WidgetBar/WidgetBar';
 import { Callouts } from './Callouts';
 import { PanelStatusBar, Telltales } from './PanelStatusBar';
@@ -42,7 +43,7 @@ const TAP_SLOP = 10;
 export function CarPanel() {
   const view = useHud((s) => s.carView);
   const setCarView = useHud((s) => s.setCarView);
-  const widgetPage = useHud((s) => s.widgetPage);
+  const activeWidget = useHud((s) => s.widgetTrack[s.widgetPage] ?? s.widgetTrack[0]);
   const driving = useHud(isDriving);
   const scale = useStageScale();
   const tripLayer = useRef<HTMLDivElement>(null);
@@ -155,7 +156,7 @@ export function CarPanel() {
         className={styles.layer}
         initial={false}
         animate={
-          view !== 'collapsed' ? bottom.widgetBar[view] : driving ? chickletLargeRect : chickletRect(widgetPage)
+          view !== 'collapsed' ? bottom.widgetBar[view] : driving ? chickletLargeRect : chickletRect(WIDGETS[activeWidget].mini)
         }
         transition={transition.screen}
         // Chicklet taps fall through to the panel (Collapsed → Panel); the full widget bar is interactive
