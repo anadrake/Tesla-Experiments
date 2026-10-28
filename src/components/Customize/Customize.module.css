@@ -64,11 +64,23 @@
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  color: var(--color-content-primary);
+}
+
+/* Background + shadow, animated from the widget's outline to the frame (Customize/motion.ts) */
+.frameBg {
+  position: absolute;
   border-radius: var(--radius-lg);
   background: var(--color-surface-floating);
   box-shadow: var(--elevation-panel);
-  color: var(--color-content-primary);
+}
+
+/* Clips the peeking cards to the frame (separate from the bg so its shadow isn't clipped) */
+.frameClip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
 }
 
 .closeSlot {
@@ -100,6 +112,7 @@
   width: 594px;
   height: 156px;
   touch-action: none;
+  transform-origin: 50% 50%;
 }
 
 .strip {

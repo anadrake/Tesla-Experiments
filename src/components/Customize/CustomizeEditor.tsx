@@ -4,6 +4,7 @@ import { useHud } from '../../state/store';
 import { transition } from '../../tokens/motion';
 import { useDismissOnOutsideTap } from '../WidgetBar/useDismissOnOutsideTap';
 import { CustomizeTrack } from './CustomizeTrack';
+import { chrome, picker } from './motion';
 import { WidgetPicker } from './WidgetPicker';
 import styles from './Customize.module.css';
 
@@ -21,29 +22,23 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
   return (
     <AnimatePresence>
       {editing && (
-        <motion.div key="editor" className={styles.editor} data-no-panel-gesture>
-          <motion.div
-            className={styles.pickerLayer}
-            initial={{ opacity: 0, y: -24 }}
-            animate={{ opacity: 1, y: 0, transition: transition.open }}
-            exit={{ opacity: 0, y: -24, transition: transition.close }}
-          >
+        // Variants run the choreography in motion.ts; children inherit hidden / shown, and the exit waits for them.
+        <motion.div
+          key="editor"
+          className={styles.editor}
+          data-no-panel-gesture
+          initial="hidden"
+          animate="shown"
+          exit="hidden"
+        >
+          {/* Picker first in the DOM = behind the edit frame, so it slides up out from behind it */}
+          <motion.div className={styles.pickerLayer} variants={picker}>
             <WidgetPicker />
           </motion.div>
-          <motion.div
-            className={styles.editLayer}
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1, transition: transition.open }}
-            exit={{ opacity: 0, scale: 0.96, transition: transition.close }}
-          >
+          <div className={styles.editLayer}>
             <CustomizeTrack />
-          </motion.div>
-          <motion.div
-            className={styles.doneSlot}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: transition.open }}
-            exit={{ opacity: 0, transition: transition.close }}
-          >
+          </div>
+          <motion.div className={styles.doneSlot} variants={chrome}>
             <motion.button
               type="button"
               className={`${styles.done} text-body-l`}

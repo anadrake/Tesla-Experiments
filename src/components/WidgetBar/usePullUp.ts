@@ -30,10 +30,12 @@ interface Options {
   revealed: boolean;
   onReveal: () => void;
   onHide: () => void;
+  /** Wait this long (s) before settling after an outside state change — e.g. until Customize mode has closed. */
+  settleDelay?: number;
 }
 
 /** Returns the bar's lift (0 = rest, -LIFT = revealed) and pointer handlers for the bar root. */
-export function usePullUp({ root, enabled, revealed, onReveal, onHide }: Options): {
+export function usePullUp({ root, enabled, revealed, onReveal, onHide, settleDelay = 0 }: Options): {
   y: MotionValue<number>;
   handlers: Pick<React.DOMAttributes<HTMLElement>, 'onPointerDown' | 'onPointerMove' | 'onPointerUp' | 'onPointerCancel'>;
 } {
@@ -41,6 +43,7 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide }: Options
   const scale = useStageScale();
   /** Active gesture. base = bar position when it locked (it may still have been springing). */
   const g = useRef<{
+    id: number;
     x: number;
     y: number;
     locked: boolean;
@@ -48,6 +51,8 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide }: Options
     fromRevealed: boolean;
     base: number;
   } | null>(null);
+  /** Touch direction decided by the touchmove claim below (null = undecided / not a touch). */
+  const touchClaim = useRef<boolean | null>(null);
 
   // iPad: the widget list is `touch-action: pan-x`, and Safari decides on the first touchmove whether a
   // touch is a native scroll — if it guesses "scroll" on a slightly diagonal pull it cancels our pointer
@@ -55,21 +60,25 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide }: Options
   useEffect(() => {
     const el = root.current;
     if (!el || !enabled) return;
-    let start: { x: number; y: number } | null = null;
-    let claim: boolean | null = null;
+    let start: { id: number; x: number; y: number } | null = null;
     const onStart = (e: TouchEvent) => {
-      start = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null;
-      claim = null;
+      // A second finger joining doesn't restart (or steal) the gesture of the first.
+      if (e.touches.length > 1) return;
+      start = { id: e.touches[0].identifier, x: e.touches[0].clientX, y: e.touches[0].clientY };
+      touchClaim.current = null;
     };
     const onMove = (e: TouchEvent) => {
       if (!start) return;
-      if (claim === null) {
-        const dx = Math.abs(e.touches[0].clientX - start.x);
-        const dy = Math.abs(e.touches[0].clientY - start.y);
+      if (touchClaim.current === null) {
+        const t = Array.from(e.touches).find((t) => t.identifier === start!.id);
+        if (!t) return; // the pulling finger lifted — another finger can't decide for it
+        const dx = Math.abs(t.clientX - start.x);
+        const dy = Math.abs(t.clientY - start.y);
         if (Math.hypot(dx, dy) < CLAIM_SLOP) return; // too small to tell; don't decide on jitter
-        claim = !(dx > dy * HORIZONTAL_BIAS);
+        touchClaim.current = !(dx > dy * HORIZONTAL_BIAS);
       }
-      if (claim && e.cancelable) e.preventDefault();
+      // Keep claiming while any finger moves, so Safari never starts a scroll under an active pull.
+      if (touchClaim.current && e.cancelable) e.preventDefault();
     };
     el.addEventListener('touchstart', onStart, { passive: true });
     el.addEventListener('touchmove', onMove, { passive: false });
@@ -81,8 +90,8 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide }: Options
 
   // State changes from elsewhere (tap outside, deep link, Done) settle the bar.
   useEffect(() => {
-    if (!g.current) animate(y, revealed ? -LIFT : 0, revealed ? springSnap : spring);
-  }, [revealed, y]);
+    if (!g.current) animate(y, revealed ? -LIFT : 0, { ...(revealed ? springSnap : spring), delay: settleDelay });
+  }, [revealed, y]); // settleDelay is read when `revealed` flips
 
   const settle = (open: boolean, alreadyHeading: boolean) => {
     // A snap already started its spring toward the target — restarting it would kink the motion.
@@ -95,17 +104,23 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide }: Options
     handlers: {
       onPointerDown: (e) => {
         if (!enabled || !e.isPrimary) return;
-        g.current = { x: e.clientX, y: e.clientY, locked: false, snapped: false, fromRevealed: revealed, base: 0 };
+        g.current = { id: e.pointerId, x: e.clientX, y: e.clientY, locked: false, snapped: false, fromRevealed: revealed, base: 0 };
       },
       onPointerMove: (e) => {
         const s = g.current;
-        if (!s) return;
+        // Only the finger that started the pull drives it — a resting thumb / second finger made the bar jump.
+        if (!s || e.pointerId !== s.id) return;
         const dx = (e.clientX - s.x) / scale;
         const dy = (s.y - e.clientY) / scale; // + = finger moved up
         if (!s.locked) {
           if (Math.hypot(dx, dy) < AXIS_SLOP) return;
+          // On touch, follow the touchmove claim's decision so the two can never disagree (a pull we lock
+          // while Safari scrolls gets cancelled mid-way → the bar bounced back). Mouse decides here.
+          const touch = e.pointerType === 'touch';
+          if (touch && touchClaim.current === null) return; // claim decides on the next touchmove
+          const horizontal = touch ? !touchClaim.current : Math.abs(dx) > Math.abs(dy) * HORIZONTAL_BIAS;
           // Horizontal → leave it to the native widget swipe. Wrong vertical direction → nothing to do.
-          if (Math.abs(dx) > Math.abs(dy) * HORIZONTAL_BIAS || (s.fromRevealed ? dy > 0 : dy < 0)) {
+          if (horizontal || (s.fromRevealed ? dy > 0 : dy < 0)) {
             g.current = null;
             return;
           }
@@ -136,15 +151,17 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide }: Options
           } else y.set(Math.min(0, s.base + push * HEAVY_GAIN));
         }
       },
-      onPointerUp: () => {
+      onPointerUp: (e) => {
         const s = g.current;
+        if (s && e.pointerId !== s.id) return;
         g.current = null;
         if (!s?.locked) return;
         // Snapped → stays where it snapped to; else springs back to where it started.
         settle(s.snapped ? !s.fromRevealed : s.fromRevealed, s.snapped);
       },
-      onPointerCancel: () => {
+      onPointerCancel: (e) => {
         const s = g.current;
+        if (s && e.pointerId !== s.id) return;
         g.current = null;
         if (s?.locked) settle(s.snapped ? !s.fromRevealed : s.fromRevealed, s.snapped);
       },

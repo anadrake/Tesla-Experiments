@@ -158,19 +158,39 @@ await touchDrag(await barCentre(), -300, 10);
 const scrollAfter = await page.evaluate(() => document.querySelector('[class*="_list_"]').scrollLeft);
 check('touch: horizontal swipe still pages the widgets', scrollAfter > scrollBefore && param('customize') === null, `${scrollBefore}→${scrollAfter}`);
 
+// Second finger (resting thumb) moving while the first pulls must not move the bar.
+{
+  await open();
+  const c = await barCentre();
+  const cdp = await page.context().newCDPSession(page);
+  const send = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts });
+  const ys = [];
+  await send('touchStart', [{ x: c.x, y: c.y, id: 1 }]);
+  for (let i = 1; i <= 6; i++) await send('touchMove', [{ x: c.x, y: c.y - i * 8, id: 1 }]);
+  await send('touchStart', [{ x: c.x, y: c.y - 48, id: 1 }, { x: c.x + 200, y: c.y + 40, id: 2 }]);
+  for (let i = 1; i <= 8; i++) {
+    await send('touchMove', [{ x: c.x, y: c.y - 48 - i * 2, id: 1 }, { x: c.x + 200, y: c.y + 40 - i * 25, id: 2 }]);
+    ys.push(await liftY());
+  }
+  await send('touchEnd', []);
+  await page.waitForTimeout(500);
+  check('touch: a second finger moving does not drive the pull', param('customize') === null && ys.every((v) => v > -30), ys.map(Math.round).join(','));
+}
+
 // --- 8.2 Customize mode ---
 const editorVisible = () => page.getByText('Drag Icons to Panel to Customize').isVisible();
 const dotCount = () => page.locator('[class*="editFrame"] [class*="_dot_"]').count();
 const enterEditing = async () => {
+  await page.waitForTimeout(700); // any close choreography still running
   await drag(await barCentre(), 0, -150);
   await page.getByRole('button', { name: 'Customize' }).click();
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(800); // open choreography (picker lands at 0.6s)
 };
 await open();
 await enterEditing();
 check('Customize opens the editor', (await editorVisible()) && param('customize') === 'editing', page.url());
 await page.getByRole('button', { name: 'Done' }).click();
-await page.waitForTimeout(500);
+await page.waitForTimeout(1200); // close choreography (0.6s) + the bar settling
 check('Done closes it and the bar comes back', !(await editorVisible()) && param('customize') === null && Math.abs(await liftY()) < 1, `y=${await liftY()}`);
 
 await enterEditing();

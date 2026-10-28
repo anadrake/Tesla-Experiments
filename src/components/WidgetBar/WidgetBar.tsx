@@ -9,6 +9,7 @@ import { presets, transition } from '../../tokens/motion';
 import { Icon } from '../Icon/Icon';
 import { InfoPages } from './pages';
 import { WidgetIcon, type WidgetId } from './registry';
+import { EDITOR_CLOSE_S } from '../Customize/motion';
 import { LIFT, usePullUp } from './usePullUp';
 import { useDismissOnOutsideTap } from './useDismissOnOutsideTap';
 import { TRACK } from './MusicWidget';
@@ -42,7 +43,15 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   const canCustomize = useHud((s) => !chicklet && s.carView !== 'collapsed' && !isDriving(s));
   const revealed = canCustomize && customize !== 'off';
   const root = useRef<HTMLDivElement>(null);
+  // Customize mode closing: the editor shrinks back into the bar's outline first (Customize/motion.ts),
+  // then the bar takes over at the lifted spot and settles down.
+  const prevCustomize = useRef(customize);
+  const closingEditor = prevCustomize.current === 'editing' && customize !== 'editing';
+  useEffect(() => {
+    prevCustomize.current = customize;
+  }, [customize]);
   const { y, handlers } = usePullUp({
+    settleDelay: closingEditor ? EDITOR_CLOSE_S : 0,
     root,
     enabled: canCustomize && customize !== 'editing',
     revealed,
@@ -148,7 +157,8 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
       {...handlers}
       initial={false}
       animate={{ opacity: editing ? 0 : 1 }}
-      transition={editing ? transition.close : transition.open}
+      // Hand-off, no cross-fade: hide the moment the editor takes over; reappear once it has closed.
+      transition={editing ? transition.cut : { ...transition.cut, delay: EDITOR_CLOSE_S }}
       style={{ pointerEvents: editing ? 'none' : undefined }}
     >
       <motion.div className={styles.lift} style={{ y }}>

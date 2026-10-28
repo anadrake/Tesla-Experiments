@@ -34,6 +34,8 @@ export const springSnap = { type: 'spring', mass: 1, stiffness: 500, damping: 28
 /** Ready-made transitions for motion components. */
 export const transition = {
   press: { duration: duration.instant },
+  /** A hard cut (hand-offs between two elements showing the same thing). */
+  cut: { duration: 0 },
   toggle: { duration: duration.fast, ease: easing.standard },
   open: { duration: duration.base, ease: easing.enter },
   close: { duration: duration.base, ease: easing.exit },
