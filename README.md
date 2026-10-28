@@ -15,7 +15,7 @@ A tap-driven, web-based prototype of an in-car center display, built from my Fig
 | Tap **P/R/N/D** in the car panel | Start a trip (Driving) / end it (Parked) |
 | Drag the car panel handle right / left | Expand to Full car view / collapse to the chicklet |
 | Swipe the widget bar | Page through your widgets (Music → Odometer → Tire pressure by default) |
-| Pull the widget bar up, tap **Customize** (Parked) | Edit the widgets: drag apps from the top in, hold a widget to move it, **X** removes it, **Done** saves |
+| Pull the widget bar up, tap **Customize** | Edit the widgets: drag apps from the top in, hold a widget to move it, **X** removes it, **Done** saves |
 | Tap **Navigate** | Keyboard; type and tap **Enter** to start navigating |
 | Tap the car icon in the dock | Settings (Controls, Pedals & Steering, Display, Lights, Search) |
 | Tap the Settings search field | Keyboard over the bottom of the screen |

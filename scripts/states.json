@@ -211,6 +211,18 @@
       "query": "mode=light&customize=editing&widgets=odometer"
     },
     {
+      "name": "customize-editing-driving-light",
+      "query": "mode=light&nav=navigating&customize=editing"
+    },
+    {
+      "name": "customize-editing-driving-full-dark",
+      "query": "mode=dark&nav=navigating&car=full&customize=editing"
+    },
+    {
+      "name": "customize-revealed-driving-dark",
+      "query": "mode=dark&nav=navigating&customize=revealed"
+    },
+    {
       "name": "customize-editing-full-light",
       "query": "mode=light&car=full&customize=editing"
     },

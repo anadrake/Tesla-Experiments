@@ -4,7 +4,7 @@ import spotify from '../../assets/media/spotify.svg';
 import spotifyChip from '../../assets/media/spotify-chip.svg';
 import album from '../../assets/media/album-vampire.png';
 import arrowUp from '../../assets/icons/arrow-up.svg';
-import { isDriving, useHud } from '../../state/store';
+import { useHud } from '../../state/store';
 import { presets, transition } from '../../tokens/motion';
 import { Icon } from '../Icon/Icon';
 import { InfoPages } from './pages';
@@ -24,7 +24,7 @@ import styles from './WidgetBar.module.css';
  *   large (Driving, 220 rail): Music 4596:70708 · Odometer 4596:70712 · Tire 4596:70716
  * Collapsed (music): 382×64 pill — tap to expand. Size change = duration/base.
  * Customize (Phase 8, Sketch 4802:103109): pull the bar up (usePullUp) → it lifts 64px and the Customize
- * button rises from under it. Tap anywhere else or pull down → back. Panel / Full while parked only (Q22).
+ * button rises from under it. Tap anywhere else or pull down → back. Panel / Full, Parked or Driving (Q22) — not the Collapsed rail.
  */
 const DOTS_IDLE_MS = 1500;
 /** Widgets with a designed Chicklet; the rest show their app icon (placeholder). */
@@ -40,7 +40,8 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   const setPage = useHud((s) => s.setWidgetPage);
   const customize = useHud((s) => s.customize);
   const setCustomize = useHud((s) => s.setCustomize);
-  const canCustomize = useHud((s) => !chicklet && s.carView !== 'collapsed' && !isDriving(s));
+  // Panel and Full, Parked or Driving (Anastasiya, 2026-10-28) — not the Collapsed rail.
+  const canCustomize = useHud((s) => !chicklet && s.carView !== 'collapsed');
   const revealed = canCustomize && customize !== 'off';
   const root = useRef<HTMLDivElement>(null);
   // Customize mode closing: the editor shrinks back into the bar's resting outline (Customize/motion.ts), so the
@@ -66,7 +67,7 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   useEffect(() => {
     if (root.current) root.current.inert = editing; // React 18 types lack `inert`
   }, [editing]);
-  // Leaving the Panel / Full view or starting to drive drops customization.
+  // Collapsing to the rail drops customization.
   useEffect(() => {
     if (!canCustomize && customize !== 'off') setCustomize('off');
   }, [canCustomize, customize, setCustomize]);

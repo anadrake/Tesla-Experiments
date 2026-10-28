@@ -126,7 +126,7 @@ check('Full view: pull reveals (Q22)', param('customize') === 'revealed', `custo
 
 await open('nav=navigating');
 await drag(await barCentre(), 0, -150);
-check('Driving: pull does nothing', param('customize') === null, `customize=${param('customize')}`);
+check('Driving: pull reveals too (Q22, 2026-10-28)', param('customize') === 'revealed', `customize=${param('customize')}`);
 
 
 // --- 8.1 fixes: no bounce / fights, diagonal + touch ---
@@ -398,9 +398,12 @@ await open('customize=editing');
 await page.mouse.click(...Object.values(await pickerIcon('camera')));
 check('picker tile press state clears after a tap', (await page.locator('[data-picker-app="camera"] button[data-pressed]').count()) === 0);
 
-// 8.4 Driving: customizing is Parked only (Q22) — a deep link that asks for both drops Customize.
-await open('customize=editing&nav=navigating');
-check('driving: no Customize editor', !(await editorVisible()) && param('customize') === null, page.url());
+// Driving: Customize works there too (Anastasiya, 2026-10-28) — pull the bar up, tap Customize.
+await open('nav=navigating');
+await drag(await barCentre(), 0, -140);
+await page.getByRole('button', { name: 'Customize' }).click();
+await page.waitForTimeout(500);
+check('driving: pull up → Customize opens the editor', (await editorVisible()) && param('customize') === 'editing', page.url());
 
 // 8.4 Reduce Motion: the editor fades in place — the frame doesn't grow and the picker isn't wiped in.
 await page.emulateMedia({ reducedMotion: 'reduce' });
