@@ -40,6 +40,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
+- 2026-10-27 — P8.1 fix (bounce + unreliable swipe-down): (1) after the snap the bar no longer follows the finger (the old 0.15× "hold" stretch made it jump past −64 and spring back on release); (2) a new drag stops any running spring and starts from where the bar actually is (spring and finger were both writing y); (3) iPad: a non-passive `touchmove` claims mostly-vertical touches (`preventDefault` once a touch moves 6px and isn't clearly sideways, |dx| > 1.3|dy|) so Safari can't turn a slightly diagonal pull on the `pan-x` list into a scroll and cancel the drag; diagonal pulls now count as vertical.
 - 2026-10-27 — P8.1 pull-up (`WidgetBar/usePullUp.ts`, all feel constants at the top): after a 10px axis slop a vertical pull moves the bar at 0.4× the finger ("heavy"); at 80px of finger travel it lets off and snaps up to the revealed lift (64px, sketch anchor 848 → 784) with `springSnap` (new non-Figma motion token: k500 c28, a little overshoot) and holds; release earlier → springs back (`spring`). Revealed: pull down 56px → snaps closed. Horizontal stays native paging. The Customize button (sketch 4766:97815: surface-floating, 12/24 padding, radius-md, panel shadow without spread → new `--elevation-panel-tight`, Body/L, content-primary text instead of the sketch's black) rises 16px + fades in with the lift, 20px under the bar; hit area extended to 64px. Tap anywhere outside the bar → hides, and that tap is swallowed (doesn't open Full / act on the map). Works in Panel and Full (Q22); off while collapsed or driving. `?customize=revealed|editing`. Customize tap → `editing` (UI is 8.2).
 - 2026-10-27 — P8.0: widget track is data (`widgetTrack` ids, `widgetPage` = index). Registry `WidgetBar/registry.tsx` = one row per picker app (Quick Actions, Music, Odometer, Tire · Calendar, Camera, Energy Usage). No designed widget → placeholder card "<App> Widget Coming Soon" (icon + Body/M) and an icon chicklet in the rails. Deep link `?widgets=a,b,c`; the track persists in localStorage `hud.widgetTrack` (URL wins, so shots stay reproducible; a URL track isn't saved until it's edited). Music pill only applies while Music is on the track. Picker glyphs from the sketch tiles → `src/assets/widgets/`; Energy pictogram is a stretched PNG fill, as in Figma.
 - 2026-10-27 — Widget customization flow (Figma Sketches `4766:94038`): phased plan 8.0–8.4 drafted in PLAN.md; two reviewer runs per phase (fidelity + function) and a new Playwright gesture script.
@@ -67,6 +68,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-27 — 8.1 on iPad: dragging up / back down sometimes makes the bar bounce up and down weirdly; swiping down on the widget doesn't always close. Fixed (see Decisions); real-touch fix needs re-testing on iPad.
 - 2026-10-27 — Q18–Q20 answered (customization: delete/min 1, hold-to-lift reorder, gap-only drops). Future note: Music widget reappears while music plays even if deleted.
 - 2026-10-27 — Q15: make the Search page copy real. Q16: add a coming-soon state for undesigned settings categories.
 - 2026-10-27 — Updated Control Bar in Figma: Quick Actions open from the **All apps** icon; apps right of the divider = recently used; apps left of All apps = customizable (functionality later).
@@ -95,6 +97,8 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - `--color-surface-glass` resolves to `#000000f2` in BOTH modes via get_variable_defs, but the Light map ref shows a near-white location tag and the component's own fallback is neutral-50 · 80%. Built Light = `#f6f6f6cc`. Likely a missing Light value on the variable.
 
 ## Learnings
+- iOS Safari decides native scrolling on the first touchmove; a `touch-action: pan-x` list will cancel a slightly diagonal pointer drag (`pointercancel`). Claim the gesture with a non-passive `touchmove` + `preventDefault`. Chrome/CDP touch doesn't reproduce this — verify on the iPad.
+- Before driving a motion value from the finger, `stop()` it: a running spring keeps writing and fights `set()`.
 - Window capture-phase `pointerdown` + `stopPropagation` runs before React's root listener, so a "dismiss-only" tap never reaches the app; also swallow the click that follows (once, short window).
 - In a drag that locks after a slop, don't `return` on the locking move — coalesced fast flicks may never send another move.
 - CSS `mask-image` clips to the element's own border box, so masking a blurred element cuts its blur off in a hard edge. Put the mask on a larger wrapper (like Figma's mask group) and the blurred shape inside it.

@@ -42,6 +42,35 @@ const tap = async (x, y) => {
 const customizeOpacity = () =>
   page.evaluate(() => getComputedStyle(document.querySelector('[class*="customizeSlot"]')).opacity);
 
+const liftY = () =>
+  page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('[class*="_lift_"]')).transform).m42);
+/** Like drag, but samples the bar's lift after every move (to catch bounces / fights). */
+const dragSampled = async (from, dx, dy, steps = 30, release = true) => {
+  const ys = [];
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  for (let i = 1; i <= steps; i++) {
+    await page.mouse.move(from.x + (dx * i) / steps, from.y + (dy * i) / steps);
+    ys.push(await liftY());
+  }
+  if (release) {
+    await page.mouse.up();
+    await page.waitForTimeout(500);
+  }
+  return ys;
+};
+/** Real touch events through CDP (Safari-like scroll decisions: the list is touch-action pan-x). */
+const touchDrag = async (from, dx, dy, steps = 12) => {
+  const cdp = await page.context().newCDPSession(page);
+  const pt = (x, y) => [{ x, y, id: 1 }];
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: pt(from.x, from.y) });
+  for (let i = 1; i <= steps; i++)
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: pt(from.x + (dx * i) / steps, from.y + (dy * i) / steps) });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForTimeout(500);
+};
+const mono = (ys, dir) => ys.every((v, i) => i === 0 || dir * (v - ys[i - 1]) >= -0.5);
+
 // --- 8.1 Pull-up ---
 await open();
 await drag(await barCentre(), 0, -40);
@@ -96,6 +125,38 @@ check('Full view: pull reveals (Q22)', param('customize') === 'revealed', `custo
 await open('nav=navigating');
 await drag(await barCentre(), 0, -150);
 check('Driving: pull does nothing', param('customize') === null, `customize=${param('customize')}`);
+
+
+// --- 8.1 fixes: no bounce / fights, diagonal + touch ---
+await open();
+let ys = await dragSampled(await barCentre(), 0, -260, 40, false);
+await page.waitForTimeout(500); // finger still down, far past the let-off
+const held = await liftY();
+await page.mouse.up();
+await page.waitForTimeout(400);
+check('pull before let-off is smooth (monotonic up)', mono(ys.slice(0, 15), -1), ys.slice(0, 15).map(Math.round).join(','));
+check('after the snap the bar holds at the lift (no follow / bounce)', Math.abs(held + 64) < 1.5, `y=${held}`);
+check('release after snap stays revealed', param('customize') === 'revealed' && Math.abs((await liftY()) + 64) < 1.5, `y=${await liftY()}`);
+
+// Pull down immediately, while the snap spring may still be running.
+await tap(1200, 600);
+await drag(await barCentre(), 0, -150, 6);
+ys = await dragSampled(await barCentre(), 0, 120, 30);
+check('swipe down right after snapping closes', param('customize') === null, `customize=${param('customize')}`);
+check('…and moves down without fighting the spring', mono(ys.slice(0, 12), 1), ys.slice(0, 12).map(Math.round).join(','));
+
+await drag(await barCentre(), 0, -150);
+await drag(await barCentre(), 60, 110); // diagonal swipe down
+check('diagonal swipe down closes', param('customize') === null, `customize=${param('customize')}`);
+
+await touchDrag(await barCentre(), 40, -160);
+check('touch: diagonal pull up reveals (not stolen by native scroll)', param('customize') === 'revealed', `customize=${param('customize')}`);
+await touchDrag(await barCentre(), -40, 120);
+check('touch: swipe down closes', param('customize') === null, `customize=${param('customize')}`);
+const scrollBefore = await page.evaluate(() => document.querySelector('[class*="_list_"]').scrollLeft);
+await touchDrag(await barCentre(), -300, 10);
+const scrollAfter = await page.evaluate(() => document.querySelector('[class*="_list_"]').scrollLeft);
+check('touch: horizontal swipe still pages the widgets', scrollAfter > scrollBefore && param('customize') === null, `${scrollBefore}→${scrollAfter}`);
 
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();

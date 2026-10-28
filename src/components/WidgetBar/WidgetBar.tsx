@@ -41,7 +41,9 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   const setCustomize = useHud((s) => s.setCustomize);
   const canCustomize = useHud((s) => !chicklet && s.carView !== 'collapsed' && !isDriving(s));
   const revealed = canCustomize && customize !== 'off';
+  const root = useRef<HTMLDivElement>(null);
   const { y, handlers } = usePullUp({
+    root,
     enabled: canCustomize && customize !== 'editing',
     revealed,
     onReveal: () => setCustomize('revealed'),
@@ -49,7 +51,6 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   });
   const reveal = useTransform(y, [0, -LIFT], [0, 1]);
   const buttonY = useTransform(y, [0, -LIFT], [LIFT / 4, 0]);
-  const root = useRef<HTMLDivElement>(null);
   useDismissOnOutsideTap(root, revealed, () => setCustomize('off'));
   // Leaving the Panel / Full view or starting to drive drops customization.
   useEffect(() => {
