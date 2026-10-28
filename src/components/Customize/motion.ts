@@ -38,6 +38,20 @@ export const frameBg: Variants = {
 };
 
 /**
+ * The frame clips the peeking neighbour cards — but the centred card's panel shadow reaches ~50px past it, so a
+ * clip that stayed put masked that shadow on close and the real bar's full shadow popped in at the hand-off
+ * (Anastasiya). The clip opens as the editor closes (exit ease: it hardly moves while the neighbours fade out —
+ * CustomizeTrack) and starts open, tightening as it opens. The bottom reaches LIFT further: the card ends at rest.
+ */
+const CLIP_SHOWN = 'inset(0px 0px 0px 0px)';
+const CLIP_OPEN = `inset(-80px -80px ${-80 - LIFT}px -80px)`;
+export const frameClip: Variants = {
+  lifted: { clipPath: CLIP_OPEN },
+  shown: at(MORPH, { clipPath: CLIP_SHOWN }),
+  rest: { clipPath: CLIP_OPEN, transition: { duration: MORPH.duration, ease: easing.exit } },
+};
+
+/**
  * The track view: centred card = the full-size widget sitting where the bar is → its 0.8107 slot.
  * View centre (2 + 297, 69 + 77.8) → lifted bar centre (299, 210): dy 63.2 (+64 at rest), scale 600 / 486.43.
  */
@@ -89,10 +103,11 @@ const still = (v: Variants): Variants => {
   return { lifted: end, shown: end, rest: end };
 };
 const fade: Variants = { lifted: { opacity: 0 }, shown: at(MORPH, { opacity: 1 }), rest: at(MORPH, { opacity: 0 }) };
-const FULL_MOTION = { editor: undefined, frameBg, trackView, chrome, pickerClip, picker };
+const FULL_MOTION = { editor: undefined, frameBg, frameClip, trackView, chrome, pickerClip, picker };
 const REDUCED_MOTION = {
   editor: fade,
   frameBg: still(frameBg),
+  frameClip: still(frameClip),
   trackView: still(trackView),
   chrome: still(chrome),
   pickerClip: still(pickerClip),

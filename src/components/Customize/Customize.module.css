@@ -110,13 +110,11 @@
   box-shadow: var(--elevation-panel);
 }
 
-/* Clips the peeking cards to the frame (separate from the bg so its shadow isn't clipped).
-   Reaches 64px below the frame: closing ends with the card at the bar's resting spot, past the frame's bottom. */
+/* Clips the peeking cards to the frame (separate from the bg so its shadow isn't clipped). The clip itself is a
+   clip-path animated with the editor (Customize/motion.ts frameClip): tight while shown, open on the way in / out. */
 .frameClip {
   position: absolute;
-  inset: 0 0 -64px 0; /* LIFT */
-  overflow: hidden;
-  border-radius: var(--radius-lg);
+  inset: 0;
 }
 
 .closeSlot {

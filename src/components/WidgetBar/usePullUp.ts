@@ -22,6 +22,11 @@ const CLOSE_LET_OFF = 56; // finger px down from revealed where it gives and sna
 const HORIZONTAL_BIAS = 1.3;
 /** Screen px a touch must move before we decide whether it's ours (vertical) or the native swipe's. */
 const CLAIM_SLOP = 6;
+/**
+ * Most speed (design px/s) a snap inherits from the finger. A fast flick hands the spring 1500–2500 px/s and it
+ * overshoots 17–36px (the "bounces a lot" on iPad); capped, the overshoot stays ~3px however hard you flick.
+ */
+const MAX_SNAP_VELOCITY = 300;
 
 interface Options {
   /** The bar root — needed to stop Safari turning a vertical drag into a native scroll. */
@@ -92,12 +97,20 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
   useEffect(() => {
     if (g.current) return;
     if (jump) y.jump(revealed ? -LIFT : 0);
-    else animate(y, revealed ? -LIFT : 0, reducible(revealed ? springSnap : spring));
+    else springTo(revealed ? -LIFT : 0, revealed ? springSnap : spring);
   }, [revealed, y]); // `jump` is read when `revealed` flips
+
+  /** Snap / spring to `to`, carrying at most MAX_SNAP_VELOCITY of the finger's speed (toward the target only). */
+  const springTo = (to: number, t: typeof spring | typeof springSnap) => {
+    const v = y.getVelocity();
+    const toward = Math.sign(to - y.get());
+    const velocity = Math.sign(v) === toward ? toward * Math.min(Math.abs(v), MAX_SNAP_VELOCITY) : 0;
+    animate(y, to, reducible({ ...t, velocity }));
+  };
 
   const settle = (open: boolean, alreadyHeading: boolean) => {
     // A snap already started its spring toward the target — restarting it would kink the motion.
-    if (!alreadyHeading) animate(y, open ? -LIFT : 0, reducible(open ? springSnap : spring));
+    if (!alreadyHeading) springTo(open ? -LIFT : 0, open ? springSnap : spring);
     if (open !== revealed) (open ? onReveal : onHide)();
   };
 
@@ -141,14 +154,14 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
           const pull = Math.max(0, dy - AXIS_SLOP);
           if (pull >= LET_OFF) {
             s.snapped = true;
-            animate(y, -LIFT, reducible(springSnap));
+            springTo(-LIFT, springSnap);
             onReveal();
           } else y.set(Math.max(-LIFT, s.base - pull * HEAVY_GAIN));
         } else {
           const push = Math.max(0, -dy - AXIS_SLOP);
           if (push >= CLOSE_LET_OFF) {
             s.snapped = true;
-            animate(y, 0, reducible(springSnap));
+            springTo(0, springSnap);
             onHide();
           } else y.set(Math.min(0, s.base + push * HEAVY_GAIN));
         }

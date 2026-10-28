@@ -1,5 +1,5 @@
-import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from 'motion/react';
-import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
+import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion } from 'motion/react';
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import closeIcon from '../../assets/icons/close.svg';
 import { capture } from '../../lib/pointer';
 import { useStageScale } from '../../shell/Stage';
@@ -95,7 +95,11 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
   const x = useMotionValue(stripX(page));
   const drag = useRef<PagerGesture | null>(null);
   const reduced = !!useReducedMotion();
-  const { frameBg, trackView, chrome } = useEditorMotion();
+  const { frameBg, frameClip, trackView, chrome } = useEditorMotion();
+  // The neighbours peek only once the frame's clip has closed in, and fade out first thing on close (motion.ts frameClip).
+  const present = useIsPresent();
+  const [settled, setSettled] = useState(false);
+  const peek = present && settled;
 
   useEffect(() => {
     // A swipe owns the strip; a lifted card doesn't (edge paging moves the strip under it).
@@ -134,7 +138,11 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
     <div className={styles.editFrame}>
       {/* Card background grows out of the widget's outline (behind everything in the frame) */}
       <motion.div className={styles.frameBg} variants={frameBg} />
-      <div className={styles.frameClip}>
+      <motion.div
+        className={styles.frameClip}
+        variants={frameClip}
+        onAnimationComplete={(def) => def === 'shown' && setSettled(true)}
+      >
         <motion.div className={styles.closeSlot} variants={chrome}>
           <AnimatePresence initial={false}>
             {track.length > 1 && (
@@ -220,10 +228,10 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
                   data-track-widget={id}
                   data-active={id === active || undefined}
                   initial={{ opacity: 0, scale: 0.9, width: 0, marginRight: 0 }}
-                  animate={{ opacity: 1, scale: 1, width: CARD_W, marginRight: CARD_GAP, x: shift(i) }}
+                  animate={{ opacity: id === active || peek ? 1 : 0, scale: 1, width: CARD_W, marginRight: CARD_GAP, x: shift(i) }}
                   variants={{ out: exitCard(trackKey(id, gen), reduced) }}
                   exit="out"
-                  transition={reduced ? SLOT_MOTION_REDUCED : SLOT_MOTION}
+                  transition={{ ...(reduced ? SLOT_MOTION_REDUCED : SLOT_MOTION), ...(present ? {} : { opacity: transition.toggle }) }}
                 >
                   {/* The held card is lifted out (DragLayer draws it); its place stays until it's dropped */}
                   <motion.div
@@ -277,7 +285,7 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
             ))}
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </div>
   );
 }
