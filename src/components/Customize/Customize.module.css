@@ -61,7 +61,21 @@
 
 /* Drag source: the tile's icon lifts out (drag.ts) */
 .pickerApp {
+  position: relative;
   touch-action: none;
+}
+
+/* "On the track" marker: short bar under the name, in the tile's bottom padding (no layout change) */
+.onTrack {
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 24px;
+  height: 4px;
+  margin-left: -12px;
+  border-radius: var(--radius-full);
+  background: var(--color-status-info);
+  pointer-events: none;
 }
 
 .pickerDivider {

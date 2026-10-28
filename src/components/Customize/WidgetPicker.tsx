@@ -1,6 +1,9 @@
+import { AnimatePresence, motion } from 'motion/react';
 import { useRef, type RefObject } from 'react';
 import { capture } from '../../lib/pointer';
+import { useHud } from '../../state/store';
 import type { WidgetId } from '../../state/widgets';
+import { transition } from '../../tokens/motion';
 import { AppTile } from '../AppTile/AppTile';
 import { WIDGETS, WidgetIcon, type WidgetDef } from '../WidgetBar/registry';
 import { DRAG_SLOP, cancelDrag, centreOf, dropDrag, moveDrag, startDrag, toEditor, useDrag } from './drag';
@@ -12,11 +15,13 @@ const groups: WidgetDef[][] = [ALL.filter((w) => w.group === 'standard'), ALL.fi
 /**
  * Sketch "Add Apps Frame" (4802:103107 › 4802:104691): 599 wide card, "Drag Icons to Panel to Customize",
  * standard widgets · divider · other apps. Always lists every app, even ones already on the track (Q20).
+ * Apps already on the track have a short blue bar under their name (Anastasiya picked option D, 2026-10-28).
  * Drag a tile's icon onto the track (drag.ts). While it's out, its tile is empty (the sketch removes it; we keep
  * its place so the row doesn't jump and the icon has somewhere to float back to).
  */
 export function WidgetPicker({ editor }: { editor: RefObject<HTMLElement> }) {
   const out = useDrag((s) => (s.source?.kind === 'picker' ? s.source.id : null));
+  const onTrack = useHud((s) => s.widgetTrack);
   const press = useRef<{ id: number; x: number; y: number; app: WidgetId; dragging: boolean } | null>(null);
 
   const at = (e: React.PointerEvent) => toEditor(editor.current!, e.clientX, e.clientY);
@@ -72,6 +77,20 @@ export function WidgetPicker({ editor }: { editor: RefObject<HTMLElement> }) {
                 }}
               >
                 <AppTile icon={<WidgetIcon id={w.id} />} label={w.label} />
+                <AnimatePresence initial={false}>
+                  {onTrack.includes(w.id) && (
+                    <motion.span
+                      key="on"
+                      className={styles.onTrack}
+                      data-on-track
+                      aria-hidden
+                      initial={{ scaleX: 0, opacity: 0 }}
+                      animate={{ scaleX: 1, opacity: 1 }}
+                      exit={{ scaleX: 0, opacity: 0 }}
+                      transition={transition.toggle}
+                    />
+                  )}
+                </AnimatePresence>
               </div>
             ))}
           </div>

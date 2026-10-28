@@ -219,6 +219,7 @@ check('X removes the centred widget', param('widgets') === 'odometer,tire' && (a
 check('…saved for reload (Q24)', (await page.evaluate(() => localStorage.getItem('hud.widgetTrack'))) === 'odometer,tire');
 await page.getByRole('button', { name: /^Remove / }).click();
 await page.waitForTimeout(600);
+check('removed widget loses its on-track bar in the picker', (await page.locator('[data-picker-app="music"] [data-on-track]').count()) === 0);
 check('last widget has no X (never empty, Q18)', (await page.getByRole('button', { name: /^Remove / }).count()) === 0 && param('widgets') === 'tire', `widgets=${param('widgets')}`);
 await page.getByRole('button', { name: 'Done' }).click();
 await page.waitForTimeout(500);
@@ -278,6 +279,8 @@ await page.mouse.up();
 await page.waitForTimeout(800);
 check('drop inserts it there and pages to it', param('widgets') === 'music,camera,odometer,tire' && param('widget') === '1', page.url());
 check('…the icon is gone and the tile is back', (await ghostGone()) && (await page.locator('[data-picker-app="camera"]').isVisible()));
+await page.waitForTimeout(200);
+check('…its picker tile now shows the on-track bar', (await page.locator('[data-picker-app="camera"] [data-on-track]').count()) === 1 && (await page.locator('[data-picker-app="calendar"] [data-on-track]').count()) === 0);
 
 await open('customize=editing');
 await dragApp('energy', { x: 1200, y: 600 }); // over the map
