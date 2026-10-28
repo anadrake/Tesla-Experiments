@@ -21,7 +21,7 @@ function saveTrack(track: readonly string[]) {
 
 /**
  * Deep links: URL params mirror store state so any state can be opened directly
- * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widgets=music,energy,…&widget=<index>&nav=typing|navigating&overlay=apps&settings=<page>&keyboard=1 (Settings search typing)
+ * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widgets=music,energy,…&widget=<index>&customize=revealed|editing&nav=typing|navigating&overlay=apps&settings=<page>&keyboard=1 (Settings search typing)
  */
 export function initUrlSync() {
   const params = new URLSearchParams(location.search);
@@ -48,6 +48,9 @@ export function initUrlSync() {
   if (Number.isInteger(widget) && widget >= 0 && widget < useHud.getState().widgetTrack.length)
     useHud.setState({ widgetPage: widget });
 
+  const customize = params.get('customize');
+  if (customize === 'revealed' || customize === 'editing') useHud.setState({ customize });
+
   let savedTrack = useHud.getState().widgetTrack;
 
   const sync = (s: ReturnType<typeof useHud.getState>) => {
@@ -69,6 +72,8 @@ export function initUrlSync() {
     }
     if (s.widgetTrack.join() !== DEFAULT_TRACK.join()) p.set('widgets', s.widgetTrack.join(','));
     else p.delete('widgets');
+    if (s.customize !== 'off') p.set('customize', s.customize);
+    else p.delete('customize');
     if (s.widgetPage) p.set('widget', String(s.widgetPage));
     else p.delete('widget');
     history.replaceState(null, '', `${location.pathname}?${p}`);

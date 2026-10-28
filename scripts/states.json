@@ -170,6 +170,19 @@
     {
       "name": "widgets-placeholder-collapsed-dark",
       "query": "mode=dark&car=collapsed&widgets=calendar,music"
+    },
+    {
+      "name": "customize-revealed-light",
+      "query": "mode=light&customize=revealed",
+      "ref": "customize-revealed-light.png"
+    },
+    {
+      "name": "customize-revealed-dark",
+      "query": "mode=dark&customize=revealed"
+    },
+    {
+      "name": "customize-revealed-full-light",
+      "query": "mode=light&car=full&customize=revealed"
     }
   ]
 }

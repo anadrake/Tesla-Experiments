@@ -167,6 +167,9 @@
 :root {
   --elevation-panel: 5px -3px 30px 20px var(--color-shadow-panel-1), -2px -2px 20px 8px var(--color-shadow-panel-2),
     1px 1px 12px 2px var(--color-shadow-panel-3);
+  /* Panel shadow without spread — sketch Customize / Done buttons (4766:97815) */
+  --elevation-panel-tight: 5px -3px 30px 0 var(--color-shadow-panel-1), -2px -2px 20px 0 var(--color-shadow-panel-2),
+    1px 1px 12px 0 var(--color-shadow-panel-3);
   --elevation-map-shadow: 2px 4px 4px 0 var(--color-shadow-map);
   --elevation-map-blur: blur(20px);
   /* Key State=Pressed: 8% black over the key fill */

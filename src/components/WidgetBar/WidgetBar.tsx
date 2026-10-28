@@ -1,14 +1,16 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useTransform } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import spotify from '../../assets/media/spotify.svg';
 import spotifyChip from '../../assets/media/spotify-chip.svg';
 import album from '../../assets/media/album-vampire.png';
 import arrowUp from '../../assets/icons/arrow-up.svg';
-import { useHud } from '../../state/store';
+import { isDriving, useHud } from '../../state/store';
 import { presets, transition } from '../../tokens/motion';
 import { Icon } from '../Icon/Icon';
 import { InfoPages } from './pages';
 import { WidgetIcon, type WidgetId } from './registry';
+import { LIFT, usePullUp } from './usePullUp';
+import { useDismissOnOutsideTap } from './useDismissOnOutsideTap';
 import { TRACK } from './MusicWidget';
 import styles from './WidgetBar.module.css';
 
@@ -20,6 +22,8 @@ import styles from './WidgetBar.module.css';
  *   mini  (Parked, 116 rail):  Music 4666:74587 · Odometer 4666:74579 · Tire 4666:74583
  *   large (Driving, 220 rail): Music 4596:70708 · Odometer 4596:70712 · Tire 4596:70716
  * Collapsed (music): 382×64 pill — tap to expand. Size change = duration/base.
+ * Customize (Phase 8, Sketch 4802:103109): pull the bar up (usePullUp) → it lifts 64px and the Customize
+ * button rises from under it. Tap anywhere else or pull down → back. Panel / Full while parked only (Q22).
  */
 const DOTS_IDLE_MS = 1500;
 /** Widgets with a designed Chicklet; the rest show their app icon (placeholder). */
@@ -33,6 +37,24 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   const page = useHud((s) => s.widgetPage);
   const active = track[page] ?? track[0];
   const setPage = useHud((s) => s.setWidgetPage);
+  const customize = useHud((s) => s.customize);
+  const setCustomize = useHud((s) => s.setCustomize);
+  const canCustomize = useHud((s) => !chicklet && s.carView !== 'collapsed' && !isDriving(s));
+  const revealed = canCustomize && customize !== 'off';
+  const { y, handlers } = usePullUp({
+    enabled: canCustomize && customize !== 'editing',
+    revealed,
+    onReveal: () => setCustomize('revealed'),
+    onHide: () => setCustomize('off'),
+  });
+  const reveal = useTransform(y, [0, -LIFT], [0, 1]);
+  const buttonY = useTransform(y, [0, -LIFT], [LIFT / 4, 0]);
+  const root = useRef<HTMLDivElement>(null);
+  useDismissOnOutsideTap(root, revealed, () => setCustomize('off'));
+  // Leaving the Panel / Full view or starting to drive drops customization.
+  useEffect(() => {
+    if (!canCustomize && customize !== 'off') setCustomize('off');
+  }, [canCustomize, customize, setCustomize]);
   const [dotsVisible, setDotsVisible] = useState(false);
   const idle = useRef<ReturnType<typeof setTimeout>>();
 
@@ -47,7 +69,13 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   if (chicklet === 'large') {
     return (
       <div className={styles.chickletFrame}>
-        <motion.div key={active} className={styles.chickletLarge} data-widget={active} {...presets.popIn} transition={transition.open}>
+        <motion.div
+          key={active}
+          className={styles.chickletLarge}
+          data-widget={active}
+          {...presets.popIn}
+          transition={transition.open}
+        >
           {active === 'music' && (
             <>
               <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
@@ -108,41 +136,60 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   }
 
   return (
-    <div className={styles.bar}>
-      <AnimatePresence initial={false} mode="popLayout">
-        {collapsed ? (
-          <motion.button
-            key="pill"
-            type="button"
-            className={`${styles.pill} text-title-l`}
-            onClick={toggle}
-            aria-label="Expand music"
-            {...presets.popIn}
-            transition={transition.open}
-            whileTap={{ scale: 0.97 }}
-          >
-            <span className={styles.pillIcon}>
-              <Icon src={spotify} size={28.8} color="var(--color-icon-strong)" />
-            </span>
-            <span className={styles.pillTitle}>{TRACK.title}</span>
-            <Icon src={arrowUp} color="var(--color-icon-strong)" />
-          </motion.button>
-        ) : (
-          <motion.div key="window" className={styles.window} {...presets.popIn} transition={transition.open}>
-            <InfoPages initialPage={page} onScrollPage={onScrollPage} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div ref={root} className={styles.bar} {...handlers}>
+      <motion.div className={styles.lift} style={{ y }}>
+        <AnimatePresence initial={false} mode="popLayout">
+          {collapsed ? (
+            <motion.button
+              key="pill"
+              type="button"
+              className={`${styles.pill} text-title-l`}
+              onClick={toggle}
+              aria-label="Expand music"
+              {...presets.popIn}
+              transition={transition.open}
+              whileTap={{ scale: 0.97 }}
+            >
+              <span className={styles.pillIcon}>
+                <Icon src={spotify} size={28.8} color="var(--color-icon-strong)" />
+              </span>
+              <span className={styles.pillTitle}>{TRACK.title}</span>
+              <Icon src={arrowUp} color="var(--color-icon-strong)" />
+            </motion.button>
+          ) : (
+            <motion.div key="window" className={styles.window} {...presets.popIn} transition={transition.open}>
+              <InfoPages initialPage={page} onScrollPage={onScrollPage} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <motion.div
+          className={styles.dots}
+          aria-hidden
+          initial={false}
+          animate={{ opacity: dotsVisible && !collapsed ? 1 : 0 }}
+          transition={dotsVisible ? transition.toggle : transition.close}
+        >
+          {track.map((id, i) => (
+            <span key={id} className={styles.dot} data-selected={i === page || undefined} />
+          ))}
+        </motion.div>
+      </motion.div>
       <motion.div
-        className={styles.dots}
-        aria-hidden
-        initial={false}
-        animate={{ opacity: dotsVisible && !collapsed ? 1 : 0 }}
-        transition={dotsVisible ? transition.toggle : transition.close}
+        className={styles.customizeSlot}
+        style={{ opacity: reveal, y: buttonY }}
+        data-revealed={revealed || undefined}
       >
-        {track.map((id, i) => (
-          <span key={id} className={styles.dot} data-selected={i === page || undefined} />
-        ))}
+        <motion.button
+          type="button"
+          className={`${styles.customize} text-body-l`}
+          tabIndex={revealed ? 0 : -1}
+          aria-hidden={!revealed}
+          onClick={() => setCustomize('editing')}
+          whileTap={{ scale: 0.96 }}
+          transition={transition.press}
+        >
+          Customize
+        </motion.button>
       </motion.div>
     </div>
   );

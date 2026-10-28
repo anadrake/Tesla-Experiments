@@ -21,6 +21,8 @@ export const DEFAULT_DESTINATION = 'Tesla Headquarters';
 export const isDriving = (s: Pick<HudState, 'nav' | 'resumeTrip'>) =>
   s.nav === 'navigating' || (s.nav === 'typing' && s.resumeTrip);
 
+export type CustomizeState = 'off' | 'revealed' | 'editing';
+
 export type ClimateAction = 'frontDefrost' | 'rearDefrost' | 'leftSeat' | 'heatedSteering' | 'wipers';
 
 /** Settings nav tree pages (Figma Navtree 4258:39). 6a: search, controls. 6b: pedals, display, lights. */
@@ -59,6 +61,12 @@ export interface HudState {
   /** Widgets on the track, in order (Phase 8 customization). Never empty (Q18). Persisted (Q24). */
   widgetTrack: WidgetId[];
   setWidgetTrack: (track: WidgetId[]) => void;
+  /**
+   * Widget customization (Phase 8): off → revealed (pulled up, Customize button showing) → editing (picker + track edit).
+   * Only in the Panel / Full car view while parked (Q22).
+   */
+  customize: CustomizeState;
+  setCustomize: (c: CustomizeState) => void;
   /** Active widget = index into widgetTrack — remembered across sizes. */
   widgetPage: number;
   setWidgetPage: (page: number) => void;
@@ -137,6 +145,8 @@ export const useHud = create<HudState>()((set) => ({
   widgetTrack: DEFAULT_TRACK,
   setWidgetTrack: (widgetTrack) =>
     set((s) => (widgetTrack.length ? { widgetTrack, widgetPage: Math.min(s.widgetPage, widgetTrack.length - 1) } : {})),
+  customize: 'off',
+  setCustomize: (customize) => set({ customize }),
   widgetPage: 0,
   setWidgetPage: (widgetPage) => set({ widgetPage }),
 

@@ -7,6 +7,7 @@
  *   opening controls/overlays . duration.base  + easing.enter
  *   screen changes, panel morph duration.slow  + easing.standard
  *   Day/Night dissolve ........ duration.deliberate
+ *   snap into place ........... springSnap (widget pull-up let-off)
  */
 export const duration = {
   instant: 0.1,
@@ -23,6 +24,12 @@ export const easing = {
 } as const satisfies Record<string, [number, number, number, number]>;
 
 export const spring = { type: 'spring', mass: 1, stiffness: 300, damping: 30 } as const;
+
+/**
+ * Snappier spring with a little overshoot (ζ ≈ 0.6) for things that "click" into place:
+ * the widget bar's let-off snap, dragged icons settling. Not a Figma token (Figma has one spring) — logged in WORKLOG.
+ */
+export const springSnap = { type: 'spring', mass: 1, stiffness: 500, damping: 28 } as const;
 
 /** Ready-made transitions for motion components. */
 export const transition = {
