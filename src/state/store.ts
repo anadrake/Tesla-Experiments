@@ -173,7 +173,13 @@ export const useHud = create<HudState>()((set) => ({
 
   settingsOpen: false,
   settingsPage: 'controls',
-  toggleSettings: () => set((s) => ({ ...closeAll(s), settingsOpen: !s.settingsOpen })),
+  // Opening Settings from the Full car view drops back to Panel so the window has the map side (Anastasiya)
+  toggleSettings: () =>
+    set((s) => ({
+      ...closeAll(s),
+      settingsOpen: !s.settingsOpen,
+      ...(!s.settingsOpen && s.carView === 'full' ? { carView: 'panel' as const } : {}),
+    })),
   setSettingsPage: (settingsPage) => set({ settingsPage, settingsTyping: false }),
   settingsTyping: false,
   settingsQuery: '',
