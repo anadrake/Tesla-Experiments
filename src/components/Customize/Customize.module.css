@@ -10,6 +10,20 @@
 }
 
 /* ---- Picker card ("Add Apps Frame" 4802:104691: 18,307 · 599×324) ---- */
+/* Ends at the edit frame's top edge (height animated in motion.ts) */
+.pickerClip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pickerClip > * {
+  pointer-events: auto;
+}
+
 .pickerLayer {
   position: absolute;
   left: 18px;
@@ -75,10 +89,11 @@
   box-shadow: var(--elevation-panel);
 }
 
-/* Clips the peeking cards to the frame (separate from the bg so its shadow isn't clipped) */
+/* Clips the peeking cards to the frame (separate from the bg so its shadow isn't clipped).
+   Reaches 64px below the frame: closing ends with the card at the bar's resting spot, past the frame's bottom. */
 .frameClip {
   position: absolute;
-  inset: 0;
+  inset: 0 0 -64px 0; /* LIFT */
   overflow: hidden;
   border-radius: var(--radius-lg);
 }

@@ -4,7 +4,7 @@ import { useHud } from '../../state/store';
 import { transition } from '../../tokens/motion';
 import { useDismissOnOutsideTap } from '../WidgetBar/useDismissOnOutsideTap';
 import { CustomizeTrack } from './CustomizeTrack';
-import { chrome, picker } from './motion';
+import { chrome, picker, pickerClip } from './motion';
 import { WidgetPicker } from './WidgetPicker';
 import styles from './Customize.module.css';
 
@@ -22,18 +22,20 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
   return (
     <AnimatePresence>
       {editing && (
-        // Variants run the choreography in motion.ts; children inherit hidden / shown, and the exit waits for them.
+        // Variants run the choreography in motion.ts; children inherit lifted / shown / rest, and the exit waits for them.
         <motion.div
           key="editor"
           className={styles.editor}
           data-no-panel-gesture
-          initial="hidden"
+          initial="lifted"
           animate="shown"
-          exit="hidden"
+          exit="rest"
         >
-          {/* Picker first in the DOM = behind the edit frame, so it slides up out from behind it */}
-          <motion.div className={styles.pickerLayer} variants={picker}>
-            <WidgetPicker />
+          {/* Clipped at the edit frame's top edge, so the picker slides up out from behind the frame */}
+          <motion.div className={styles.pickerClip} variants={pickerClip}>
+            <motion.div className={styles.pickerLayer} variants={picker}>
+              <WidgetPicker />
+            </motion.div>
           </motion.div>
           <div className={styles.editLayer}>
             <CustomizeTrack />

@@ -190,7 +190,7 @@ await open();
 await enterEditing();
 check('Customize opens the editor', (await editorVisible()) && param('customize') === 'editing', page.url());
 await page.getByRole('button', { name: 'Done' }).click();
-await page.waitForTimeout(1200); // close choreography (0.6s) + the bar settling
+await page.waitForTimeout(1200); // close choreography (0.25s)
 check('Done closes it and the bar comes back', !(await editorVisible()) && param('customize') === null && Math.abs(await liftY()) < 1, `y=${await liftY()}`);
 
 await enterEditing();

@@ -30,12 +30,12 @@ interface Options {
   revealed: boolean;
   onReveal: () => void;
   onHide: () => void;
-  /** Wait this long (s) before settling after an outside state change — e.g. until Customize mode has closed. */
-  settleDelay?: number;
+  /** Jump (no spring) on the next outside state change — the bar is hidden, e.g. under the closing Customize editor. */
+  jump?: boolean;
 }
 
 /** Returns the bar's lift (0 = rest, -LIFT = revealed) and pointer handlers for the bar root. */
-export function usePullUp({ root, enabled, revealed, onReveal, onHide, settleDelay = 0 }: Options): {
+export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = false }: Options): {
   y: MotionValue<number>;
   handlers: Pick<React.DOMAttributes<HTMLElement>, 'onPointerDown' | 'onPointerMove' | 'onPointerUp' | 'onPointerCancel'>;
 } {
@@ -90,8 +90,10 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, settleDel
 
   // State changes from elsewhere (tap outside, deep link, Done) settle the bar.
   useEffect(() => {
-    if (!g.current) animate(y, revealed ? -LIFT : 0, { ...(revealed ? springSnap : spring), delay: settleDelay });
-  }, [revealed, y]); // settleDelay is read when `revealed` flips
+    if (g.current) return;
+    if (jump) y.jump(revealed ? -LIFT : 0);
+    else animate(y, revealed ? -LIFT : 0, revealed ? springSnap : spring);
+  }, [revealed, y]); // `jump` is read when `revealed` flips
 
   const settle = (open: boolean, alreadyHeading: boolean) => {
     // A snap already started its spring toward the target — restarting it would kink the motion.

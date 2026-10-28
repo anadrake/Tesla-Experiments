@@ -43,15 +43,15 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   const canCustomize = useHud((s) => !chicklet && s.carView !== 'collapsed' && !isDriving(s));
   const revealed = canCustomize && customize !== 'off';
   const root = useRef<HTMLDivElement>(null);
-  // Customize mode closing: the editor shrinks back into the bar's outline first (Customize/motion.ts),
-  // then the bar takes over at the lifted spot and settles down.
+  // Customize mode closing: the editor shrinks back into the bar's resting outline (Customize/motion.ts), so the
+  // hidden bar jumps straight to rest and takes over there — no drop, and the Customize button doesn't flash.
   const prevCustomize = useRef(customize);
   const closingEditor = prevCustomize.current === 'editing' && customize !== 'editing';
   useEffect(() => {
     prevCustomize.current = customize;
   }, [customize]);
   const { y, handlers } = usePullUp({
-    settleDelay: closingEditor ? EDITOR_CLOSE_S : 0,
+    jump: closingEditor,
     root,
     enabled: canCustomize && customize !== 'editing',
     revealed,
