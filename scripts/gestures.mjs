@@ -266,9 +266,8 @@ const dragApp = async (id, to, dwell = 500) => {
 await open('customize=editing');
 await page.mouse.move(...Object.values(await pickerIcon('camera')));
 await page.mouse.down();
-await page.mouse.move(GAP.right, GAP.y - 80, { steps: 12 });
-await page.mouse.move(GAP.right, GAP.y, { steps: 4 });
-await page.waitForTimeout(100);
+await page.mouse.move(GAP.right, GAP.y, { steps: 3 }); // straight in, then read the bar before the slot opens
+await page.waitForTimeout(60);
 const early = await page.locator('[data-drop-target]').getAttribute('data-drop-target').catch(() => null);
 await page.waitForTimeout(500);
 const late = await page.locator('[data-drop-target]').getAttribute('data-drop-target').catch(() => null);
@@ -329,7 +328,7 @@ await open('customize=editing');
   check('hold a track card 0.3s → it lifts', lifted);
   await page.mouse.move(610, 817, { steps: 10 });
   await page.waitForTimeout(900);
-  const stripMoved = await page.locator('[data-track-widget="odometer"]').boundingBox().then((b) => Math.abs(b.x + b.width / 2 - 315) < 30);
+  const stripMoved = await page.locator('[data-track-widget="odometer"]').boundingBox().then((b) => Math.abs(b.x + b.width / 2 - 315) < 60); // the lit gap next to it nudges it aside a little
   check('…dragging it to the track end pages the track', param('widget') === '1' && stripMoved, page.url());
   await page.mouse.move(GAP.right, GAP.y, { steps: 6 });
   await page.waitForTimeout(200);
@@ -337,6 +336,48 @@ await open('customize=editing');
   await page.waitForTimeout(900);
 }
 check('…dropped in a gap: reordered', param('widgets') === 'odometer,music,tire' && param('widget') === '1' && (await ghostGone()), page.url());
+
+await open('customize=editing&widget=2');
+{
+  // Move the last card to the front: hold at the left end until the track reaches the start — the front gap
+  // must light up there even though the finger is in the edge zone (nothing further to page to).
+  await page.mouse.move(315, 817);
+  await page.mouse.down();
+  await page.waitForTimeout(450);
+  await page.mouse.move(24, 817, { steps: 10 });
+  await page.waitForTimeout(1700);
+  const bar = await page.locator('[data-drop-target]').count();
+  await page.mouse.up();
+  await page.waitForTimeout(900);
+  check('reorder to the front: the first gap lights up at the start', bar === 1 && param('widgets') === 'tire,music,odometer' && (param('widget') ?? '0') === '0', page.url());
+}
+
+await open('customize=editing&widget=1');
+{
+  await page.mouse.move(315, 817);
+  await page.mouse.down();
+  await page.waitForTimeout(450);
+  // Both gaps in view are its own — nudging toward the left end pages quickly and the next gap lights up.
+  await page.mouse.move(80, 700, { steps: 8 }); // toward the left end, above the frame
+  await page.waitForTimeout(600);
+  const t = await page.locator('[data-drop-target]').count();
+  await page.mouse.up();
+  await page.waitForTimeout(900);
+  check('held card: a nudge toward an end pages fast and lights the next gap', t === 1 && param('widgets') === 'odometer,music,tire', `targets ${t} ${page.url()}`);
+}
+
+await open('customize=editing');
+{
+  const from = await pickerIcon('energy');
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(250, 610, { steps: 10 }); // ~200px from the left gap, above the frame
+  await page.waitForTimeout(120);
+  const t = await page.locator('[data-drop-target]').count();
+  await page.mouse.up();
+  await page.waitForTimeout(800);
+  check('picker app: the bar shows from further away (above the frame, ~200px off)', t === 1, `targets ${t}`);
+}
 
 await open('customize=editing');
 await drag({ x: 315, y: 817 }, -200, 0, 10); // quick swipe on a card is still paging, not a hold

@@ -21,17 +21,38 @@ export type GapTarget = { gap: number; mode: 'bar' | 'slot' };
 
 /** Interaction timings (not motion durations). */
 export const HOLD_MS = 300; // track card hold before it lifts (Q19)
-const SLOT_DWELL_MS = 350; // bar → slot after hovering the same gap this long
-const EDGE_DWELL_MS = 550; // hovering a track end this long pages the track
+const SLOT_DWELL_MS = 300; // bar → slot after hovering the same gap this long
+/**
+ * Holding toward a track end pages it (repeats): quickly while no gap is lit (a held card's own two gaps never
+ * are, so reordering always starts this way), slowly while one is — so it doesn't page past the gap you reached.
+ */
+const EDGE_DWELL_MS = { free: 350, targeted: 1000 };
 export const DRAG_SLOP = 8; // design px before a press becomes a drag
 
-/** A gap is "near" within this of its centre (the cards between gaps are not targets). */
-const GAP_REACH = 150;
-const GAP_KEEP = GAP_REACH + 24; // hysteresis: keep the current gap a little longer
-/** Vertical band (editor y) where the track takes drops: from just above the edit frame to its dots. */
-const BAND = { top: FRAME.top - 40, bottom: FRAME.top + 300 };
-/** Past the outer gaps, towards the frame's edges: page the track (the peeking neighbour). */
-const EDGE = { left: FRAME.left + 24, right: FRAME.left + FRAME.width - 24 };
+/**
+ * Gaps are targeted from the finger. A picker app finds the nearest gap within GAP_REACH (a small dead zone stays
+ * over the middle of the centred card, Q20); a held card takes the nearest gap it may move to anywhere in view —
+ * reordering should never feel fiddly (Anastasiya, 2026-10-28). Off-screen gaps need the track paged first.
+ */
+const GAP_REACH = { picker: 215, track: 330 };
+const GAP_KEEP = 24; // hysteresis: keep the current gap a little longer than a new one would take
+/**
+ * Where the track takes drops (editor coords): from well above the edit frame to under its dots, and a little
+ * past its sides (beyond that is the map — drops there float back).
+ */
+const BAND = {
+  top: FRAME.top - 110,
+  bottom: FRAME.top + FRAME.height + 50,
+  left: FRAME.left - 60,
+  right: FRAME.left + FRAME.width + 60,
+};
+/** Only gaps you can see (inside the frame) are targets. */
+const inView = (x: number) => x >= FRAME.left && x <= FRAME.left + FRAME.width;
+/**
+ * Toward the frame's ends the track pages (to reach gaps further along) — only if there's somewhere to go, and
+ * without blocking the gap under the finger: it stays lit, the page turns after EDGE_DWELL_MS.
+ */
+const EDGE = { left: FRAME.left + 90, right: FRAME.left + FRAME.width - 90 };
 
 /** Track cards lift a little when held (Q19), then shrink while dragged so the gaps stay visible. */
 export const GHOST_SCALE = { lifted: 1.04, dragging: 0.6 };
@@ -79,6 +100,7 @@ let chasing = false; // catching back up with the finger after leaving the slot
 let slotTimer: ReturnType<typeof setTimeout> | undefined;
 let edgeTimer: ReturnType<typeof setTimeout> | undefined;
 let edgeDir = 0;
+let edgeLit = false; // a gap was lit when the edge timer started
 
 const clearTimers = () => {
   clearTimeout(slotTimer);
@@ -107,15 +129,8 @@ export function shrinkGhost() {
   animate(ghost.scale, GHOST_SCALE.dragging, springSnap);
 }
 
-/**
- * The ghost scales around the grab point, so the finger stays on the same spot of the card: its box sits at
- * finger − grab, and what you see is centred at finger − grab × scale (used for hit tests).
- */
+/** The ghost scales around the grab point, so the finger stays on the same spot of the card: its box sits at finger − grab. */
 const boxFor = (p: { x: number; y: number }) => ({ x: p.x - ghost.grab.x, y: p.y - ghost.grab.y });
-const centreFor = (p: { x: number; y: number }) => {
-  const s = ghost.scale.get();
-  return { x: p.x - ghost.grab.x * s, y: p.y - ghost.grab.y * s };
-};
 
 function follow(p: { x: number; y: number }) {
   if (pinned) return;
@@ -134,13 +149,13 @@ const gapX = (g: number, page: number) => STRIP_ORIGIN.x + stripX(page) + gapInS
 
 function nearestGap(x: number, keep: number | undefined, source: DragSource) {
   const { widgetTrack, widgetPage } = useHud.getState();
-  if (keep !== undefined && Math.abs(x - gapX(keep, widgetPage)) < GAP_KEEP) return keep;
   let best: number | undefined;
-  let bestD = GAP_REACH;
+  let bestD = GAP_REACH[source.kind];
   for (let g = 0; g <= widgetTrack.length; g++) {
     // Reordering: the gaps either side of the card's own slot wouldn't change anything — not targets.
     if (source.kind === 'track' && (g === source.index || g === source.index + 1)) continue;
-    const d = Math.abs(x - gapX(g, widgetPage));
+    if (!inView(gapX(g, widgetPage))) continue;
+    const d = Math.abs(x - gapX(g, widgetPage)) - (g === keep ? GAP_KEEP : 0);
     if (d < bestD) [best, bestD] = [g, d];
   }
   return best;
@@ -158,35 +173,49 @@ function unpin() {
   chasing = true;
 }
 
+/** Last finger position (re-targets after the track pages under a still finger). */
+let last: { x: number; y: number } | null = null;
+/** Where the current target gap is on screen (it moves when the track pages). */
+let targetX = 0;
+
 export function moveDrag(pointer: { x: number; y: number }) {
   const { source, phase, target } = useDrag.getState();
   if (!source || phase !== 'drag') return;
-  const c = centreFor(pointer);
-  const inBand = c.y > BAND.top && c.y < BAND.bottom;
-  const dir = !inBand ? 0 : c.x < EDGE.left ? -1 : c.x > EDGE.right ? 1 : 0;
+  last = pointer;
+  const inBand = pointer.y > BAND.top && pointer.y < BAND.bottom && pointer.x > BAND.left && pointer.x < BAND.right;
+  const { widgetPage, widgetTrack } = useHud.getState();
+  const want = !inBand ? 0 : pointer.x < EDGE.left ? -1 : pointer.x > EDGE.right ? 1 : 0;
+  const next = widgetPage + want;
+  const dir = want && next >= 0 && next < widgetTrack.length ? want : 0; // nowhere to page → no edge zone
 
-  if (dir !== edgeDir) {
+  const gap = inBand ? nearestGap(pointer.x, target?.gap, source) : undefined;
+
+  const lit = gap !== undefined;
+  if (dir !== edgeDir || (dir && lit !== edgeLit)) {
     clearTimeout(edgeTimer);
     edgeDir = dir;
+    edgeLit = lit;
     if (dir) {
-      const page = () => {
+      const turn = () => {
         const { widgetPage, widgetTrack, setWidgetPage } = useHud.getState();
-        const next = Math.max(0, Math.min(widgetTrack.length - 1, widgetPage + edgeDir));
-        if (next !== widgetPage) setWidgetPage(next);
-        edgeTimer = setTimeout(page, EDGE_DWELL_MS);
+        const to = widgetPage + edgeDir;
+        if (to < 0 || to >= widgetTrack.length) return;
+        setWidgetPage(to);
+        // The gaps moved under a still finger: re-target (and keep paging while it stays at the edge).
+        edgeDir = 0;
+        if (last) moveDrag(last);
       };
-      edgeTimer = setTimeout(page, EDGE_DWELL_MS);
+      edgeTimer = setTimeout(turn, lit ? EDGE_DWELL_MS.targeted : EDGE_DWELL_MS.free);
     }
   }
-
-  const gap = inBand && !dir ? nearestGap(c.x, target?.gap, source) : undefined;
   if (gap === undefined) {
     clearTimeout(slotTimer);
     setTarget(null);
     unpin();
-  } else if (gap !== target?.gap) {
+  } else if (gap !== target?.gap || gapX(gap, widgetPage) !== targetX) {
     clearTimeout(slotTimer);
     unpin();
+    targetX = gapX(gap, widgetPage);
     setTarget({ gap, mode: 'bar' });
     slotTimer = setTimeout(() => {
       setTarget({ gap, mode: 'slot' });
@@ -194,8 +223,7 @@ export function moveDrag(pointer: { x: number; y: number }) {
       if (useDrag.getState().source?.kind === 'picker') {
         pinned = true;
         chasing = false;
-        const { widgetPage } = useHud.getState();
-        animate(ghost.x, gapX(gap, widgetPage), springSnap);
+        animate(ghost.x, targetX, springSnap);
         animate(ghost.y, STRIP_ORIGIN.y + CARD_H / 2, springSnap);
       }
     }, SLOT_DWELL_MS);
