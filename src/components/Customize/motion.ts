@@ -22,10 +22,19 @@ const FRAME = { left: 0, top: 0, width: 598, height: 322 };
 
 const at = (transition: object, values: object) => ({ ...values, transition });
 
+/**
+ * The frame also fades in / out: at the widget's outline its panel shadow would sit right behind the card's own
+ * and double it (a dark flash at the hand-off — Anastasiya). On close it's gone by the time it's nearly that small
+ * (the shrink is front-loaded too).
+ */
 export const frameBg: Variants = {
-  lifted: { ...BAR, top: BAR.top - LIFT },
-  shown: at(MORPH, FRAME),
-  rest: at(MORPH, BAR),
+  lifted: { ...BAR, top: BAR.top - LIFT, opacity: 0 },
+  shown: at(MORPH, { ...FRAME, opacity: 1 }),
+  rest: {
+    ...BAR,
+    opacity: 0,
+    transition: { ...MORPH, opacity: { duration: duration.fast, ease: easing.standard } },
+  },
 };
 
 /**

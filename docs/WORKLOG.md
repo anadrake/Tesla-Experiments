@@ -78,6 +78,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-28 — Drop shadow behind the track card flashed much darker for a moment on the close animation → cause: the edit frame shrinks into the widget's outline, so its panel shadow stacked on the card's own. Frame now fades in on open (with the morph) and out on close (`duration.fast`, standard ease — gone before it reaches the outline).
 - 2026-10-28 — Moving existing apps to the front didn't always show the blue line / work; in general the line is "too hard" to get — should show sooner and from further away, for picker apps and even more so for reordering.
 - 2026-10-28 — Picked option D for "already on the track": a bar under the app name in the picker.
 - 2026-10-28 — Placing an app that's already elsewhere on the track jumped it across the track (disorienting). Unless it's next to itself, a move should look exactly like adding a new app (expands into the gap); it just disappears from its old spot unseen. Also asked for a few design options (not built) for marking which picker apps are already on the track — dot / check badge / position number / underline bar / backplate shown in chat for review.
