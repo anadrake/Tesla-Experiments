@@ -1,4 +1,4 @@
-import type { Variants } from 'motion/react';
+import { useReducedMotion, type TargetAndTransition, type Variants } from 'motion/react';
 import { duration, easing } from '../../tokens/motion';
 
 /**
@@ -78,3 +78,25 @@ export const picker: Variants = {
     transition: { ...MORPH, opacity: { duration: MORPH.duration, ease: easing.exit } },
   },
 };
+
+/**
+ * Reduce Motion: nothing grows, shrinks or slides — the editor fades in and out as it is (a same-length fade, so the
+ * bar's hand-off at EDITOR_CLOSE_S still lines up). MotionConfig alone would jump the transforms but still animate
+ * the frame's box and the picker's clip, wiping the picker in from the top.
+ */
+const still = (v: Variants): Variants => {
+  const { transition: _, ...end } = v.shown as TargetAndTransition;
+  return { lifted: end, shown: end, rest: end };
+};
+const fade: Variants = { lifted: { opacity: 0 }, shown: at(MORPH, { opacity: 1 }), rest: at(MORPH, { opacity: 0 }) };
+const FULL_MOTION = { editor: undefined, frameBg, trackView, chrome, pickerClip, picker };
+const REDUCED_MOTION = {
+  editor: fade,
+  frameBg: still(frameBg),
+  trackView: still(trackView),
+  chrome: still(chrome),
+  pickerClip: still(pickerClip),
+  picker: still(picker),
+};
+/** The editor's variants, following Reduce Motion. */
+export const useEditorMotion = () => (useReducedMotion() ? REDUCED_MOTION : FULL_MOTION);

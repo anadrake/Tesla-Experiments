@@ -2,7 +2,7 @@ import { animate, motionValue } from 'motion/react';
 import { create } from 'zustand';
 import { useHud } from '../../state/store';
 import type { WidgetId } from '../../state/widgets';
-import { springSnap, transition } from '../../tokens/motion';
+import { prefersReducedMotion, reducible, springSnap, transition } from '../../tokens/motion';
 import { CARD_H, CARD_W, CENTRE_CARD, FRAME, STRIP_ORIGIN, gapInStrip, stripX } from './geometry';
 
 /**
@@ -117,7 +117,7 @@ export function startDrag(source: DragSource, centre: { x: number; y: number }, 
   ghost.grab = { x: pointer.x - centre.x, y: pointer.y - centre.y };
   if (source.kind === 'track') {
     ghost.scale.jump(1);
-    animate(ghost.scale, GHOST_SCALE.lifted, springSnap);
+    animate(ghost.scale, GHOST_SCALE.lifted, reducible(springSnap));
   } else ghost.scale.jump(1);
   pinned = chasing = false;
   clearTimers();
@@ -126,7 +126,7 @@ export function startDrag(source: DragSource, centre: { x: number; y: number }, 
 
 /** The track card is being dragged now (not just held): shrink it around the finger. */
 export function shrinkGhost() {
-  animate(ghost.scale, GHOST_SCALE.dragging, springSnap);
+  animate(ghost.scale, GHOST_SCALE.dragging, reducible(springSnap));
 }
 
 /** The ghost scales around the grab point, so the finger stays on the same spot of the card: its box sits at finger − grab. */
@@ -136,8 +136,8 @@ function follow(p: { x: number; y: number }) {
   if (pinned) return;
   const c = boxFor(p);
   if (chasing) {
-    animate(ghost.x, c.x, springSnap);
-    animate(ghost.y, c.y, { ...springSnap, onComplete: () => (chasing = false) });
+    animate(ghost.x, c.x, reducible(springSnap));
+    animate(ghost.y, c.y, { ...reducible(springSnap), onComplete: () => (chasing = false) });
   } else {
     ghost.x.set(c.x);
     ghost.y.set(c.y);
@@ -223,8 +223,8 @@ export function moveDrag(pointer: { x: number; y: number }) {
       if (useDrag.getState().source?.kind === 'picker') {
         pinned = true;
         chasing = false;
-        animate(ghost.x, targetX, springSnap);
-        animate(ghost.y, STRIP_ORIGIN.y + CARD_H / 2, springSnap);
+        animate(ghost.x, targetX, reducible(springSnap));
+        animate(ghost.y, STRIP_ORIGIN.y + CARD_H / 2, reducible(springSnap));
       }
     }, SLOT_DWELL_MS);
   }
@@ -236,6 +236,17 @@ function settle(to: { x: number; y: number }, opts: { scale?: number; fade?: boo
   pinned = chasing = false;
   useDrag.setState({ phase: 'settling', target: null });
   const done = () => useDrag.setState({ source: null, phase: 'drag' });
+  // Reduce Motion: nothing travels — a picker icon fades out where it was dropped, anything else cuts home.
+  if (prefersReducedMotion()) {
+    if (opts.fade) animate(ghost.opacity, 0, { ...transition.toggle, onComplete: done });
+    else {
+      ghost.x.jump(to.x);
+      ghost.y.jump(to.y);
+      if (opts.scale !== undefined) ghost.scale.jump(opts.scale);
+      done();
+    }
+    return;
+  }
   const t = opts.fade ? transition.screen : springSnap;
   animate(ghost.x, to.x, t);
   if (opts.scale !== undefined) animate(ghost.scale, opts.scale, t);

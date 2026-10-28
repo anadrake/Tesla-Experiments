@@ -14,7 +14,8 @@ A tap-driven, web-based prototype of an in-car center display, built from my Fig
 | Tap the clock | Toggle Light / Dark |
 | Tap **P/R/N/D** in the car panel | Start a trip (Driving) / end it (Parked) |
 | Drag the car panel handle right / left | Expand to Full car view / collapse to the chicklet |
-| Swipe the widget bar | Music → Odometer → Tire pressure |
+| Swipe the widget bar | Page through your widgets (Music → Odometer → Tire pressure by default) |
+| Pull the widget bar up, tap **Customize** (Parked) | Edit the widgets: drag apps from the top in, hold a widget to move it, **X** removes it, **Done** saves |
 | Tap **Navigate** | Keyboard; type and tap **Enter** to start navigating |
 | Tap the car icon in the dock | Settings (Controls, Pedals & Steering, Display, Lights, Search) |
 | Tap the Settings search field | Keyboard over the bottom of the screen |
@@ -28,6 +29,7 @@ npm install
 npm run dev        # open the Network URL on your iPad (same Wi-Fi)
 npm run build      # typecheck + production build
 npm run shots      # screenshot every state in scripts/states.json → shots/ (dev server must be running)
+npm run gestures   # drive the widget pull-up / Customize / drag & drop gestures and check the result (dev server)
 ```
 
 ### Deploy
@@ -36,7 +38,7 @@ Every push to `main` builds and deploys to GitHub Pages (`.github/workflows/depl
 ### Deep links
 Any state opens from URL params, which the reviewer and `npm run shots` rely on:
 
-`?mode=light|dark` · `car=full|collapsed` · `music=collapsed|paused` · `widget=0|1|2` · `nav=typing|navigating` · `overlay=apps` · `settings=<page>` · `keyboard=1` (with `settings=search`)
+`?mode=light|dark` · `car=full|collapsed` · `music=collapsed|paused` · `widgets=music,odometer,…` (the track) · `widget=<index>` · `customize=revealed|editing` · `nav=typing|navigating` · `overlay=apps` · `settings=<page>` · `keyboard=1` (with `settings=search`)
 
 e.g. `?mode=dark&nav=navigating&car=collapsed`
 
@@ -56,6 +58,8 @@ Start every session by pointing the agent at [CLAUDE.md](CLAUDE.md); it reads th
 4. Ask for the `hud-reviewer` agent to check it.
 
 **Add a settings page**: follow the recipe in [docs/COMPONENTS.md](docs/COMPONENTS.md) › *Add a settings page*. Short version: build `src/overlays/Settings/pages/<Name>Page.tsx` from `components/settings` controls, store values with `useSetting(key, default)`, register it in `PAGES` in `SettingsWindow.tsx`. Pages that aren't built show *Coming soon*.
+
+**Give a widget app its real widget**: in `src/components/WidgetBar/registry.tsx`, set `Widget` on its entry (and `mini` if its rail chicklet isn't 92×92). Picker, track, Customize and the placeholder all follow from the registry. Apps without one show "<App> Widget Coming Soon" and their icon as the chicklet.
 
 **Add an icon**: find its node in [docs/ICONS.md](docs/ICONS.md), export the SVG and strip the page background layers (see COMPONENTS.md › Asset notes). Single-colour icons render with `Icon` and a token colour.
 

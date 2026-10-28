@@ -7,7 +7,7 @@ import { useDismissOnOutsideTap } from '../WidgetBar/useDismissOnOutsideTap';
 import { CustomizeTrack } from './CustomizeTrack';
 import { DragLayer } from './DragLayer';
 import { resetDrag } from './drag';
-import { chrome, picker, pickerClip } from './motion';
+import { useEditorMotion } from './motion';
 import { WidgetPicker } from './WidgetPicker';
 import styles from './Customize.module.css';
 
@@ -30,6 +30,7 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
   const close = () => setCustomize('off');
   const full = view === 'full';
   const editor = useRef<HTMLDivElement>(null);
+  const { editor: editorFade, chrome, picker, pickerClip } = useEditorMotion();
   useEffect(() => {
     if (!editing) resetDrag();
   }, [editing]);
@@ -48,6 +49,7 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
           ref={editor}
           className={styles.editor}
           data-no-panel-gesture
+          variants={editorFade}
           initial="lifted"
           animate="shown"
           exit="rest"

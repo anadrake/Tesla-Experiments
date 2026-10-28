@@ -55,3 +55,12 @@ export const presets = {
   /** Not a Figma style: the "already on the track" blink (Customize, Phase 8 — logged in WORKLOG). */
   flash: { opacity: [1, 0.35, 1, 0.35, 1, 0.35, 1] as number[] },
 } as const;
+
+/**
+ * Reduce Motion (iPad Settings › Accessibility). Motion components follow it via <MotionConfig reducedMotion="user">
+ * (transforms jump), but imperative `animate()` calls don't — pass their transition through `reducible`, so
+ * springs and slides become cuts (anything the finger drags still follows the finger).
+ */
+export const prefersReducedMotion = () =>
+  typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const reducible = <T extends object>(t: T): T | typeof transition.cut => (prefersReducedMotion() ? transition.cut : t);

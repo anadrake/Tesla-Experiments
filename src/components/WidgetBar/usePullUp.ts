@@ -2,7 +2,7 @@ import { animate, useMotionValue, type MotionValue } from 'motion/react';
 import { useEffect, useRef, type RefObject } from 'react';
 import { capture } from '../../lib/pointer';
 import { useStageScale } from '../../shell/Stage';
-import { spring, springSnap } from '../../tokens/motion';
+import { reducible, spring, springSnap } from '../../tokens/motion';
 
 /**
  * Pull-up gesture on the widget bar → reveals the Customize button (Figma Sketch 4802:103109).
@@ -92,12 +92,12 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
   useEffect(() => {
     if (g.current) return;
     if (jump) y.jump(revealed ? -LIFT : 0);
-    else animate(y, revealed ? -LIFT : 0, revealed ? springSnap : spring);
+    else animate(y, revealed ? -LIFT : 0, reducible(revealed ? springSnap : spring));
   }, [revealed, y]); // `jump` is read when `revealed` flips
 
   const settle = (open: boolean, alreadyHeading: boolean) => {
     // A snap already started its spring toward the target — restarting it would kink the motion.
-    if (!alreadyHeading) animate(y, open ? -LIFT : 0, open ? springSnap : spring);
+    if (!alreadyHeading) animate(y, open ? -LIFT : 0, reducible(open ? springSnap : spring));
     if (open !== revealed) (open ? onReveal : onHide)();
   };
 
@@ -141,14 +141,14 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
           const pull = Math.max(0, dy - AXIS_SLOP);
           if (pull >= LET_OFF) {
             s.snapped = true;
-            animate(y, -LIFT, springSnap);
+            animate(y, -LIFT, reducible(springSnap));
             onReveal();
           } else y.set(Math.max(-LIFT, s.base - pull * HEAVY_GAIN));
         } else {
           const push = Math.max(0, -dy - AXIS_SLOP);
           if (push >= CLOSE_LET_OFF) {
             s.snapped = true;
-            animate(y, 0, springSnap);
+            animate(y, 0, reducible(springSnap));
             onHide();
           } else y.set(Math.min(0, s.base + push * HEAVY_GAIN));
         }

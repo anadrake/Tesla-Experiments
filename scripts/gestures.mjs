@@ -398,6 +398,44 @@ await open('customize=editing');
 await page.mouse.click(...Object.values(await pickerIcon('camera')));
 check('picker tile press state clears after a tap', (await page.locator('[data-picker-app="camera"] button[data-pressed]').count()) === 0);
 
+// 8.4 Driving: customizing is Parked only (Q22) — a deep link that asks for both drops Customize.
+await open('customize=editing&nav=navigating');
+check('driving: no Customize editor', !(await editorVisible()) && param('customize') === null, page.url());
+
+// 8.4 Reduce Motion: the editor fades in place — the frame doesn't grow and the picker isn't wiped in.
+await page.emulateMedia({ reducedMotion: 'reduce' });
+await open('customize=revealed');
+{
+  const sizes = page.evaluate(
+    () =>
+      new Promise((res) => {
+        const out = [];
+        const t0 = performance.now();
+        const f = () => {
+          const bg = document.querySelector('[class*="frameBg"]');
+          const clip = document.querySelector('[class*="pickerClip"]');
+          if (bg) out.push(`${Math.round(bg.getBoundingClientRect().height)}/${Math.round(clip.getBoundingClientRect().height)}`);
+          if (performance.now() - t0 < 500) requestAnimationFrame(f);
+          else res([...new Set(out)]);
+        };
+        f();
+      }),
+  );
+  await page.getByRole('button', { name: 'Customize' }).click();
+  const seen = await sizes;
+  check('reduce motion: editor opens without growing (frame / picker clip fixed)', seen.length === 1 && seen[0] === '322/670', seen.join(' '));
+  const tile = await pickerIcon('camera');
+  await page.mouse.move(tile.x, tile.y);
+  await page.mouse.down();
+  await page.mouse.move(tile.x + 20, tile.y + 20, { steps: 3 });
+  await page.mouse.move(565, 817, { steps: 12 }); // the gap right of the centred card
+  await page.waitForTimeout(450);
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+  check('reduce motion: drop still inserts, icon gone', param('widgets') === 'music,camera,odometer,tire' && (await ghostGone()), page.url());
+}
+await page.emulateMedia({ reducedMotion: 'no-preference' });
+
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();
 process.exitCode = failed ? 1 : 0;

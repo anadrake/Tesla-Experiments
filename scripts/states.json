@@ -172,6 +172,14 @@
       "query": "mode=dark&car=collapsed&widgets=calendar,music"
     },
     {
+      "name": "widgets-placeholder-driving-light",
+      "query": "mode=light&nav=navigating&car=collapsed&widgets=camera,music"
+    },
+    {
+      "name": "widgets-placeholder-driving-dark",
+      "query": "mode=dark&nav=navigating&car=collapsed&widgets=quickActions,music"
+    },
+    {
       "name": "customize-revealed-light",
       "query": "mode=light&customize=revealed",
       "ref": "customize-revealed-light.png"

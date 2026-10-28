@@ -1,11 +1,11 @@
-import { AnimatePresence, animate, motion, useMotionValue } from 'motion/react';
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from 'motion/react';
 import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
 import closeIcon from '../../assets/icons/close.svg';
 import { capture } from '../../lib/pointer';
 import { useStageScale } from '../../shell/Stage';
 import { useHud } from '../../state/store';
 import type { WidgetId } from '../../state/widgets';
-import { presets, spring, transition } from '../../tokens/motion';
+import { duration, presets, reducible, spring, transition } from '../../tokens/motion';
 import { Icon } from '../Icon/Icon';
 import { Pressable } from '../Pressable/Pressable';
 import { PlaceholderWidget, TrackWidget, WIDGETS } from '../WidgetBar/registry';
@@ -24,7 +24,7 @@ import {
   useDrag,
 } from './drag';
 import { BAR, CARD_GAP, CARD_W, GAP_OPEN, PITCH, SLOT, VIEW, gapInStrip, stripX } from './geometry';
-import { chrome, frameBg, trackView } from './motion';
+import { useEditorMotion } from './motion';
 import styles from './Customize.module.css';
 
 /**
@@ -48,11 +48,19 @@ interface PagerGesture {
   lifted?: boolean;
 }
 
+/** Reduce Motion: cards fade in / out but don't grow, shrink or slide; a removed card closes up once it has faded. */
+const AFTER_FADE = { ...transition.cut, delay: duration.fast };
+const SLOT_MOTION = { ...transition.screen, x: spring };
+const SLOT_MOTION_REDUCED = { ...transition.toggle, width: transition.cut, marginRight: transition.cut, x: transition.cut };
+
 /** Removed (X) → collapses; moved elsewhere (`gone` = its key) → gone at once, the new card expands instead. */
-const exitCard = (key: string) => (gone: string | undefined) =>
+const exitCard = (key: string, reduced: boolean) => (gone: string | undefined) =>
   gone === key
     ? { opacity: 0, width: 0, marginRight: 0, transition: transition.cut }
-    : { opacity: 0, scale: 0.9, width: 0, marginRight: 0 };
+    : reduced
+      ? { opacity: 0, width: 0, marginRight: 0, transition: { ...transition.toggle, width: AFTER_FADE, marginRight: AFTER_FADE } }
+      : { opacity: 0, scale: 0.9, width: 0, marginRight: 0 };
+
 
 /** A track card's face: the widget at 0.81 (placeholders full size, as in sketch 4802:107503). */
 export function TrackCard({ id }: { id: WidgetId }) {
@@ -86,10 +94,12 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
   const scale = useStageScale();
   const x = useMotionValue(stripX(page));
   const drag = useRef<PagerGesture | null>(null);
+  const reduced = !!useReducedMotion();
+  const { frameBg, trackView, chrome } = useEditorMotion();
 
   useEffect(() => {
     // A swipe owns the strip; a lifted card doesn't (edge paging moves the strip under it).
-    if (!drag.current || drag.current.lifted) animate(x, stripX(page), spring);
+    if (!drag.current || drag.current.lifted) animate(x, stripX(page), reducible(spring));
   }, [page, track.length, x]);
 
   // A moved app's old card vanishes in this same frame; if it was left of the centred card, everything after it
@@ -98,7 +108,7 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
   useLayoutEffect(() => {
     if (!moved) return;
     if (moved.before) x.jump(x.get() + PITCH);
-    animate(x, stripX(useHud.getState().widgetPage), spring);
+    animate(x, stripX(useHud.getState().widgetPage), reducible(spring));
   }, [moved, x]);
 
   const active = track[page] ?? track[0];
@@ -117,7 +127,7 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
     const target = dx < -SWIPE_PAGE ? page + 1 : dx > SWIPE_PAGE ? page - 1 : page;
     const clamped = Math.max(0, Math.min(track.length - 1, target));
     if (clamped !== page) setPage(clamped);
-    else animate(x, stripX(page), spring);
+    else animate(x, stripX(page), reducible(spring));
   };
 
   return (
@@ -155,7 +165,7 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
               d.hold = setTimeout(() => {
                 if (drag.current !== d || d.moved || !editor.current || useDrag.getState().source) return;
                 d.lifted = true;
-                animate(x, stripX(page), spring); // undo any rubber band from the hold
+                animate(x, stripX(page), reducible(spring)); // undo any rubber band from the hold
                 startDrag({ kind: 'track', id, index: track.indexOf(id) }, centreOf(editor.current, card), p);
               }, HOLD_MS);
             }
@@ -198,7 +208,7 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
             drag.current = null;
             clearTimeout(d.hold);
             if (d.lifted) cancelDrag();
-            else animate(x, stripX(page), spring);
+            else animate(x, stripX(page), reducible(spring));
           }}
         >
           <motion.div className={styles.strip} style={{ x }}>
@@ -211,9 +221,9 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
                   data-active={id === active || undefined}
                   initial={{ opacity: 0, scale: 0.9, width: 0, marginRight: 0 }}
                   animate={{ opacity: 1, scale: 1, width: CARD_W, marginRight: CARD_GAP, x: shift(i) }}
-                  variants={{ out: exitCard(trackKey(id, gen)) }}
+                  variants={{ out: exitCard(trackKey(id, gen), reduced) }}
                   exit="out"
-                  transition={{ ...transition.screen, x: spring }}
+                  transition={reduced ? SLOT_MOTION_REDUCED : SLOT_MOTION}
                 >
                   {/* The held card is lifted out (DragLayer draws it); its place stays until it's dropped */}
                   <motion.div
@@ -242,7 +252,7 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
                       : { opacity: 1, ...BAR, x: -BAR.width / 2, y: (VIEW.height - BAR.height) / 2 }),
                   }}
                   exit={{ opacity: 0 }}
-                  transition={{ ...spring, opacity: transition.toggle }}
+                  transition={{ ...(reduced ? transition.cut : spring), opacity: transition.toggle }}
                 />
               )}
             </AnimatePresence>
