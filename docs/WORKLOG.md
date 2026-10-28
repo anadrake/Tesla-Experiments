@@ -75,6 +75,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-28 — Picker still looked like it popped as it went behind the edit frame on close → it now also fades out on close (opacity over the same 0.25s with the exit ease, so most of the fade is at the end). Open unchanged (solid).
 - 2026-10-28 — Choreography v2 looks good. Customize in Full shouldn't collapse to Panel. Edit frame bg updated in Figma: lower opacity + background blur — support Light and Dark.
 - 2026-10-27 — Customize open/close was a bit slow and too phased: should all happen at once, smoothly, both ways. A few odd pop-outs on close (found: card cut off at the frame bottom then the bar snapping in whole; Customize button flashing as the bar dropped; picker vanishing below the shrunken frame).
 - 2026-10-27 — Picker card animations: on open the widgets shrink down as the background card grows from behind and appears; the card with the icons slides up from behind everything; close = reverse of open. Also: still an occasional drag bounce on the main widget bar.

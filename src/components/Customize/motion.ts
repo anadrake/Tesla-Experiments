@@ -59,8 +59,13 @@ export const pickerClip: Variants = {
   shown: at(MORPH, { height: FRAME_TOP }),
   rest: at(MORPH, { height: frameTop(false) }),
 };
+/** Close also fades it out, mostly towards the end (exit ease), so it melts away behind the frame (Anastasiya). */
 export const picker: Variants = {
-  lifted: { y: frameTop(true) - PICKER_TOP },
-  shown: at(MORPH, { y: 0 }),
-  rest: at(MORPH, { y: frameTop(false) - PICKER_TOP }),
+  lifted: { y: frameTop(true) - PICKER_TOP, opacity: 1 },
+  shown: at(MORPH, { y: 0, opacity: 1 }),
+  rest: {
+    y: frameTop(false) - PICKER_TOP,
+    opacity: 0,
+    transition: { ...MORPH, opacity: { duration: MORPH.duration, ease: easing.exit } },
+  },
 };
