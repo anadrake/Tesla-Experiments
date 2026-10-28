@@ -264,22 +264,22 @@ const dragApp = async (id, to, dwell = 500) => {
 };
 
 await open('customize=editing');
-await page.mouse.move(...Object.values(await pickerIcon('camera')));
+await page.mouse.move(...Object.values(await pickerIcon('phone')));
 await page.mouse.down();
 await page.mouse.move(GAP.right, GAP.y, { steps: 3 }); // straight in, then read the bar before the slot opens
 await page.waitForTimeout(60);
 const early = await page.locator('[data-drop-target]').getAttribute('data-drop-target').catch(() => null);
 await page.waitForTimeout(500);
 const late = await page.locator('[data-drop-target]').getAttribute('data-drop-target').catch(() => null);
-const tileHidden = await page.locator('[data-picker-app="camera"]').evaluate((el) => getComputedStyle(el).visibility === 'hidden');
+const tileHidden = await page.locator('[data-picker-app="phone"]').evaluate((el) => getComputedStyle(el).visibility === 'hidden');
 check('drag near a gap: insertion bar, then drop slot', early === 'bar' && late === 'slot', `${early} → ${late}`);
 check('the dragged app leaves its picker tile', tileHidden);
 await page.mouse.up();
 await page.waitForTimeout(800);
-check('drop inserts it there and pages to it', param('widgets') === 'music,camera,odometer,tire' && param('widget') === '1', page.url());
-check('…the icon is gone and the tile is back', (await ghostGone()) && (await page.locator('[data-picker-app="camera"]').isVisible()));
+check('drop inserts it there and pages to it', param('widgets') === 'music,phone,odometer,tire' && param('widget') === '1', page.url());
+check('…the icon is gone and the tile is back', (await ghostGone()) && (await page.locator('[data-picker-app="phone"]').isVisible()));
 await page.waitForTimeout(200);
-check('…its picker tile now shows the on-track bar', (await page.locator('[data-picker-app="camera"] [data-on-track]').count()) === 1 && (await page.locator('[data-picker-app="calendar"] [data-on-track]').count()) === 0);
+check('…its picker tile now shows the on-track bar', (await page.locator('[data-picker-app="phone"] [data-on-track]').count()) === 1 && (await page.locator('[data-picker-app="calendar"] [data-on-track]').count()) === 0);
 
 await open('customize=editing');
 await dragApp('energy', { x: 1200, y: 600 }); // over the map
@@ -395,8 +395,8 @@ await open('customize=editing');
 check('held card dropped where it was: no change', param('widgets') === null && (await ghostGone()), page.url());
 
 await open('customize=editing');
-await page.mouse.click(...Object.values(await pickerIcon('camera')));
-check('picker tile press state clears after a tap', (await page.locator('[data-picker-app="camera"] button[data-pressed]').count()) === 0);
+await page.mouse.click(...Object.values(await pickerIcon('phone')));
+check('picker tile press state clears after a tap', (await page.locator('[data-picker-app="phone"] button[data-pressed]').count()) === 0);
 
 // Driving: Customize works there too (Anastasiya, 2026-10-28) — pull the bar up, tap Customize.
 await open('nav=navigating');
@@ -427,7 +427,7 @@ await open('customize=revealed');
   await page.getByRole('button', { name: 'Customize' }).click();
   const seen = await sizes;
   check('reduce motion: editor opens without growing (frame / picker clip fixed)', seen.length === 1 && seen[0] === '322/670', seen.join(' '));
-  const tile = await pickerIcon('camera');
+  const tile = await pickerIcon('phone');
   await page.mouse.move(tile.x, tile.y);
   await page.mouse.down();
   await page.mouse.move(tile.x + 20, tile.y + 20, { steps: 3 });
@@ -435,7 +435,7 @@ await open('customize=revealed');
   await page.waitForTimeout(450);
   await page.mouse.up();
   await page.waitForTimeout(300);
-  check('reduce motion: drop still inserts, icon gone', param('widgets') === 'music,camera,odometer,tire' && (await ghostGone()), page.url());
+  check('reduce motion: drop still inserts, icon gone', param('widgets') === 'music,phone,odometer,tire' && (await ghostGone()), page.url());
 }
 await page.emulateMedia({ reducedMotion: 'no-preference' });
 

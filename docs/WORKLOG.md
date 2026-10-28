@@ -79,6 +79,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-28 — Picker: Camera → Phone (Figma 4802:103108 Add Apps Frame, tile "Phone" = pictogram/app/phone 12:10905, the dock's phone.svg). Widget id `camera` → `phone`; a saved track with `camera` just drops it (parseTrack ignores unknown ids).
 - 2026-10-28 — Widget customization should work in drive mode too (it was Parked only). Now Panel and Full, Parked or Driving; still not the Collapsed rail. Same layout — the editor sits over the road scene (Panel) / car (Full); the Driving Full trip card stays clear of it.
 - 2026-10-28 — Close is clean on the iPad (frame fade fixed the shadow flash). Go ahead with 8.4.
 - 2026-10-28 — Drop shadow behind the track card flashed much darker for a moment on the close animation → cause: the edit frame shrinks into the widget's outline, so its panel shadow stacked on the card's own. Frame now fades in on open (with the morph) and out on close (`duration.fast`, standard ease — gone before it reaches the outline).

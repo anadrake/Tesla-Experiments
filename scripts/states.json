@@ -173,7 +173,7 @@
     },
     {
       "name": "widgets-placeholder-driving-light",
-      "query": "mode=light&nav=navigating&car=collapsed&widgets=camera,music"
+      "query": "mode=light&nav=navigating&car=collapsed&widgets=phone,music"
     },
     {
       "name": "widgets-placeholder-driving-dark",

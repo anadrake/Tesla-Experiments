@@ -1,8 +1,8 @@
 import type { ComponentType } from 'react';
 import calendar from '../../assets/apps/calendar.svg';
-import camera from '../../assets/apps/camera.svg';
 import energy from '../../assets/widgets/energy.png';
 import music from '../../assets/widgets/music.svg';
+import phone from '../../assets/apps/phone.svg';
 import odometer from '../../assets/widgets/odometer.svg';
 import quickActions from '../../assets/widgets/quick-actions.svg';
 import tire from '../../assets/widgets/tire.svg';
@@ -43,7 +43,7 @@ export const WIDGETS: Record<WidgetId, WidgetDef> = {
   odometer: { id: 'odometer', label: 'Odometer', ariaLabel: 'Trip stats', icon: odometer, iconKind: 'glyph', group: 'standard', Widget: OdometerWidget, mini: { width: 96, height: 92 } },
   tire: { id: 'tire', label: 'Tire Pressure', ariaLabel: 'Tire pressure', icon: tire, iconKind: 'glyph', group: 'standard', Widget: TireWidget, mini: { width: 98, height: 98 } },
   calendar: { id: 'calendar', label: 'Calendar', ariaLabel: 'Calendar', icon: calendar, iconKind: 'pictogram', group: 'other', mini: MINI_DEFAULT },
-  camera: { id: 'camera', label: 'Camera', ariaLabel: 'Camera', icon: camera, iconKind: 'pictogram', group: 'other', mini: MINI_DEFAULT },
+  phone: { id: 'phone', label: 'Phone', ariaLabel: 'Phone', icon: phone, iconKind: 'pictogram', group: 'other', mini: MINI_DEFAULT },
   energy: { id: 'energy', label: 'Energy Usage', ariaLabel: 'Energy Usage', icon: energy, iconKind: 'pictogram', group: 'other', mini: MINI_DEFAULT },
 };
 
