@@ -201,6 +201,14 @@
     {
       "name": "customize-editing-single-light",
       "query": "mode=light&customize=editing&widgets=odometer"
+    },
+    {
+      "name": "customize-editing-full-light",
+      "query": "mode=light&car=full&customize=editing"
+    },
+    {
+      "name": "customize-editing-full-dark",
+      "query": "mode=dark&car=full&customize=editing"
     }
   ]
 }

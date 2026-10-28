@@ -85,7 +85,9 @@
 .frameBg {
   position: absolute;
   border-radius: var(--radius-lg);
-  background: var(--color-surface-floating);
+  background: var(--color-surface-floating-frosted);
+  -webkit-backdrop-filter: var(--elevation-frosted-blur);
+  backdrop-filter: var(--elevation-frosted-blur);
   box-shadow: var(--elevation-panel);
 }
 

@@ -98,6 +98,8 @@
   --color-surface-panel: #f0f0f0;
   --color-surface-raised: #ffffff;
   --color-surface-floating: #fafafa;
+  /* Customize edit frame (sketch 4802:103107): floating at 50%, unbound fill in Figma — Dark derived the same way */
+  --color-surface-floating-frosted: #fafafa80;
   --color-surface-field: #e0e0e0;
   --color-surface-selected: #d0d1d2;
   --color-surface-sunken: #d0d1d2;
@@ -137,6 +139,7 @@
   --color-surface-panel: #414141;
   --color-surface-raised: #5c5c5c;
   --color-surface-floating: #414141;
+  --color-surface-floating-frosted: #41414180;
   --color-surface-field: #5c5c5c;
   --color-surface-selected: #757575;
   --color-surface-sunken: #242424;
@@ -172,6 +175,8 @@
     1px 1px 12px 0 var(--color-shadow-panel-3);
   --elevation-map-shadow: 2px 4px 4px 0 var(--color-shadow-map);
   --elevation-map-blur: blur(20px);
+  /* Figma background blur 50 (Customize edit frame) — CSS blur = Figma radius / 2, as in Figma's own SVG export */
+  --elevation-frosted-blur: blur(25px);
   /* Key State=Pressed: 8% black over the key fill */
   --overlay-pressed: linear-gradient(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0.08));
 }

@@ -224,7 +224,12 @@ check('bar shows the remaining widget after Done', await page.locator('[data-wid
 
 await open('car=full');
 await enterEditing();
-check('Customize from Full → Panel + editor', param('car') === null && (await editorVisible()), page.url());
+check('Customize in Full stays Full + editor', param('car') === 'full' && (await editorVisible()), page.url());
+await tap(750, 400); // on the picker card (Full: moved with the bar, 433 right / 29 up)
+check('Full: tap on the picker does nothing', param('customize') === 'editing', page.url());
+await tap(1650, 500); // empty car canvas
+await page.waitForTimeout(500);
+check('Full: tap off the cards closes, stays Full', param('customize') === null && param('car') === 'full' && !(await editorVisible()), page.url());
 
 await open('customize=editing');
 const inertPreview = await page.evaluate(() => {
