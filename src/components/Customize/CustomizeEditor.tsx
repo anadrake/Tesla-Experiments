@@ -11,11 +11,13 @@ import { useEditorMotion } from './motion';
 import { WidgetPicker } from './WidgetPicker';
 import styles from './Customize.module.css';
 
-/** Full view: the same layout, moved with the widget bar (Panel 15,848 → Full 448,819). */
-const FULL_OFFSET = {
-  x: bottom.widgetBar.full.left - bottom.widgetBar.panel.left,
-  y: bottom.widgetBar.full.top - bottom.widgetBar.panel.top,
-};
+/**
+ * The editor is laid out in panel coords from the sketch, where the widget bar sits at 15,848; it moves with the
+ * real bar — Panel 15,854 (lined up with the map's trip card) and Full 448,819.
+ */
+const SKETCH_BAR = { left: 15, top: 848 };
+const offsetTo = (bar: { left: number; top: number }) => ({ x: bar.left - SKETCH_BAR.left, y: bar.top - SKETCH_BAR.top });
+const OFFSET = { panel: offsetTo(bottom.widgetBar.panel), full: offsetTo(bottom.widgetBar.full) };
 
 /**
  * Customize mode (Sketch "Tap customize" 4802:103107), drawn over the car panel (panel coordinates):
@@ -53,13 +55,16 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
           initial="lifted"
           animate="shown"
           exit="rest"
-          style={full ? FULL_OFFSET : undefined}
+          style={OFFSET[full ? 'full' : 'panel']}
         >
           {/* Clipped at the edit frame's top edge, so the picker slides up out from behind the frame */}
           <motion.div className={styles.pickerClip} variants={pickerClip}>
-            <motion.div className={styles.pickerLayer} variants={picker} data-customize-surface>
-              <WidgetPicker editor={editor} />
-            </motion.div>
+            {/* Panel: the picker keeps its sketch spot (307) — moved down with the bar it'd uncover the Trunk callout */}
+            <div style={{ transform: `translateY(${-OFFSET.panel.y * (full ? 0 : 1)}px)` }}>
+              <motion.div className={styles.pickerLayer} variants={picker} data-customize-surface>
+                <WidgetPicker editor={editor} />
+              </motion.div>
+            </div>
           </motion.div>
           <div className={styles.editLayer} data-customize-surface>
             <CustomizeTrack editor={editor} />

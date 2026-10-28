@@ -42,8 +42,8 @@ export const WIDGETS: Record<WidgetId, WidgetDef> = {
   music: { id: 'music', label: 'Music', ariaLabel: 'Music', icon: music, iconKind: 'glyph', group: 'standard', Widget: MusicWidget, mini: MINI_DEFAULT },
   odometer: { id: 'odometer', label: 'Odometer', ariaLabel: 'Trip stats', icon: odometer, iconKind: 'glyph', group: 'standard', Widget: OdometerWidget, mini: { width: 96, height: 92 } },
   tire: { id: 'tire', label: 'Tire Pressure', ariaLabel: 'Tire pressure', icon: tire, iconKind: 'glyph', group: 'standard', Widget: TireWidget, mini: { width: 98, height: 98 } },
-  calendar: { id: 'calendar', label: 'Calendar', ariaLabel: 'Calendar', icon: calendar, iconKind: 'pictogram', group: 'other', mini: MINI_DEFAULT },
   phone: { id: 'phone', label: 'Phone', ariaLabel: 'Phone', icon: phone, iconKind: 'pictogram', group: 'other', mini: MINI_DEFAULT },
+  calendar: { id: 'calendar', label: 'Calendar', ariaLabel: 'Calendar', icon: calendar, iconKind: 'pictogram', group: 'other', mini: MINI_DEFAULT },
   energy: { id: 'energy', label: 'Energy Usage', ariaLabel: 'Energy Usage', icon: energy, iconKind: 'pictogram', group: 'other', mini: MINI_DEFAULT },
 };
 

@@ -13,7 +13,7 @@ import { reducible, spring, springSnap } from '../../tokens/motion';
  * After the snap the bar no longer follows the finger — the spring finishes the move on its own.
  * Tune the feel here — all values in design px.
  */
-export const LIFT = 64; // revealed: bar sits 64px higher (anchor/bottom 848 → 784)
+export const LIFT = 64; // revealed: bar sits 64px higher (sketch anchor 848 → 784)
 const AXIS_SLOP = 10; // finger travel before we decide vertical vs horizontal
 const HEAVY_GAIN = 0.4; // bar travel per finger px before the let-off
 const LET_OFF = 80; // finger px past the slop where the bar gives and snaps up

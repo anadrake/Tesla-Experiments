@@ -16,7 +16,7 @@ export const EDITOR_CLOSE_S = MORPH.duration;
 
 const LIFT = 64;
 const FRAME_TOP = 670; // edit frame top in the panel
-/** Widget window in edit-frame coords: panel (15, 848 [− 64 lifted]) − frame (16, 670). */
+/** Widget window in edit-frame coords: sketch panel (15, 848 [− 64 lifted]) − frame (16, 670). The editor is offset onto the real bar (CustomizeEditor). */
 const BAR = { left: -1, top: 848 - FRAME_TOP, width: 600, height: 192 };
 const FRAME = { left: 0, top: 0, width: 598, height: 322 };
 

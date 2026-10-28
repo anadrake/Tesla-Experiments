@@ -79,6 +79,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-28 — Picker: Phone goes left of Calendar (registry order). Widget and trip card weren't quite aligned → Panel widget bar 848 → 854, now 854–1046 like the map's trip card (Driving). Full already matched (widget and car-status trip card both 819–1011). The Customize editor follows the real bar (offset from the sketch's 848), except the picker in Panel, which stays at its sketch 307 — moved down it uncovered the Trunk callout.
 - 2026-10-28 — Picker: Camera → Phone (Figma 4802:103108 Add Apps Frame, tile "Phone" = pictogram/app/phone 12:10905, the dock's phone.svg). Widget id `camera` → `phone`; a saved track with `camera` just drops it (parseTrack ignores unknown ids).
 - 2026-10-28 — Widget customization should work in drive mode too (it was Parked only). Now Panel and Full, Parked or Driving; still not the Collapsed rail. Same layout — the editor sits over the road scene (Panel) / car (Full); the Driving Full trip card stays clear of it.
 - 2026-10-28 — Close is clean on the iPad (frame fade fixed the shadow flash). Go ahead with 8.4.

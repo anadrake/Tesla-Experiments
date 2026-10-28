@@ -2,7 +2,7 @@
  * Widget track ids (data only — components live in components/WidgetBar/registry.tsx).
  * Kept separate so the store can use them without importing widget components.
  */
-export const WIDGET_IDS = ['quickActions', 'music', 'odometer', 'tire', 'calendar', 'phone', 'energy'] as const;
+export const WIDGET_IDS = ['quickActions', 'music', 'odometer', 'tire', 'phone', 'calendar', 'energy'] as const;
 export type WidgetId = (typeof WIDGET_IDS)[number];
 
 export const DEFAULT_TRACK: WidgetId[] = ['music', 'odometer', 'tire'];

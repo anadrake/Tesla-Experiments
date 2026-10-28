@@ -74,12 +74,13 @@ export const chickletRect = (c: { width: number; height: number }): Rect => ({
 
 export const bottom = {
   widgetBar: pair(
-    { left: 15, top: 848, width: 600, height: 208 },
+    // Panel: 6px below the Figma 848 so it lines up with the map's trip card (854–1046) while driving (Anastasiya).
+    { left: 15, top: 854, width: 600, height: 208 },
     { left: 448, top: 819, width: 600, height: 208 },
     { left: 13, top: 972, width: 92, height: 92 }, // Mini Chicklet
   ),
   tripCard: pair(
-    { left: 640, top: 848, width: 400, height: 192, opacity: 0 },
+    { left: 640, top: 854, width: 400, height: 192, opacity: 0 },
     { left: 1072, top: 819, width: 400, height: 192, opacity: 1 },
   ),
 };
