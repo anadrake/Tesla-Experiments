@@ -1,10 +1,13 @@
-import { motion } from 'motion/react';
+import { animate, motion, useMotionValue } from 'motion/react';
+import { useRef } from 'react';
 import profile from '../../assets/settings/profile.svg';
 import update from '../../assets/settings/status-update.svg';
 import notification from '../../assets/settings/status-notification.svg';
 import bluetooth from '../../assets/settings/status-bluetooth.svg';
 import wifi from '../../assets/settings/status-wifi.svg';
 import { Icon } from '../../components/Icon/Icon';
+import { capture } from '../../lib/pointer';
+import { useStageScale } from '../../shell/Stage';
 import { useHud, type SettingsPage } from '../../state/store';
 import { presets, transition } from '../../tokens/motion';
 import { NAV_ITEMS } from './navItems';
@@ -28,24 +31,66 @@ const PAGES: Partial<Record<SettingsPage, () => JSX.Element>> = {
   lights: LightsPage,
 };
 
+/** Swipe-down zone: the top of the window (header height); a drag starting lower is left to the page. */
+const SWIPE_ZONE = 112;
+const SWIPE_START = 10; // design px before the drag takes over (taps on nav items still work)
+const SWIPE_CLOSE = 160; // design px down, or a quick flick, closes
+const SWIPE_FLICK = 0.8; // design px / ms
+
 /**
  * Figma "Settings Window": Navtree (448) + Settings Panel (840) at x630 y64, over the map.
  * Opens from the control bar car icon (screen change: slow + standard). Closes on the car icon,
- * a map / panel tap, or opening another overlay.
+ * a map / panel tap, opening another overlay, or a swipe down from the top (Anastasiya).
  */
 export function SettingsWindow() {
   const page = useHud((s) => s.settingsPage);
   const setPage = useHud((s) => s.setSettingsPage);
   const Page = PAGES[page] ?? ComingSoonPage;
+  const scale = useStageScale();
+  const y = useMotionValue(1016);
+  const swipe = useRef<{ startY: number; lastY: number; lastT: number; v: number; active: boolean } | null>(null);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    const top = e.currentTarget.getBoundingClientRect().top;
+    if ((e.clientY - top) / scale > SWIPE_ZONE) return;
+    swipe.current = { startY: e.clientY, lastY: e.clientY, lastT: e.timeStamp, v: 0, active: false };
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    const g = swipe.current;
+    if (!g) return;
+    const dy = (e.clientY - g.startY) / scale;
+    if (!g.active) {
+      if (dy < SWIPE_START) return;
+      g.active = true;
+      capture(e); // from here the drag owns the pointer, so the nav item under the finger isn't clicked
+    }
+    const dt = e.timeStamp - g.lastT;
+    if (dt > 0) g.v = (e.clientY - g.lastY) / scale / dt;
+    g.lastY = e.clientY;
+    g.lastT = e.timeStamp;
+    y.set(Math.max(0, dy));
+  };
+  const onPointerUp = (e: React.PointerEvent) => {
+    const g = swipe.current;
+    swipe.current = null;
+    if (!g?.active) return;
+    const dy = (e.clientY - g.startY) / scale;
+    if (dy > SWIPE_CLOSE || g.v > SWIPE_FLICK) useHud.getState().toggleSettings();
+    else animate(y, 0, transition.toggle);
+  };
 
   return (
     <motion.div
       className={styles.window}
       role="dialog"
       aria-label="Settings"
-      initial={{ y: 1016 }}
+      style={{ y }}
       animate={{ y: 0, transition: transition.screen }}
       exit={{ y: 1016, transition: { ...transition.screen } }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
     >
       <nav className={styles.navtree} aria-label="Settings categories">
         {NAV_ITEMS.map((item) => (

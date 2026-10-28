@@ -33,6 +33,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 | Q8 | Car status top bar | ✅ Not intentional. Status bar elements keep the same size on every screen; on expand/collapse they only move and hide/reveal |
 
 ## Decisions
+- 2026-10-27 — Swipe down from the top of Settings (top 112px, header height) closes it (Anastasiya). The window follows the finger; >160px or a quick flick closes, otherwise it springs back. The drag only takes over after 10px down, so taps on the top nav items still work.
 - 2026-10-27 — Opening Settings from the Full car view switches the car panel to Panel first (Anastasiya); closing Settings stays on Panel.
 - 2026-10-27 — Car status Full (Figma update by Anastasiya): bg is `surface/canvas` in every size (Dark #171717, Light #fafafa; was `surface/panel`); reflection 6% opacity at x450; floor "shadow · full" is a 2556×678 ellipse, blur 70.7, under Figma's "Mask group" alpha radial gradient (faint under the car → solid at the edges). The mask box is larger than the ellipse (Figma mask-no-clip), so code wraps the blurred ellipse in a %-sized mask box — a mask on the ellipse itself clipped its blur into a hard arc. design-ref car-status-{light,dark} re-captured.
 - 2026-10-27 — Settings search field opens the shared Keyboard over the bottom of the screen (Anastasiya). Typing goes to the field (focus ring + caret like Navigate); Enter, a page switch, the car icon or a map tap closes it. Results aren't filtered yet — the Search page still shows its Figma highlights. Deep link `?settings=search&keyboard=1`.
