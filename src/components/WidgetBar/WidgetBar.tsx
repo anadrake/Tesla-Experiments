@@ -7,7 +7,7 @@ import { presets, reducible, spring, springSnap, transition } from '../../tokens
 import { InfoPages } from './pages';
 import { WIDGETS, WidgetIcon, type WidgetId } from './registry';
 import { LIFT, usePullUp } from './usePullUp';
-import { POP_HOLD_MS, POP_PULL, POP_SCALE, dragTo, grab, liftOut, move, popOut, release, settleMove, tension } from './move';
+import { POP_HOLD_MS, POP_PULL, POP_SCALE, catchUp, dragTo, grab, liftOut, move, popOut, release, settleMove, tension } from './move';
 import { useDismissOnOutsideTap } from './useDismissOnOutsideTap';
 import styles from './WidgetBar.module.css';
 
@@ -117,7 +117,8 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
     if (moving) liftOut(); // no-op after a pop; lifts the card for ?customize=moving
     wasMoving.current = moving;
   }, [moving]);
-  const liftY = useTransform(() => y.get() + move.y.get());
+  const liftX = useTransform(() => move.x.get() + catchUp.x.get());
+  const liftY = useTransform(() => y.get() + move.y.get() + catchUp.y.get());
   // Leaving move mode (a drop, Done, tap outside), Done goes at once: the bar has already jumped to its new dock,
   // so a fade would flash it there (Anastasiya, 2026-10-29). Back with the next press on the bar.
   const [buttonGone, setButtonGone] = useState(false);
@@ -186,7 +187,7 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
       // (plain style, not an animation, so the swap lands in one painted frame — CustomizeEditor).
       style={{ opacity: hidden ? 0 : 1, pointerEvents: hidden ? 'none' : undefined }}
     >
-      <motion.div className={styles.lift} style={{ x: move.x, y: liftY, scale: move.scale }}>
+      <motion.div className={styles.lift} style={{ x: liftX, y: liftY, scale: move.scale }}>
         {/* Popped out: scaled up with a little overshoot (the socket's click) — state-driven, so it runs on the compositor */}
         <motion.div
           className={styles.pop}

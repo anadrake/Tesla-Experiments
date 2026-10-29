@@ -32,11 +32,18 @@ const CATCH = 80;
 export const POP_SCALE = 1.04;
 const POP_TENSION = 1.015;
 
+/** The card's offset from its docked spot — exactly where the finger has it (1:1, no smoothing: that read as lag). */
 export const move = {
   x: motionValue(0),
   y: motionValue(0),
   scale: motionValue(1),
 };
+/**
+ * The pop's catch-up: the card jumps up so the spot you pressed is back under the finger. That gap is added on top
+ * of `move` and springs to 0 once, while the finger is still followed 1:1 underneath (was: a spring restarted on
+ * every pointermove, which never caught up while the finger kept moving — Anastasiya: "a lot of lag").
+ */
+export const catchUp = { x: motionValue(0), y: motionValue(0) };
 
 interface MoveState {
   /** Finger down on the popped widget. */
@@ -50,20 +57,22 @@ let start = { x: 0, y: 0 };
 let base = { x: 0, y: 0 };
 let stage = 1;
 let travelled = false;
-/** Catching up with the finger after the pop (springs, then follows 1:1). */
-let chasing = false;
-/** Where the finger wants the card (offset) — targeting uses this, not the card while it's still catching up. */
-let want = { x: 0, y: 0 };
+/** Last finger position handled — the popping gesture reaches dragTo through both usePullUp and the bar. */
+let last = { x: NaN, y: NaN };
 
 function follow(to: { x: number; y: number }) {
-  want = to;
-  if (!chasing) {
-    move.x.set(to.x);
-    move.y.set(to.y);
-    return;
-  }
-  animate(move.x, to.x, reducible(springSnap));
-  animate(move.y, to.y, { ...reducible(springSnap), onComplete: () => (chasing = false) });
+  move.x.set(to.x);
+  move.y.set(to.y);
+}
+
+/** Fold what's left of the catch-up into the offset, so whatever springs next starts from where the card shows. */
+function landCatchUp() {
+  catchUp.x.stop();
+  catchUp.y.stop();
+  move.x.jump(move.x.get() + catchUp.x.get());
+  move.y.jump(move.y.get() + catchUp.y.get());
+  catchUp.x.jump(0);
+  catchUp.y.jump(0);
 }
 
 const spots = (): MoveSpot[] => {
@@ -71,11 +80,11 @@ const spots = (): MoveSpot[] => {
   return moveSpots(s.carView, isDriving(s), s.widgetDock);
 };
 
-/** The dragged card's centre in display px, where the finger has it (the bar is lifted by `lift` — usePullUp's y). */
+/** The dragged card's centre in display px, where the finger has it — not counting the pop's catch-up (`lift` = usePullUp's y). */
 function cardCentre(lift: number) {
   const s = useHud.getState();
   const r = widgetBarRect(s.carView, isDriving(s), s.widgetDock);
-  return { x: r.left + WIDGET_CARD.width / 2 + want.x, y: r.top + lift + WIDGET_CARD.height / 2 + want.y };
+  return { x: r.left + WIDGET_CARD.width / 2 + move.x.get(), y: r.top + lift + WIDGET_CARD.height / 2 + move.y.get() };
 }
 
 function nearest(lift: number) {
@@ -117,8 +126,12 @@ export function liftOut() {
 export function popOut(client: { x: number; y: number }, from: { x: number; y: number }, scale: number, lift: number) {
   grab(client, scale);
   base = { x: (client.x - from.x) / scale, y: (client.y - from.y) / scale - lift };
-  chasing = true;
+  // Follow the finger from here on (1:1); the card itself still shows where it was and springs the gap shut.
+  catchUp.x.jump(move.x.get() - base.x);
+  catchUp.y.jump(move.y.get() - base.y);
   follow(base);
+  animate(catchUp.x, 0, reducible(springSnap));
+  animate(catchUp.y, 0, reducible(springSnap));
   liftOut();
   useHud.getState().setCustomize('moving');
   useMove.setState({ target: spots()[0]?.key ?? null });
@@ -128,17 +141,18 @@ export function popOut(client: { x: number; y: number }, from: { x: number; y: n
 export function grab(client: { x: number; y: number }, scale: number) {
   move.x.stop();
   move.y.stop();
+  landCatchUp();
   start = client;
+  last = { x: NaN, y: NaN };
   base = { x: move.x.get(), y: move.y.get() };
-  want = base;
   stage = scale;
   travelled = false;
-  chasing = false;
   useMove.setState({ dragging: true });
 }
 
 export function dragTo(client: { x: number; y: number }, lift: number) {
-  if (!useMove.getState().dragging) return;
+  if (!useMove.getState().dragging || (client.x === last.x && client.y === last.y)) return;
+  last = client;
   const dx = (client.x - start.x) / stage;
   const dy = (client.y - start.y) / stage;
   if (!travelled && Math.hypot(dx, dy) < DRAG_SLOP) return;
@@ -152,7 +166,7 @@ export function dragTo(client: { x: number; y: number }, lift: number) {
 export function release(lift: number) {
   if (!useMove.getState().dragging) return;
   useMove.setState({ dragging: false });
-  chasing = false;
+  landCatchUp();
   if (!travelled) {
     // Back into its lifted spot, still in move mode.
     animate(move.x, 0, reducible(springSnap));
@@ -175,6 +189,7 @@ export function rebase(dx: number, dy: number) {
 /** Move mode ended (drop, Done, tap outside): back into the socket. */
 export function settleMove() {
   useMove.setState({ dragging: false, target: null });
+  landCatchUp();
   animate(move.x, 0, reducible(springSnap));
   animate(move.y, 0, reducible(springSnap));
   animate(move.scale, 1, reducible(spring));
