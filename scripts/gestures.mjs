@@ -490,6 +490,22 @@ check('Self-Driving hidden + inert in Driving Full', await selfDriveInert(), pag
 await open('car=collapsed');
 check('Self-Driving hidden + inert in the Parked rail', await selfDriveInert(), page.url());
 
+// --- 9.3 Map peek (Car status Full): live map, not pannable; tap → map + Panel (Q29/Q31) ---
+const peek = () => page.locator('button[aria-label="Open map"]');
+const peekMapTransform = () => peek().evaluate((el) => getComputedStyle(el.firstElementChild).transform);
+await open('car=full&nav=navigating');
+check('peek shows the route while navigating', (await peek().locator('polyline').count()) === 1, page.url());
+const t0 = await peekMapTransform();
+await drag({ x: 1700, y: 120 }, -120, 60);
+// A drag ends in a click on the peek (→ Panel), like a left drag anywhere in Full — the map itself must not move.
+check('peek does not pan', (await peekMapTransform()) === t0, `${t0} → ${await peekMapTransform()}`);
+await open('car=full&nav=navigating');
+await tap(1650, 150);
+check('tap the peek → map in Panel', param('car') === null, page.url());
+check('peek inert outside Full', await peek().evaluate((el) => el.inert), '');
+await open('car=full');
+check('no route in the peek when idle', (await peek().locator('polyline').count()) === 0, page.url());
+
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();
 process.exitCode = failed ? 1 : 0;

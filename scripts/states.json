@@ -404,6 +404,24 @@
     {
       "name": "selfdrive-parked-rail-dark",
       "query": "mode=dark&car=collapsed"
+    },
+    {
+      "name": "map-peek-idle-light",
+      "query": "mode=light&car=full",
+      "ref": "map-peek-light.png"
+    },
+    {
+      "name": "map-peek-routed-light",
+      "query": "mode=light&car=full&nav=navigating"
+    },
+    {
+      "name": "map-peek-idle-dark",
+      "query": "mode=dark&car=full",
+      "ref": "map-peek-dark.png"
+    },
+    {
+      "name": "map-peek-routed-dark",
+      "query": "mode=dark&car=full&nav=navigating"
     }
   ]
 }

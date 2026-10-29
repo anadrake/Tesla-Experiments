@@ -11,6 +11,7 @@ import { TripCardActive } from '../Navigation/TripCardActive';
 import { Icon } from '../Icon/Icon';
 import { TripSearchCard } from '../TripCard/TripSearchCard';
 import { CustomizeEditor } from '../Customize/CustomizeEditor';
+import { MapPeek } from '../MapPeek/MapPeek';
 import { WIDGETS } from '../WidgetBar/registry';
 import { WidgetBar } from '../WidgetBar/WidgetBar';
 import { Callouts } from './Callouts';
@@ -101,6 +102,9 @@ export function CarPanel() {
       onPointerUp={onPointerUp}
       onPointerCancel={() => (start.current = null)}
     >
+      {/* Car status Full: round live-map peek top-right, under the car scene (Parked and Driving) */}
+      <MapPeek view={view} />
+
       {/* State=Parked scene: shadows, car renders, callouts */}
       <motion.div className={styles.group} initial={false} animate={{ opacity: driving ? 0 : 1 }} transition={transition.screen}>
         <motion.div

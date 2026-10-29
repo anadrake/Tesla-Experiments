@@ -1,0 +1,22 @@
+/* Mask on the outer box (not on blurred content — see WORKLOG Learnings): Figma's blurred radial ellipse,
+   opaque toward the upper right, fading to nothing at its edge. */
+.peek {
+  position: absolute;
+  overflow: hidden;
+  padding: 0;
+  border: none;
+  background: none;
+  /* The midway box (Q30) sits ~90px higher than Light's, which pushed the ellipse's opaque core off-screen and
+     made the peek read faint (P9.3 review). Grow the mask and pin it top-right so the core lands in view. */
+  mask-size: 125% 125%;
+  mask-position: 100% 0;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 125% 125%;
+  -webkit-mask-position: 100% 0;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.map {
+  position: absolute;
+  pointer-events: none;
+}

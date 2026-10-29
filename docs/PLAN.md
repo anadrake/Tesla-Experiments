@@ -279,7 +279,7 @@ Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **On
 - States: `selfdrive-{parked,driving,full,rail}-{light,dark}`.
 - Review: fidelity + function (morph Panel ⇄ Full ⇄ Collapsed keeps it in place, Parked ⇄ Driving).
 
-### 9.3 — Map peek in Car status Full (M)
+### 9.3 — Map peek in Car status Full (M) ✅ 2026-10-28 (reviewed; iPad test pending)
 - Round masked map in the top-right of the Full view: the **live** map tiles + route layer inside the mask (Q29), so routed / not routed and Light / Dark follow the app state, Parked and Driving. **Not** pannable / pinchable.
 - Mask: midway between the Light and Dark comps (Q30) ≈ 694×698 at (1383, −197); soft edge from the Mask group. Appears / disappears with the Panel ⇄ Full morph.
 - Tap → opens the map: car view morphs Full → Panel (Q29/Q31).

@@ -128,22 +128,34 @@ export function MapTiles({ width, height, children, onTap }: Props) {
           height: TILE,
         }}
       >
-        {(['light', 'dark'] as const).map((theme) => (
-          <div key={theme} className={theme === 'light' ? styles.tileLight : styles.tileDark}>
-            {/* Explicit px boxes, not a CSS grid: Safari sized 1fr tracks from the images' natural size (warped map). */}
-            {QUADS.map(([col, row]) => (
-              <img
-                key={`${col}${row}`}
-                src={files[`../../assets/map/tiles-${theme}-${col}${row}.jpg`]}
-                alt=""
-                draggable={false}
-                style={{ left: col * QUAD, top: row * QUAD, width: QUAD, height: QUAD }}
-              />
-            ))}
-          </div>
-        ))}
+        <MapImagery />
         {children}
       </div>
     </div>
+  );
+}
+
+/**
+ * The map images (TILE × TILE design px), both themes stacked — they cross-fade with the Day/Night dissolve.
+ * Shared by the main map and the Car status map peek.
+ */
+export function MapImagery() {
+  return (
+    <>
+      {(['light', 'dark'] as const).map((theme) => (
+        <div key={theme} className={theme === 'light' ? styles.tileLight : styles.tileDark}>
+          {/* Explicit px boxes, not a CSS grid: Safari sized 1fr tracks from the images' natural size (warped map). */}
+          {QUADS.map(([col, row]) => (
+            <img
+              key={`${col}${row}`}
+              src={files[`../../assets/map/tiles-${theme}-${col}${row}.jpg`]}
+              alt=""
+              draggable={false}
+              style={{ left: col * QUAD, top: row * QUAD, width: QUAD, height: QUAD }}
+            />
+          ))}
+        </div>
+      ))}
+    </>
   );
 }
