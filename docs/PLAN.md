@@ -243,3 +243,70 @@ Two `hud-reviewer` runs in parallel after each phase:
 1. **Fidelity** — `npm run shots` of the phase's states vs `design-ref/customize-*` (and Figma nodes above); Light + Dark; token/motion grep.
 2. **Function** — runs `scripts/gestures.mjs`, then walks the flows by hand in the built-in browser at iPad size; edge cases listed in the phase.
 I triage both reports, fix, and log the result in WORKLOG before you test on the iPad.
+
+---
+
+# Phase 9 — Full widget set, Self-Driving, map peek, move widget (✅ answers in 2026-10-28 — Q25–Q35 resolved, ready for 9.0)
+
+**Sources (Figma, file `L4iGjQC6AbgfNfqCAxQnh9`):**
+- **Update 1 — widget set:** `4889:51206` "Dynamic Widget Bar - New Set". Base components `.Widget / new full set` `4899:2892` (Widget = Music · Odometer · Tire · Energy · Calendar · Phone · Quick Actions × Size = Open 600×192 / Collapsed pill / Chicklet / Mini Chicklet), list `4899:2999`, page indicator (7 dots) `4899:2998`, size review `4901:8483`. Light only.
+- **Update 2 — map peek + Self-Driving:** Sketches › "Update 2": New Map Light `4889:37991`, Dark `4889:37992` (Car status Full with a round masked map top-right, "Mask group" 647×660). Start Self-Driving button (`Self Drive` instance, 240×86) on Vehicle › Car Status Panel `4268:3115`: Parked Panel, Parking Sensors Panel, Driving Panel, Driving Collapsed 220, Parked Full. Car Render has `Mode=FSD` variants `4266:2711` / `4266:2782` (blue path).
+- **Update 3b — move from the Collapsed rail (last step, 9.6):** `4923:59013` (widget on the map, drop field 88×232 in the 116 rail) and its row on Sketches.
+- **Update 3 — move widget:** Sketches › "Update 3". Panel row: pull up `4889:38248` → move fields `4889:40694` → dragged `4889:41114` → snapped onto the map `4889:41518`. Full row: `4889:43675` → `4889:43676` → `4889:43677` → snaps + "smart shuffle" `4889:43408` (also `4889:41922`).
+
+## Sub-phases (each ends: 2 reviewer runs → fix → you test on iPad → WORKLOG → commit + push)
+Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **One sub-phase per session.**
+
+### 9.0 — References & specs (S)
+- Save small refs to `design-ref/`: `widgets-set-light` (size review `4901:8483`), `map-peek-{light,dark}`, `move-panel-{1..4}`, `move-full-{1..4}`, `self-drive-states` (`4268:3115`). One screenshot each, ≤1024px.
+- `get_design_context` **only on the 4 new base components' Open size** (`4899:2637` Energy, `4899:2696` Calendar, `4899:2736` Phone, `4899:2800` Quick Actions) + the Self Drive instance + the map Mask group. Pull Collapsed / Chicklet / Mini from metadata + screenshot unless they need more.
+- Diff the refreshed Music / Odometer / Tire against what's built (pills are 382 wide — Q27; Odometer chicklet 186) → list for 9.1.
+- New tokens if any (Light **and** Dark). COMPONENTS.md rows.
+- Review: none (no UI change) — I check the refs list against Figma.
+
+### 9.1 — New widgets: Energy, Calendar, Phone, Quick Actions (M–L)
+- `InfoWidgets.tsx` → one file per widget (`EnergyWidget`, `CalendarWidget`, `PhoneWidget`, `QuickActionsWidget`) with Open / Collapsed / Chicklet / Mini; set `Widget` + sizes in `registry.tsx` (the "Coming soon" placeholder stays for future apps).
+- Collapse (Q26): **swipe down on the widget** collapses the whole bar to the pill of the widget that was showing; the page is remembered; tapping the pill opens the bar back on that widget. Every widget gets its 382×64 pill (Music already has one). Swipe down while the Customize button is revealed still just hides the button (P8.1).
+- Apply any Music / Odometer / Tire refresh from 9.0; dots handle up to 7 pages.
+- Widgets are **static concept images** (Q25): no taps inside them beyond paging / collapse / Customize. Built as real layout from tokens (not bitmaps) so Light/Dark both work.
+- Dark derived from tokens (Q28). Energy chart = SVG.
+- States: `widget-{energy,calendar,phone,quickActions}-{light,dark}`, plus collapsed / chicklet (Driving rail) / mini (Collapsed rail), and the Customize track showing real widgets.
+- Review: fidelity (shots vs `widgets-set-light`) + function (paging, rails, Customize track/drag still pass `npm run gestures`).
+
+### 9.2 — Start Self-Driving button (S–M)
+- New `SelfDriveButton` component; placed per state: Parked Panel (top-right), Driving Panel (right of the turn card), Driving Collapsed 220 rail (above the chicklet), Parked Full (beside the telltales). Moves with the panel morph like the other status items.
+- Tap does **nothing** (Q32) — standard press feedback only, no state. Shown only where Figma has it (not Driving Full / Parked 116 rail).
+- States: `selfdrive-{parked,driving,full,rail}-{light,dark}`.
+- Review: fidelity + function (morph Panel ⇄ Full ⇄ Collapsed keeps it in place, Parked ⇄ Driving).
+
+### 9.3 — Map peek in Car status Full (M)
+- Round masked map in the top-right of the Full view: the **live** map tiles + route layer inside the mask (Q29), so routed / not routed and Light / Dark follow the app state, Parked and Driving. **Not** pannable / pinchable.
+- Mask: midway between the Light and Dark comps (Q30) ≈ 694×698 at (1383, −197); soft edge from the Mask group. Appears / disappears with the Panel ⇄ Full morph.
+- Tap → opens the map: car view morphs Full → Panel (Q29/Q31).
+- States: `map-peek-{idle,routed}-{parked,driving}-{light,dark}` (8).
+- Review: fidelity (vs `map-peek-*`) + function (start / end trip while in Full updates the peek, morph in/out, no pan/pinch in the peek).
+
+### 9.4 — Move widget (L)
+- Store: where the widget bar lives — Panel: `panel | map` (docked on the map beside the trip card); Full: `left | right` of the Navigate / trip card. Persisted like the track; `?widgetDock=`.
+- Gesture (Q33): keep holding the pull-up past the Customize reveal → after a beat the widget **pops out, like out of a socket** (quick lift + scale overshoot with `springSnap`, shadow grows) and move mode starts. Move mode: Done replaces Customize, grey drop fields at the origin and the target(s), widget follows the finger (lifted, panel shadow), snaps into the nearest field on release, otherwise floats back. Full: dropping right of the card "smart-shuffles" the card left so the pair stays centred.
+- Reuse `Customize/drag.ts` pieces (finger-based targeting, `springSnap`, `reducible()`); new checks in `scripts/gestures.mjs` (pop out, drop on map, drop back, cancel, Full shuffle).
+- Map drop field sits in the **same spot as during a trip** (beside where the trip card is), with or without a trip (Q34). Position is **saved** (localStorage, URL wins) (Q35). Moving is **disabled from the Collapsed rail** until 9.6.
+- Review: fidelity (vs `move-*`) + function (gesture script + manual walk at iPad size).
+
+### 9.5 — Integration sweep (S)
+- Reduce Motion for 9.2–9.4, README/COMPONENTS/WORKLOG, full reviewer sweep of all states + regression of P8 (`npm run gestures`), iPad letterbox shots.
+
+### 9.6 — Move widget from the Collapsed rail (M) — last
+- Per `4923:59013` and its row: widget docked on the map while the panel is collapsed; drop field in the 116 rail. Re-enable the gesture there; extend `gestures.mjs`.
+- Review: fidelity + function, then a final P8/P9 regression run.
+
+## Review agents per sub-phase (same as P8)
+Two `hud-reviewer` runs in parallel (Sonnet, read-only):
+1. **Fidelity to Figma** — `npm run shots -- --only <states>` vs the 9.0 refs, Light + Dark, region by region; token / motion grep; Figma inconsistencies go to "ask Anastasiya", not copied.
+2. **Functionality** — `npm run gestures` + walking the sub-phase's flows by tap in the built-in browser at 1376×1032; deep links; console errors; edge cases listed in the sub-phase.
+I triage both, fix, log in WORKLOG, then you test on the iPad.
+
+## Token budget notes
+- Figma: refs captured once in 9.0; later sub-phases read `design-ref/` + COMPONENTS.md, and call `get_design_context` only on the one node being built. Never fetch the Sketches page whole (~160k chars) — node IDs are listed above.
+- The remote Figma MCP (`06eb831b…`) works for this file; the desktop one only sees the file when it's the active tab in Figma.
+- Reviewers get only the sub-phase's states / flows; one sub-phase per session; WORKLOG "Current state" stays short.
