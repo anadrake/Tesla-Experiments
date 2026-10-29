@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
 import { useHud } from '../../state/store';
 import { bottom } from '../CarPanel/geometry';
 import { transition } from '../../tokens/motion';
@@ -36,6 +36,12 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
   useEffect(() => {
     if (!editing) resetDrag();
   }, [editing]);
+  // Hand-off with the widget bar: it hides while the editor is on screen and comes back the moment the editor's exit
+  // finishes (onExitComplete) — a timer let both cards (and both shadows) show for a frame (Anastasiya: dark flash).
+  const setShown = useHud((s) => s.setCustomizeEditorShown);
+  useLayoutEffect(() => {
+    if (editing) setShown(true);
+  }, [editing, setShown]);
   useDismissOnOutsideTap(
     full ? (t) => !!(t as Element).closest?.('[data-customize-surface]') : panel,
     editing,
@@ -43,7 +49,14 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
   );
 
   return (
-    <AnimatePresence>
+    <AnimatePresence
+      onExitComplete={() => {
+        // The bar re-renders at once (store update), but AnimatePresence unmounts the editor a render later —
+        // hide it now so the two cards are never painted together.
+        if (editor.current) editor.current.style.visibility = 'hidden';
+        setShown(false);
+      }}
+    >
       {editing && (
         // Variants run the choreography in motion.ts; children inherit lifted / shown / rest, and the exit waits for them.
         <motion.div

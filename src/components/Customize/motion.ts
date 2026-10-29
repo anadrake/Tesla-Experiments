@@ -11,8 +11,6 @@ import { duration, easing } from '../../tokens/motion';
  */
 
 const MORPH = { duration: duration.base, ease: easing.standard };
-/** When the editor has fully gone (close), the real widget bar takes over. */
-export const EDITOR_CLOSE_S = MORPH.duration;
 
 const LIFT = 64;
 const FRAME_TOP = 670; // edit frame top in the panel
@@ -94,8 +92,7 @@ export const picker: Variants = {
 };
 
 /**
- * Reduce Motion: nothing grows, shrinks or slides — the editor fades in and out as it is (a same-length fade, so the
- * bar's hand-off at EDITOR_CLOSE_S still lines up). MotionConfig alone would jump the transforms but still animate
+ * Reduce Motion: nothing grows, shrinks or slides — the editor fades in and out as it is (same length as the morph). MotionConfig alone would jump the transforms but still animate
  * the frame's box and the picker's clip, wiping the picker in from the top.
  */
 const still = (v: Variants): Variants => {

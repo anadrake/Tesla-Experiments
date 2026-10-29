@@ -9,7 +9,6 @@ import { presets, transition } from '../../tokens/motion';
 import { Icon } from '../Icon/Icon';
 import { InfoPages } from './pages';
 import { WidgetIcon, type WidgetId } from './registry';
-import { EDITOR_CLOSE_S } from '../Customize/motion';
 import { LIFT, usePullUp } from './usePullUp';
 import { useDismissOnOutsideTap } from './useDismissOnOutsideTap';
 import { TRACK } from './MusicWidget';
@@ -64,6 +63,7 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   useDismissOnOutsideTap(root, revealed && customize === 'revealed', () => setCustomize('off'));
   // While editing, the editor (CustomizeEditor) replaces the bar and the Customize button.
   const editing = revealed && customize === 'editing';
+  const hidden = useHud((s) => editing || s.customizeEditorShown);
   useEffect(() => {
     if (root.current) root.current.inert = editing; // React 18 types lack `inert`
   }, [editing]);
@@ -156,11 +156,9 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
       ref={root}
       className={styles.bar}
       {...handlers}
-      initial={false}
-      animate={{ opacity: editing ? 0 : 1 }}
-      // Hand-off, no cross-fade: hide the moment the editor takes over; reappear once it has closed.
-      transition={editing ? transition.cut : { ...transition.cut, delay: EDITOR_CLOSE_S }}
-      style={{ pointerEvents: editing ? 'none' : undefined }}
+      // Hand-off, no cross-fade: hidden while the editor is on screen, back as soon as it's gone
+      // (plain style, not an animation, so the swap lands in one painted frame — CustomizeEditor).
+      style={{ opacity: hidden ? 0 : 1, pointerEvents: hidden ? 'none' : undefined }}
     >
       <motion.div className={styles.lift} style={{ y }}>
         <AnimatePresence initial={false} mode="popLayout">

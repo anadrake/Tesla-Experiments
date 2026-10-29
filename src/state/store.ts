@@ -63,10 +63,13 @@ export interface HudState {
   setWidgetTrack: (track: WidgetId[]) => void;
   /**
    * Widget customization (Phase 8): off → revealed (pulled up, Customize button showing) → editing (picker + track edit).
-   * Only in the Panel / Full car view while parked (Q22).
+   * Panel / Full car view, Parked or Driving (Q22).
    */
   customize: CustomizeState;
   setCustomize: (c: CustomizeState) => void;
+  /** The Customize editor is on screen (incl. its close animation) — the widget bar stays hidden until it's gone. */
+  customizeEditorShown: boolean;
+  setCustomizeEditorShown: (shown: boolean) => void;
   /** Active widget = index into widgetTrack — remembered across sizes. */
   widgetPage: number;
   setWidgetPage: (page: number) => void;
@@ -148,6 +151,8 @@ export const useHud = create<HudState>()((set) => ({
   customize: 'off',
   // Editing works in Panel and Full alike (Full stays Full — Anastasiya). One thing at a time: other overlays close.
   setCustomize: (customize) => set((s) => (customize === 'editing' ? { customize, ...closeAll(s) } : { customize })),
+  customizeEditorShown: false,
+  setCustomizeEditorShown: (customizeEditorShown) => set({ customizeEditorShown }),
   widgetPage: 0,
   setWidgetPage: (widgetPage) => set({ widgetPage }),
 
