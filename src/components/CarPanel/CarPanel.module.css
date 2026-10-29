@@ -2,6 +2,8 @@
   position: absolute;
   left: 0;
   top: 0;
+  /* Always display-wide; the panel width is a translate (CarPanel.tsx) */
+  width: var(--display-w);
   height: var(--stage-h);
   /* clip, not hidden: a hidden box can still be scrolled (focus scroll-into-view shifted the whole Full scene once) */
   overflow: clip;
@@ -12,6 +14,12 @@
 
 .layer {
   position: absolute;
+}
+
+/* The scene, counter-translated against the box (CarPanel.tsx) */
+.content {
+  position: absolute;
+  inset: 0;
 }
 
 /* Full-panel layer used to fade a whole scene (Parked / Driving) — never clips */

@@ -1,9 +1,19 @@
 .map {
   position: absolute;
+  left: 0;
   top: 0;
+  /* Never resizes (Map.tsx): display-wide, under the panel */
+  width: var(--display-w);
   height: var(--stage-h);
   overflow: hidden;
   background: var(--color-surface-canvas);
+}
+
+/* Sits at the map's left edge / visible part; slides with it (lib/slide.ts) */
+.edgeFrame {
+  position: absolute;
+  top: 0;
+  height: 100%;
 }
 
 /* ---- Tiles ---- */

@@ -1,5 +1,5 @@
 import { AnimatePresence, animate, motion, useMotionValue } from 'motion/react';
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, type RefObject } from 'react';
 import { isDriving, useHud } from '../../state/store';
 import { transition } from '../../tokens/motion';
 import {
@@ -31,15 +31,20 @@ export function WidgetLayer() {
   // The Collapsed rail shows the chicklet — unless the bar is docked on the map.
   const chicklet = view === 'collapsed' && dock.panel === 'panel' ? (driving ? 'large' : 'mini') : undefined;
   const rect = widgetBarRect(view, driving, dock, driving ? chickletLargeRect : chickletRect(WIDGETS[activeWidget].mini));
-  const box = useRectValues(rect, `${dock.panel}:${dock.full}`, `${view}:${driving}`);
+  const slot = useRef<HTMLDivElement>(null);
+  const box = useSlotMotion(slot, rect, `${dock.panel}:${dock.full}`, `${view}:${driving}`);
 
   return (
     <div className={styles.dockLayer}>
       <MoveFields />
       <motion.div
+        ref={slot}
         className={styles.dockSlot}
         // Chicklet taps fall through to the car panel underneath (Collapsed → Panel).
-        style={{ ...box, pointerEvents: chicklet ? 'none' : 'auto' }}
+        style={{ ...box.size, pointerEvents: chicklet ? 'none' : 'auto' }}
+        initial={false}
+        animate={box.animate}
+        transition={box.transition}
       >
         <WidgetBar chicklet={chicklet} />
       </motion.div>
@@ -49,32 +54,36 @@ export function WidgetLayer() {
 }
 
 /**
- * The bar's rect as motion values. A view / Parked ⇄ Driving change morphs it with the panel (transition.screen); a
- * dock change on its own (a drop) jumps it, and the move offset is rebased so the widget stays under the finger and settles from there.
+ * Where the bar's slot goes. A view / Parked ⇄ Driving change morphs it with the panel (transition.screen); a
+ * dock change on its own (a drop) jumps it, and the move offset is rebased so the widget stays under the finger and
+ * settles from there. Position + opacity are a `transform` animation (compositor, perf 9.5); the size only changes
+ * into / out of the rail chicklet, and stays a small layout animation (the bar's content reflows).
  */
-function useRectValues(rect: Rect, dockKey: string, sceneKey: string) {
-  const left = useMotionValue(rect.left);
-  const top = useMotionValue(rect.top);
+function useSlotMotion(el: RefObject<HTMLElement>, rect: Rect, dockKey: string, sceneKey: string) {
   const width = useMotionValue(rect.width);
   const height = useMotionValue(rect.height);
-  const opacity = useMotionValue(rect.opacity ?? 1);
-  const prev = useRef({ dockKey, sceneKey });
+  const prev = useRef({ dockKey, sceneKey, rect });
+  const dockJump = prev.current.sceneKey === sceneKey && prev.current.dockKey !== dockKey;
   useLayoutEffect(() => {
     const was = prev.current;
-    prev.current = { dockKey, sceneKey };
-    if (was.sceneKey === sceneKey && was.dockKey !== dockKey) {
-      rebase(rect.left - left.get(), rect.top - top.get());
-      left.jump(rect.left);
-      top.jump(rect.top);
+    prev.current = { dockKey, sceneKey, rect };
+    if (dockJump) {
+      // From where the slot shows now (it may still be settling), else where it was headed.
+      const t = el.current && getComputedStyle(el.current).transform;
+      const at = t && t !== 'none' ? new DOMMatrix(t) : null;
+      rebase(rect.left - (at?.m41 ?? was.rect.left), rect.top - (at?.m42 ?? was.rect.top));
+      width.jump(rect.width);
+      height.jump(rect.height);
       return;
     }
-    animate(left, rect.left, transition.screen);
-    animate(top, rect.top, transition.screen);
     animate(width, rect.width, transition.screen);
     animate(height, rect.height, transition.screen);
-    animate(opacity, rect.opacity ?? 1, transition.screen);
   }, [rect.left, rect.top, rect.width, rect.height, rect.opacity, dockKey, sceneKey]);
-  return { left, top, width, height, opacity };
+  return {
+    size: { left: 0, top: 0, width, height },
+    animate: { transform: `translate(${rect.left}px, ${rect.top}px)`, opacity: rect.opacity ?? 1 },
+    transition: dockJump ? transition.cut : transition.screen,
+  };
 }
 
 /** Field opacity: resting / the one the widget would drop into (no sketch for the latter — it just firms up). */

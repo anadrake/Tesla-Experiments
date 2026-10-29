@@ -20,6 +20,7 @@ import { Button } from '../settings/controls';
 import styles from './CarPanel.module.css';
 import { capture } from '../../lib/pointer';
 
+const DISPLAY_W = 1920;
 const DRAG_THRESHOLD = 60; // design px
 /** Figma "bg": canvas in every size (Full was surface/panel until Anastasiya darkened it, 2026-10-27). */
 const PANEL_BG = {
@@ -92,73 +93,97 @@ export function CarPanel() {
       aria-label="Car status"
       data-car-panel
       initial={false}
-      animate={{ width: panelWidth(view, driving), backgroundColor: panelBg(view, driving) }}
+      // The width change runs on the compositor (perf, 9.5): the box is always display-wide and slides left so its
+      // right edge sits at the panel width; `.content` slides back by the same amount, so the scene stays put and
+      // is clipped at the edge. Both are transform animations with the same timing, so they move in lockstep.
+      animate={{
+        transform: `translateX(${panelWidth(view, driving) - DISPLAY_W}px)`,
+        backgroundColor: panelBg(view, driving),
+      }}
       transition={transition.screen}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerCancel={() => (start.current = null)}
     >
-      {/* Car status Full: round live-map peek top-right, under the car scene (Parked and Driving) */}
-      <MapPeek view={view} />
+      <motion.div
+        className={styles.content}
+        initial={false}
+        animate={{ transform: `translateX(${DISPLAY_W - panelWidth(view, driving)}px)` }}
+        transition={transition.screen}
+      >
+        {/* Car status Full: round live-map peek top-right, under the car scene (Parked and Driving) */}
+        <MapPeek view={view} />
 
-      {/* State=Parked scene: shadows, car renders, callouts */}
-      <motion.div className={styles.group} initial={false} animate={{ opacity: driving ? 0 : 1 }} transition={transition.screen}>
-        <FlipLayer rects={scene.shadowPanel} view={view}>
-          <Icon src={shadowPanel} color="var(--color-surface-sunken)" className={styles.fill} />
-        </FlipLayer>
-        <FlipLayer rects={scene.shadowFull} view={view}>
-          <div className={styles.shadowMask}>
-            <div className={styles.shadowFull} />
-          </div>
-        </FlipLayer>
+        {/* State=Parked scene: shadows, car renders, callouts */}
+        <motion.div
+          className={styles.group}
+          initial={false}
+          animate={{ opacity: driving ? 0 : 1 }}
+          transition={transition.screen}
+        >
+          <FlipLayer rects={scene.shadowPanel} view={view}>
+            <Icon src={shadowPanel} color="var(--color-surface-sunken)" className={styles.fill} />
+          </FlipLayer>
+          <FlipLayer rects={scene.shadowFull} view={view}>
+            <div className={styles.shadowMask}>
+              <div className={styles.shadowFull} />
+            </div>
+          </FlipLayer>
 
-        <FlipLayer rects={scene.reflection} view={view}>
-          <img className={`${styles.fill} ${styles.render} ${styles.reflection}`} src={renderFull} alt="" />
-        </FlipLayer>
-        <FlipLayer rects={scene.renderPanel} view={view}>
-          <img className={`${styles.fill} ${styles.render}`} src={renderPanel} alt="" />
-        </FlipLayer>
-        <FlipLayer rects={scene.renderFull} view={view}>
-          <img className={`${styles.fill} ${styles.render}`} src={renderFull} alt="" />
-        </FlipLayer>
+          <FlipLayer rects={scene.reflection} view={view}>
+            <img className={`${styles.fill} ${styles.render} ${styles.reflection}`} src={renderFull} alt="" />
+          </FlipLayer>
+          <FlipLayer rects={scene.renderPanel} view={view}>
+            <img className={`${styles.fill} ${styles.render}`} src={renderPanel} alt="" />
+          </FlipLayer>
+          <FlipLayer rects={scene.renderFull} view={view}>
+            <img className={`${styles.fill} ${styles.render}`} src={renderFull} alt="" />
+          </FlipLayer>
 
-        <Callouts view={view} />
+          <Callouts view={view} />
+        </motion.div>
+
+        {/* State=Driving scene: road render + speed, limit sign, next turn */}
+        <DrivingScene view={view} visible={driving} />
+        <SpeedCluster view={view} visible={driving} />
+
+        <PanelStatusBar view={view} driving={driving} />
+        <Telltales view={view} driving={driving} />
+
+        <SelfDriveLayer rect={selfDrive[driving ? 'driving' : 'parked'][view]} />
+
+        {/* The widget bar lives in its own layer above the panel (WidgetBar/WidgetLayer) so it can dock on the map */}
+        <motion.div
+          className={styles.layer}
+          style={TRIP_BASE}
+          initial={false}
+          // Full: shuffles to keep the widget + card pair centred, whichever side the widget is docked (9.4).
+          // Same size in every view, so it moves on the compositor (flip from 0,0 = a pure translate).
+          animate={flip(tripCardRect(view, dock), TRIP_BASE)}
+          transition={transition.screen}
+          ref={tripLayer}
+          data-no-panel-gesture
+        >
+          {/* Car status shows the active trip while driving (driving = navigating), else Navigate / Home / Work */}
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.div
+              key={driving ? 'active' : 'search'}
+              className={styles.fill}
+              {...presets.fadeIn}
+              transition={transition.toggle}
+            >
+              {driving ? <TripCardActive /> : <TripSearchCard />}
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
       </motion.div>
 
-      {/* State=Driving scene: road render + speed, limit sign, next turn */}
-      <DrivingScene view={view} visible={driving} />
-      <SpeedCluster view={view} visible={driving} />
-
-      <PanelStatusBar view={view} driving={driving} />
-      <Telltales view={view} driving={driving} />
-
-      <SelfDriveLayer rect={selfDrive[driving ? 'driving' : 'parked'][view]} />
-
+      {/* On the box, not in .content: they ride the panel's right edge */}
       <div className={styles.divider} aria-hidden>
         <img src={divider} alt="" width={240} height={104} />
       </div>
       {/* Figma "handle": transparent 64×320 hit area over the grab pill */}
       <div className={styles.handle} data-panel-handle aria-hidden />
-
-      {/* The widget bar lives in its own layer above the panel (WidgetBar/WidgetLayer) so it can dock on the map */}
-      <motion.div
-        className={styles.layer}
-        style={TRIP_BASE}
-        initial={false}
-        // Full: shuffles to keep the widget + card pair centred, whichever side the widget is docked (9.4).
-        // Same size in every view, so it moves on the compositor (flip from 0,0 = a pure translate).
-        animate={flip(tripCardRect(view, dock), TRIP_BASE)}
-        transition={transition.screen}
-        ref={tripLayer}
-        data-no-panel-gesture
-      >
-        {/* Car status shows the active trip while driving (driving = navigating), else Navigate / Home / Work */}
-        <AnimatePresence initial={false} mode="popLayout">
-          <motion.div key={driving ? 'active' : 'search'} className={styles.fill} {...presets.fadeIn} transition={transition.toggle}>
-            {driving ? <TripCardActive /> : <TripSearchCard />}
-          </motion.div>
-        </AnimatePresence>
-      </motion.div>
     </motion.section>
   );
 }

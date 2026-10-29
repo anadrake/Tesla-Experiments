@@ -27,6 +27,9 @@ type Rects = Record<CarView, Rect>;
 export const flipBase = (rects: Rects): Rect =>
   Object.values(rects).reduce((a, r) => (r.width * r.height > a.width * a.height ? r : a));
 export const flipStyle = ({ left, top, width, height }: Rect) => ({ left, top, width, height, transformOrigin: '0 0' });
+/** Same-size moves: laid out at 0,0 with the rect's size, moved by a translate (compositor). */
+export const moveStyle = ({ width, height }: Rect) => ({ left: 0, top: 0, width, height });
+export const move = ({ left, top, opacity = 1 }: Rect) => ({ transform: `translate(${left}px, ${top}px)`, opacity });
 export const flip = (rect: Rect, base: Rect) => ({
   transform: `translate(${rect.left - base.left}px, ${rect.top - base.top}px) scale(${rect.width / base.width}, ${rect.height / base.height})`,
   opacity: rect.opacity ?? 1,
@@ -136,6 +139,11 @@ export const drivingScene = pair(
 );
 
 type Placed = { left: number; top: number; scale: number; opacity: number };
+/** A placed item as a compositor transform (laid out at 0,0; its CSS transform-origin is kept). */
+export const placedMotion = ({ left, top, scale, opacity }: Placed) => ({
+  transform: `translate(${left}px, ${top}px) scale(${scale})`,
+  opacity,
+});
 const placed = (panel: Placed, full: Placed, collapsed: Placed): Record<CarView, Placed> => ({ panel, full, collapsed });
 
 /** Speed readout + speed-limit sign (anchor/top-left). The Collapsed rail shows them enlarged. */

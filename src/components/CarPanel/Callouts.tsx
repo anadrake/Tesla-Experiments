@@ -5,12 +5,30 @@ import power from '../../assets/car/power.svg';
 import type { CarView } from '../../state/store';
 import { transition } from '../../tokens/motion';
 import { Icon } from '../Icon/Icon';
-import { callouts as g, type Rect } from './geometry';
+import { callouts as g, flip, flipBase, flipStyle, type Rect } from './geometry';
 import styles from './Callouts.module.css';
 
-function Layer({ rect, className, children }: { rect: Rect; className?: string; children?: React.ReactNode }) {
+/** Morphs on the compositor (geometry.ts › flip): every callout is a fill or keeps its size, so scaling is exact. */
+function Layer({
+  rects,
+  view,
+  className,
+  children,
+}: {
+  rects: Record<CarView, Rect>;
+  view: CarView;
+  className?: string;
+  children?: React.ReactNode;
+}) {
+  const base = flipBase(rects);
   return (
-    <motion.div className={`${styles.layer} ${className ?? ''}`} initial={false} animate={rect} transition={transition.screen}>
+    <motion.div
+      className={`${styles.layer} ${className ?? ''}`}
+      style={flipStyle(base)}
+      initial={false}
+      animate={flip(rects[view], base)}
+      transition={transition.screen}
+    >
       {children}
     </motion.div>
   );
@@ -29,26 +47,26 @@ function Label({ part, state }: { part: string; state: string }) {
 export function Callouts({ view }: { view: CarView }) {
   return (
     <>
-      <Layer rect={g.lockPanel[view]}>
+      <Layer rects={g.lockPanel} view={view}>
         <img src={lockPanel} alt="" className={styles.fill} />
       </Layer>
-      <Layer rect={g.lockFull[view]} className={styles.center}>
+      <Layer rects={g.lockFull} view={view} className={styles.center}>
         <Icon src={lockFull} size={33} color="var(--color-icon-strong)" />
       </Layer>
-      <Layer rect={g.lockLine[view]} className={styles.line} />
+      <Layer rects={g.lockLine} view={view} className={styles.line} />
 
-      <Layer rect={g.trunkLine[view]} className={styles.line} />
-      <Layer rect={g.trunkText[view]} className={styles.text}>
+      <Layer rects={g.trunkLine} view={view} className={styles.line} />
+      <Layer rects={g.trunkText} view={view} className={styles.text}>
         <Label part="Trunk" state="Open" />
       </Layer>
 
-      <Layer rect={g.frunkLine[view]} className={styles.line} />
-      <Layer rect={g.frunkText[view]} className={styles.text}>
+      <Layer rects={g.frunkLine} view={view} className={styles.line} />
+      <Layer rects={g.frunkText} view={view} className={styles.text}>
         <Label part="Frunk" state="Open" />
       </Layer>
 
-      <Layer rect={g.chargeLine[view]} className={styles.line} />
-      <Layer rect={g.charge[view]}>
+      <Layer rects={g.chargeLine} view={view} className={styles.line} />
+      <Layer rects={g.charge} view={view}>
         <Icon src={power} color="var(--color-icon-strong)" className={styles.fill} />
       </Layer>
     </>

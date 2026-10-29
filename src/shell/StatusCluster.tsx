@@ -95,7 +95,8 @@ export function StatusCluster() {
       }}
       className={styles.item}
       initial={false}
-      animate={pos?.[id] ?? { opacity: 0 }}
+      // A translate (not left / top) so the move runs on the compositor (perf, 9.5); items are laid out at 0,0.
+      animate={pos ? { transform: `translate(${pos[id].left}px, ${pos[id].top}px)`, opacity: pos[id].opacity } : { opacity: 0 }}
       transition={transition.screen}
     >
       {children}

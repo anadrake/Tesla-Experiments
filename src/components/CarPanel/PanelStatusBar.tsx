@@ -6,7 +6,14 @@ import seatbelt from '../../assets/telltales/seatbelt.svg';
 import { useHud, type CarView } from '../../state/store';
 import { transition } from '../../tokens/motion';
 import { Icon } from '../Icon/Icon';
-import { battery as batteryRects, batteryDrivingCollapsed, telltales as telltaleRects, telltalesDriving } from './geometry';
+import {
+  battery as batteryRects,
+  batteryDrivingCollapsed,
+  move,
+  moveStyle,
+  telltales as telltaleRects,
+  telltalesDriving,
+} from './geometry';
 import styles from './PanelStatusBar.module.css';
 
 const GEARS = ['P', 'R', 'N', 'D'] as const;
@@ -37,13 +44,20 @@ export function PanelStatusBar({ view, driving, battery = 90 }: { view: CarView;
       </button>
       <motion.span
         className={`${styles.percent} text-body-l`}
+        style={moveStyle(rects.percent)}
         initial={false}
-        animate={rects.percent}
+        animate={move(rects.percent)}
         transition={transition.screen}
       >
         {battery}%
       </motion.span>
-      <motion.span className={styles.battery} initial={false} animate={rects.gauge} transition={transition.screen}>
+      <motion.span
+        className={styles.battery}
+        style={moveStyle(rects.gauge)}
+        initial={false}
+        animate={move(rects.gauge)}
+        transition={transition.screen}
+      >
         <span className={styles.gauge} data-low={battery <= 20 || undefined}>
           <span className={styles.level} style={{ width: (37 * battery) / 100 }} />
         </span>
@@ -62,9 +76,13 @@ export function Telltales({ view, driving }: { view: CarView; driving: boolean }
     <motion.div
       className={styles.telltales}
       initial={false}
-      animate={(driving ? telltalesDriving : telltaleRects)[view]}
+      // Same size in every view (the Parked ⇄ Driving size + gap change is a jump, as before for the gap)
+      animate={move((driving ? telltalesDriving : telltaleRects)[view])}
       transition={transition.screen}
-      style={{ gap: driving ? 'var(--space-8)' : 'var(--space-2)' }}
+      style={{
+        ...moveStyle((driving ? telltalesDriving : telltaleRects)[view]),
+        gap: driving ? 'var(--space-8)' : 'var(--space-2)',
+      }}
     >
       <Icon src={lowBeam} color="var(--color-status-success)" />
       <Icon src={autoHighBeam} color="var(--color-icon-strong)" />
