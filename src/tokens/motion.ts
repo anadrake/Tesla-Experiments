@@ -46,12 +46,28 @@ export const transition = {
   flash: { duration: duration.slow * 3, ease: 'linear' },
 } as const;
 
-/** Figma animation styles (Motion/…) as motion variants. */
+/**
+ * Figma animation styles (Motion/…) as motion variants. Moves are written as `transform` strings, not `x` / `y` /
+ * `scale`: motion runs `transform` + `opacity` on the compositor (WAAPI), which keeps iPad's 120Hz, while `x` / `y` /
+ * `scale` (and left / top / width) run in JS, which Safari caps at 60fps — that read as choppy (perf, 9.5).
+ */
 export const presets = {
   fadeIn: { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } },
-  slideUpIn: { initial: { y: '100%' }, animate: { y: 0 }, exit: { y: '100%' } },
-  slideInFromLeft: { initial: { x: '-100%' }, animate: { x: 0 }, exit: { x: '-100%' } },
-  popIn: { initial: { opacity: 0, scale: 0.92 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.92 } },
+  slideUpIn: {
+    initial: { transform: 'translateY(100%)' },
+    animate: { transform: 'translateY(0%)' },
+    exit: { transform: 'translateY(100%)' },
+  },
+  slideInFromLeft: {
+    initial: { transform: 'translateX(-100%)' },
+    animate: { transform: 'translateX(0%)' },
+    exit: { transform: 'translateX(-100%)' },
+  },
+  popIn: {
+    initial: { opacity: 0, transform: 'scale(0.92)' },
+    animate: { opacity: 1, transform: 'scale(1)' },
+    exit: { opacity: 0, transform: 'scale(0.92)' },
+  },
   /** Not a Figma style: the "already on the track" blink (Customize, Phase 8 — logged in WORKLOG). */
   flash: { opacity: [1, 0.35, 1, 0.35, 1, 0.35, 1] as number[] },
 } as const;

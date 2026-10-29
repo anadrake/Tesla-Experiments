@@ -57,8 +57,14 @@
 }
 
 .render {
+  display: block;
   object-fit: cover;
   pointer-events: none;
+}
+
+/* Floor reflection under the Full render: flipped and tilted (Figma) */
+.reflection {
+  transform: scaleY(-1) rotate(4.16deg);
 }
 
 /* Grab pill on the right edge (Figma "divider", 136px line + glow), vertically centered */

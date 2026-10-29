@@ -17,6 +17,20 @@ export type Rect = {
 };
 
 type Rects = Record<CarView, Rect>;
+
+/**
+ * Perf (9.5): a view morph that animates left/top/width/height relays out and repaints the layer every frame — the
+ * car renders and the blurred shadow made Panel ⇄ Full choppy on iPad. Instead the layer is laid out once at its
+ * largest rect (`flipBase`, sharpest) and `flip` transforms it to each view's rect: a `transform` + `opacity`
+ * animation, which motion runs on the compositor (WAAPI) — no layout, no repaint, immune to main-thread work.
+ */
+export const flipBase = (rects: Rects): Rect =>
+  Object.values(rects).reduce((a, r) => (r.width * r.height > a.width * a.height ? r : a));
+export const flipStyle = ({ left, top, width, height }: Rect) => ({ left, top, width, height, transformOrigin: '0 0' });
+export const flip = (rect: Rect, base: Rect) => ({
+  transform: `translate(${rect.left - base.left}px, ${rect.top - base.top}px) scale(${rect.width / base.width}, ${rect.height / base.height})`,
+  opacity: rect.opacity ?? 1,
+});
 const pair = (panel: Rect, full: Rect, collapsed?: Rect): Rects => ({
   panel: { opacity: 1, ...panel },
   full: { opacity: 1, ...full },

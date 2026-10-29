@@ -5,7 +5,7 @@ import leadCar from '../../assets/drive/lead-car.png';
 import egoCar from '../../assets/drive/ego-car.svg';
 import type { CarView } from '../../state/store';
 import { transition } from '../../tokens/motion';
-import { drivingScene } from './geometry';
+import { drivingScene, flip, flipBase, flipStyle } from './geometry';
 import styles from './DrivingScene.module.css';
 
 /** % of the 633×746.5 Car Render frame, so the scene scales with its rect. */
@@ -18,12 +18,14 @@ const at = (left: number, top: number, w: number, h: number) => ({
 
 /** Figma Car Render Scene=Driving, Mode=Standard (4479:49839): road lines, beam, lead car, ego car (rear view). */
 export function DrivingScene({ view, visible }: { view: CarView; visible: boolean }) {
-  const rect = drivingScene[view];
+  const base = flipBase(drivingScene);
+  const to = flip(drivingScene[view], base);
   return (
     <motion.div
       className={styles.scene}
+      style={flipStyle(base)}
       initial={false}
-      animate={{ ...rect, opacity: visible ? rect.opacity : 0 }}
+      animate={{ ...to, opacity: visible ? to.opacity : 0 }}
       transition={transition.screen}
     >
       <img src={roadLines} alt="" style={at(150, -0.41, 308.974, 672.91)} />

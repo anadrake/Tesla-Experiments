@@ -104,6 +104,7 @@
   --color-surface-field: #e0e0e0;
   --color-surface-selected: #d0d1d2;
   --color-surface-sunken: #d0d1d2;
+  --color-move-field: var(--color-surface-sunken); /* 9.4 move field (sketch Rectangle 41) */
   --color-surface-inverse: #414141; /* music chicklet progress (played) */
   --color-surface-glass: #f6f6f6cc; /* Figma vars report #000000f2 for Light; Light refs + component fallback show neutral-50 · 80% — see WORKLOG */
   --color-content-primary: #414141;
@@ -148,6 +149,7 @@
   --color-surface-field: #5c5c5c;
   --color-surface-selected: #757575;
   --color-surface-sunken: #242424;
+  --color-move-field: #000000b3; /* not in Figma: sunken #242424 vanished over the dark cards — near-black 70% (Anastasiya, 2026-10-29) */
   --color-surface-glass: #000000f2;
   --color-surface-inverse: #f0f0f0; /* Dark value not exposed by Figma vars — assumed inverse of Light (see WORKLOG) */
   --color-content-primary: #f0f0f0;

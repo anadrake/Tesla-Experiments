@@ -33,9 +33,10 @@ export function Keyboard() {
   return (
     <motion.div
       className={styles.keyboard}
-      initial={{ y: '100%' }}
-      animate={{ y: 0, transition: { duration: duration.slow, ease: easing.enter } }}
-      exit={{ y: '100%', transition: { duration: duration.slow, ease: easing.exit } }}
+      // `transform` (not `y`) so motion runs the slide on the compositor — full frame rate on iPad (perf, 9.5)
+      initial={{ transform: 'translateY(100%)' }}
+      animate={{ transform: 'translateY(0%)', transition: { duration: duration.slow, ease: easing.enter } }}
+      exit={{ transform: 'translateY(100%)', transition: { duration: duration.slow, ease: easing.exit } }}
       role="group"
       aria-label="Keyboard"
     >

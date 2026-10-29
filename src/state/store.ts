@@ -234,3 +234,6 @@ function closeAll(s: HudState): Partial<HudState> {
     ...(s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
   };
 }
+
+// Dev only: lets scripts/perf.mjs drive state changes directly (stripped from the production build).
+if (import.meta.env.DEV) (window as unknown as { hud: typeof useHud }).hud = useHud;

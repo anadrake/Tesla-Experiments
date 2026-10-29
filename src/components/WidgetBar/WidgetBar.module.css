@@ -508,7 +508,7 @@
 .moveField {
   position: absolute;
   border-radius: var(--radius-lg);
-  background: var(--color-surface-sunken);
+  background: var(--color-move-field);
   pointer-events: none;
 }
 

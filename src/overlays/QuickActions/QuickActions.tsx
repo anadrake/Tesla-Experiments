@@ -54,9 +54,10 @@ export function QuickActions() {
       data-mode="dark"
       role="dialog"
       aria-label="Quick actions"
-      initial={{ y: 476 }}
-      animate={{ y: 0, transition: transition.open }}
-      exit={{ y: 476, transition: transition.close }}
+      // `transform` (not `y`) so motion runs the slide on the compositor — full frame rate on iPad (perf, 9.5)
+      initial={{ transform: 'translateY(476px)' }}
+      animate={{ transform: 'translateY(0px)', transition: transition.open }}
+      exit={{ transform: 'translateY(476px)', transition: transition.close }}
     >
       <div className={styles.grid}>
         {CLIMATE.map((c) => (

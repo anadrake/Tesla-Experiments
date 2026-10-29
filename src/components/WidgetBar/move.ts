@@ -19,8 +19,11 @@ import { WIDGET_CARD, moveSpots, widgetBarRect, type MoveSpot } from '../CarPane
 export const POP_PULL = 60; // extra finger travel past the reveal let-off before the widget can pop
 export const POP_HOLD_MS = 300; // …held there this long → pop
 const DRAG_SLOP = 8; // a press in move mode becomes a drag after this
-/** A field takes the drop when the card's centre is within this of the field's centre. */
-const REACH = 300;
+/**
+ * A field takes the drop when the dragged card touches it, or comes within this of its edge — close is enough
+ * (Anastasiya, 2026-10-29: the old centre-to-centre 300 felt too tight). The nearest one wins.
+ */
+const CATCH = 80;
 /** Lifted out of the socket. Before the pop the pull stretches it up to POP_TENSION (the "socket" resisting). */
 const POP_SCALE = 1.04;
 const POP_TENSION = 1.015;
@@ -75,10 +78,15 @@ function cardCentre(lift: number) {
 
 function nearest(lift: number) {
   const c = cardCentre(lift);
+  // Card and spot are the same size, so they're within CATCH of touching when the centres are within size + CATCH.
+  const reach = { x: WIDGET_CARD.width + CATCH, y: WIDGET_CARD.height + CATCH };
   let best: MoveSpot | null = null;
-  let bestD = REACH;
+  let bestD = Infinity;
   for (const s of spots()) {
-    const d = Math.hypot(c.x - (s.left + WIDGET_CARD.width / 2), c.y - (s.top + WIDGET_CARD.height / 2));
+    const dx = c.x - (s.left + WIDGET_CARD.width / 2);
+    const dy = c.y - (s.top + WIDGET_CARD.height / 2);
+    if (Math.abs(dx) > reach.x || Math.abs(dy) > reach.y) continue;
+    const d = Math.hypot(dx, dy);
     if (d < bestD) [best, bestD] = [s, d];
   }
   return best;

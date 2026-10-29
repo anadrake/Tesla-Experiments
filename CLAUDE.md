@@ -12,11 +12,13 @@ Runs on iPad Pro (GitHub Pages, Add to Home Screen). Design concept — not affi
 - `npm run dev` — dev server on LAN (open the printed Network URL on the iPad)
 - `npm run build` — typecheck + production build
 - `npm run shots [-- --only a,b] [--ipad]` — screenshot states in `scripts/states.json` → `shots/` (needs dev server)
+- `node scripts/perf.mjs [--cpu 4] [--only a,b] [--base URL]` — frame-time / paint eval of the main animations (needs dev server)
 
 ## Conventions
 - **Canvas is 1920×1200 px**, identical to Figma. Write sizes in Figma px; `Stage` scales to the device.
 - **Tokens only.** Colors/space/radius/type come from `src/tokens/tokens.css` (names = Figma variables). Never hard-code a hex or a duration. Missing token? Pull it from Figma for Light AND Dark and add it.
 - **Motion only from `src/tokens/motion.ts`** (`transition.press/toggle/open/screen/dayNight`, `presets`, `spring`).
+- **Animate `transform` / `opacity` strings, not `x`/`y`/`scale`/`left`/`width`,** for anything that isn't finger-driven: motion runs those on the compositor (iPad 120Hz); the rest runs in JS, which Safari caps at 60fps. Rect morphs: `flip()` in `CarPanel/geometry.ts`.
 - **Text styles:** use `.text-*` classes (Figma text style names).
 - **State:** everything flow-related lives in `src/state/store.ts`. Deep-linkable fields are mirrored in `src/state/url.ts`; add a `scripts/states.json` entry for each new reviewable state.
 - **Structure:** `components/` (one folder per Figma component, `Name.tsx` + `Name.module.css`), `shell/`, `screens/`, `overlays/`.

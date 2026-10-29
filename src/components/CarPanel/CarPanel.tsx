@@ -1,11 +1,11 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import renderPanel from '../../assets/car/render-panel.png';
 import renderFull from '../../assets/car/render-full.png';
 import shadowPanel from '../../assets/car/shadow-panel.svg';
 import divider from '../../assets/car/divider.svg';
 import { useStageScale } from '../../shell/Stage';
-import { isDriving, useHud } from '../../state/store';
+import { DEFAULT_DOCK, isDriving, useHud, type CarView } from '../../state/store';
 import { presets, transition } from '../../tokens/motion';
 import { TripCardActive } from '../Navigation/TripCardActive';
 import { Icon } from '../Icon/Icon';
@@ -15,7 +15,7 @@ import { Callouts } from './Callouts';
 import { PanelStatusBar, Telltales } from './PanelStatusBar';
 import { DrivingScene } from './DrivingScene';
 import { SpeedCluster } from './SpeedCluster';
-import { panelWidth, scene, selfDrive, tripCardRect } from './geometry';
+import { flip, flipBase, flipStyle, panelWidth, scene, selfDrive, tripCardRect, type Rect } from './geometry';
 import { Button } from '../settings/controls';
 import styles from './CarPanel.module.css';
 import { capture } from '../../lib/pointer';
@@ -103,45 +103,24 @@ export function CarPanel() {
 
       {/* State=Parked scene: shadows, car renders, callouts */}
       <motion.div className={styles.group} initial={false} animate={{ opacity: driving ? 0 : 1 }} transition={transition.screen}>
-        <motion.div
-          className={styles.layer}
-          initial={false}
-          animate={scene.shadowPanel[view]}
-          transition={transition.screen}
-        >
+        <FlipLayer rects={scene.shadowPanel} view={view}>
           <Icon src={shadowPanel} color="var(--color-surface-sunken)" className={styles.fill} />
-        </motion.div>
-        <motion.div className={styles.layer} initial={false} animate={scene.shadowFull[view]} transition={transition.screen}>
+        </FlipLayer>
+        <FlipLayer rects={scene.shadowFull} view={view}>
           <div className={styles.shadowMask}>
             <div className={styles.shadowFull} />
           </div>
-        </motion.div>
+        </FlipLayer>
 
-        <motion.img
-          className={`${styles.layer} ${styles.render}`}
-          src={renderFull}
-          alt=""
-          initial={false}
-          animate={scene.reflection[view]}
-          style={{ scaleY: -1, rotate: 4.16 }}
-          transition={transition.screen}
-        />
-        <motion.img
-          className={`${styles.layer} ${styles.render}`}
-          src={renderPanel}
-          alt=""
-          initial={false}
-          animate={scene.renderPanel[view]}
-          transition={transition.screen}
-        />
-        <motion.img
-          className={`${styles.layer} ${styles.render}`}
-          src={renderFull}
-          alt=""
-          initial={false}
-          animate={scene.renderFull[view]}
-          transition={transition.screen}
-        />
+        <FlipLayer rects={scene.reflection} view={view}>
+          <img className={`${styles.fill} ${styles.render} ${styles.reflection}`} src={renderFull} alt="" />
+        </FlipLayer>
+        <FlipLayer rects={scene.renderPanel} view={view}>
+          <img className={`${styles.fill} ${styles.render}`} src={renderPanel} alt="" />
+        </FlipLayer>
+        <FlipLayer rects={scene.renderFull} view={view}>
+          <img className={`${styles.fill} ${styles.render}`} src={renderFull} alt="" />
+        </FlipLayer>
 
         <Callouts view={view} />
       </motion.div>
@@ -164,9 +143,11 @@ export function CarPanel() {
       {/* The widget bar lives in its own layer above the panel (WidgetBar/WidgetLayer) so it can dock on the map */}
       <motion.div
         className={styles.layer}
+        style={TRIP_BASE}
         initial={false}
-        // Full: shuffles to keep the widget + card pair centred, whichever side the widget is docked (9.4)
-        animate={tripCardRect(view, dock)}
+        // Full: shuffles to keep the widget + card pair centred, whichever side the widget is docked (9.4).
+        // Same size in every view, so it moves on the compositor (flip from 0,0 = a pure translate).
+        animate={flip(tripCardRect(view, dock), TRIP_BASE)}
         transition={transition.screen}
         ref={tripLayer}
         data-no-panel-gesture
@@ -183,6 +164,24 @@ export function CarPanel() {
 }
 
 /** Start Self-Driving: morphs with the panel like the other layers; hidden (and untappable) where Figma has none. */
+const TRIP_BASE = { ...tripCardRect('full', DEFAULT_DOCK), left: 0, top: 0 };
+
+/** A scene layer that morphs between views on the compositor (geometry.ts › flip). */
+function FlipLayer({ rects, view, children }: { rects: Record<CarView, Rect>; view: CarView; children: ReactNode }) {
+  const base = flipBase(rects);
+  return (
+    <motion.div
+      className={styles.layer}
+      style={flipStyle(base)}
+      initial={false}
+      animate={flip(rects[view], base)}
+      transition={transition.screen}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 function SelfDriveLayer({ rect }: { rect: (typeof selfDrive)['parked']['panel'] }) {
   const shown = rect.opacity !== 0;
   const layer = useRef<HTMLDivElement>(null);
