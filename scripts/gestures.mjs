@@ -557,6 +557,19 @@ await popAndDrop({ x: 1434, y: 950 });
 const mapBox = await cardBox();
 check('drop on the map field docks it on the map', param('widgetDock') === 'map' && param('customize') === null, page.url());
 check('…beside the trip card spot (1134, 854)', Math.abs(mapBox.x - 1134) < 2 && Math.abs(mapBox.y - 854) < 2, `${mapBox.x},${mapBox.y}`);
+await open();
+{
+  const c = await barCentre();
+  await popOut(c);
+  await page.mouse.move(1434, 950, { steps: 25 });
+  await page.waitForTimeout(250);
+  await page.mouse.up();
+  const o = await customizeOpacity();
+  check('drop: Done hides at once (no flash at the new dock)', o === '0', `opacity ${o}`);
+  await page.waitForTimeout(700);
+  await drag(await barCentre(), 0, -140);
+  check('…and Customize comes back with the next pull', param('customize') === 'revealed' && (await customizeOpacity()) === '1', await customizeOpacity());
+}
 await page.goto(`${base}?mode=light`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(300);
 check('the dock is saved (reload without the param)', param('widgetDock') === 'map', page.url());

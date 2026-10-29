@@ -1,13 +1,13 @@
 import { AnimatePresence, motion, useTransform } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { capture } from '../../lib/pointer';
 import { useStageScale } from '../../shell/Stage';
 import { useHud } from '../../state/store';
-import { presets, transition } from '../../tokens/motion';
+import { presets, reducible, spring, springSnap, transition } from '../../tokens/motion';
 import { InfoPages } from './pages';
 import { WIDGETS, WidgetIcon, type WidgetId } from './registry';
 import { LIFT, usePullUp } from './usePullUp';
-import { POP_HOLD_MS, POP_PULL, dragTo, grab, liftOut, move, popOut, release, settleMove, tension } from './move';
+import { POP_HOLD_MS, POP_PULL, POP_SCALE, dragTo, grab, liftOut, move, popOut, release, settleMove, tension } from './move';
 import { useDismissOnOutsideTap } from './useDismissOnOutsideTap';
 import styles from './WidgetBar.module.css';
 
@@ -118,6 +118,14 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
     wasMoving.current = moving;
   }, [moving]);
   const liftY = useTransform(() => y.get() + move.y.get());
+  // Leaving move mode (a drop, Done, tap outside), Done goes at once: the bar has already jumped to its new dock,
+  // so a fade would flash it there (Anastasiya, 2026-10-29). Back with the next press on the bar.
+  const [buttonGone, setButtonGone] = useState(false);
+  const wasMovingNow = useRef(moving);
+  useLayoutEffect(() => {
+    if (wasMovingNow.current && !moving) setButtonGone(true);
+    wasMovingNow.current = moving;
+  }, [moving]);
   const reveal = useTransform(y, [0, -LIFT], [0, 1]);
   const buttonY = useTransform(y, [0, -LIFT], [LIFT / 4, 0]);
   useDismissOnOutsideTap(root, revealed && (customize === 'revealed' || moving), () => setCustomize('off'));
@@ -173,50 +181,65 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
       className={styles.bar}
       data-moving={moving || undefined}
       {...barHandlers}
+      onPointerDownCapture={() => setButtonGone(false)}
       // Hand-off, no cross-fade: hidden while the editor is on screen, back as soon as it's gone
       // (plain style, not an animation, so the swap lands in one painted frame — CustomizeEditor).
       style={{ opacity: hidden ? 0 : 1, pointerEvents: hidden ? 'none' : undefined }}
     >
       <motion.div className={styles.lift} style={{ x: move.x, y: liftY, scale: move.scale }}>
-        {/* Popped out: a second panel shadow fades in under the card (lifted further off the screen) */}
-        <motion.div className={styles.liftShadow} style={{ opacity: move.lifted }} aria-hidden />
-        <AnimatePresence initial={false} mode="popLayout">
-          {collapsed ? (
-            <motion.button
-              key={`pill-${active}`}
-              type="button"
-              className={styles.pill}
-              data-widget={active}
-              onClick={() => setCollapsed(false)}
-              aria-label={`Expand ${WIDGETS[active].ariaLabel}`}
-              {...presets.popIn}
-              transition={transition.open}
-              whileTap={{ scale: 0.97 }}
-            >
-              <PillBody id={active} />
-            </motion.button>
-          ) : (
-            <motion.div key="window" className={styles.window} {...presets.popIn} transition={transition.open}>
-              <InfoPages initialPage={page} onScrollPage={onScrollPage} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Popped out: scaled up with a little overshoot (the socket's click) — state-driven, so it runs on the compositor */}
         <motion.div
-          className={styles.dots}
-          aria-hidden
+          className={styles.pop}
           initial={false}
-          animate={{ opacity: dotsVisible && !collapsed ? 1 : 0 }}
-          transition={dotsVisible ? transition.toggle : transition.close}
+          animate={{ transform: moving ? `scale(${POP_SCALE})` : 'scale(1)' }}
+          transition={reducible(moving ? springSnap : spring)}
         >
-          {track.map((id, i) => (
-            <span key={id} className={styles.dot} data-selected={i === page || undefined} />
-          ))}
+          {/* …and a second panel shadow fades in under the card (lifted further off the screen) */}
+          <motion.div
+            className={styles.liftShadow}
+            initial={false}
+            animate={{ opacity: moving ? 1 : 0 }}
+            transition={reducible(moving ? transition.open : transition.close)}
+            aria-hidden
+          />
+          <AnimatePresence initial={false} mode="popLayout">
+            {collapsed ? (
+              <motion.button
+                key={`pill-${active}`}
+                type="button"
+                className={styles.pill}
+                data-widget={active}
+                onClick={() => setCollapsed(false)}
+                aria-label={`Expand ${WIDGETS[active].ariaLabel}`}
+                {...presets.popIn}
+                transition={transition.open}
+                whileTap={{ scale: 0.97 }}
+              >
+                <PillBody id={active} />
+              </motion.button>
+            ) : (
+              <motion.div key="window" className={styles.window} {...presets.popIn} transition={transition.open}>
+                <InfoPages initialPage={page} onScrollPage={onScrollPage} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <motion.div
+            className={styles.dots}
+            aria-hidden
+            initial={false}
+            animate={{ opacity: dotsVisible && !collapsed ? 1 : 0 }}
+            transition={dotsVisible ? transition.toggle : transition.close}
+          >
+            {track.map((id, i) => (
+              <span key={id} className={styles.dot} data-selected={i === page || undefined} />
+            ))}
+          </motion.div>
         </motion.div>
       </motion.div>
       <motion.div
         className={styles.customizeSlot}
         data-move-ignore
-        style={{ opacity: reveal, y: buttonY }}
+        style={{ opacity: buttonGone ? 0 : reveal, y: buttonY }}
         data-revealed={revealed || undefined}
       >
         <motion.button

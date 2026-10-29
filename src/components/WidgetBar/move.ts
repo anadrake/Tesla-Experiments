@@ -1,7 +1,7 @@
 import { animate, motionValue } from 'motion/react';
 import { create } from 'zustand';
 import { isDriving, useHud } from '../../state/store';
-import { reducible, spring, springSnap, transition } from '../../tokens/motion';
+import { reducible, spring, springSnap } from '../../tokens/motion';
 import { WIDGET_CARD, moveSpots, widgetBarRect, type MoveSpot } from '../CarPanel/geometry';
 
 /**
@@ -24,16 +24,18 @@ const DRAG_SLOP = 8; // a press in move mode becomes a drag after this
  * (Anastasiya, 2026-10-29: the old centre-to-centre 300 felt too tight). The nearest one wins.
  */
 const CATCH = 80;
-/** Lifted out of the socket. Before the pop the pull stretches it up to POP_TENSION (the "socket" resisting). */
-const POP_SCALE = 1.04;
+/**
+ * Lifted out of the socket. Before the pop the pull stretches it up to POP_TENSION (the "socket" resisting).
+ * The lift itself (POP_SCALE + the extra shadow) is state-driven in WidgetBar — a compositor animation, so the
+ * click of the pop keeps iPad's frame rate; only the finger-driven parts (offset, tension) live here.
+ */
+export const POP_SCALE = 1.04;
 const POP_TENSION = 1.015;
 
 export const move = {
   x: motionValue(0),
   y: motionValue(0),
   scale: motionValue(1),
-  /** 0 → 1: the extra lift shadow. */
-  lifted: motionValue(0),
 };
 
 interface MoveState {
@@ -102,13 +104,10 @@ export function tension(t: number) {
   else move.scale.set(1 + (POP_TENSION - 1) * t);
 }
 
-/** Lifted out of the socket (pop, or move mode opened from a deep link). */
+/** Popped: the socket lets go — the pull's stretch eases off (WidgetBar scales the card up to POP_SCALE). */
 export function liftOut() {
   lastTension = 0;
-  if (move.lifted.get() > 0) return;
-  // A quick overshoot past the lifted size — the "out of a socket" click.
-  animate(move.scale, POP_SCALE, reducible({ ...springSnap, velocity: 1.2 }));
-  animate(move.lifted, 1, reducible(transition.open));
+  animate(move.scale, 1, reducible(spring));
 }
 
 /**
@@ -179,5 +178,4 @@ export function settleMove() {
   animate(move.x, 0, reducible(springSnap));
   animate(move.y, 0, reducible(springSnap));
   animate(move.scale, 1, reducible(spring));
-  animate(move.lifted, 0, reducible(transition.close));
 }

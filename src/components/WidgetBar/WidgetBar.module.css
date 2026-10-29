@@ -443,15 +443,20 @@
 }
 
 /* ---- Customize (Phase 8): pull-up lift + Customize button (Sketch 4802:103109) ---- */
-.lift {
+.lift,
+.pop {
   position: absolute;
   inset: 0;
   transform-origin: 50% 96px; /* popped out (9.4) it scales around the card, not the box with the dots */
+  /* Own GPU layers: the finger moves / scales them every frame. Without the hint Safari repaints the whole card
+     (shadow blur, album art, text) per move, since JS-set transforms don't promote a layer there (perf, 9.5). */
+  will-change: transform;
 }
 
 /* Sits 20px under the lifted bar (anchor/bottom gap 20): 208 + 20 − 64 */
 .customizeSlot {
   position: absolute;
+  will-change: transform, opacity; /* follows the pull every frame */
   top: 164px;
   left: 0;
   right: 0;
@@ -492,11 +497,13 @@
 
 .dockSlot {
   position: absolute;
+  will-change: transform;
 }
 
 /* A second panel shadow under the card, faded in while it's popped out */
 .liftShadow {
   position: absolute;
+  will-change: opacity;
   inset: 0 0 auto 0;
   height: 192px;
   border-radius: var(--radius-lg);
