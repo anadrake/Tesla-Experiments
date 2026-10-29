@@ -264,7 +264,7 @@ Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **On
 - New tokens if any (Light **and** Dark). COMPONENTS.md rows.
 - Review: none (no UI change) — I check the refs list against Figma.
 
-### 9.1 — New widgets: Energy, Calendar, Phone, Quick Actions (M–L)
+### 9.1 — New widgets: Energy, Calendar, Phone, Quick Actions (M–L) ✅ 2026-10-28 (reviewed; iPad test pending)
 - `InfoWidgets.tsx` → one file per widget (`EnergyWidget`, `CalendarWidget`, `PhoneWidget`, `QuickActionsWidget`) with Open / Collapsed / Chicklet / Mini; set `Widget` + sizes in `registry.tsx` (the "Coming soon" placeholder stays for future apps).
 - Collapse (Q26): **swipe down on the widget** collapses the whole bar to the pill of the widget that was showing; the page is remembered; tapping the pill opens the bar back on that widget. Every widget gets its 382×64 pill (Music already has one). Swipe down while the Customize button is revealed still just hides the button (P8.1).
 - Apply any Music / Odometer / Tire refresh from 9.0; dots handle up to 7 pages.

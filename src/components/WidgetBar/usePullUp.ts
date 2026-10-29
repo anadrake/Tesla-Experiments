@@ -6,6 +6,7 @@ import { reducible, spring, springSnap } from '../../tokens/motion';
 
 /**
  * Pull-up gesture on the widget bar → reveals the Customize button (Figma Sketch 4802:103109).
+ * The same gesture downward (bar at rest) collapses the bar to its pill (Q26) — heavy, then it gives at COLLAPSE_LET_OFF.
  *
  * Feels like a compound bow: the bar is heavy at first (moves a fraction of the finger), then at the
  * let-off point it "gives" and snaps the rest of the way up on its own, where it holds. Let go before
@@ -18,6 +19,7 @@ const AXIS_SLOP = 10; // finger travel before we decide vertical vs horizontal
 const HEAVY_GAIN = 0.4; // bar travel per finger px before the let-off
 const LET_OFF = 80; // finger px past the slop where the bar gives and snaps up
 const CLOSE_LET_OFF = 56; // finger px down from revealed where it gives and snaps back
+const COLLAPSE_LET_OFF = 56; // finger px down from rest where the bar gives and collapses to its pill
 /** Vertical wins unless the finger went clearly sideways (|dx| > this × |dy|) — diagonal pulls still count. */
 const HORIZONTAL_BIAS = 1.3;
 /** Screen px a touch must move before we decide whether it's ours (vertical) or the native swipe's. */
@@ -35,12 +37,14 @@ interface Options {
   revealed: boolean;
   onReveal: () => void;
   onHide: () => void;
+  /** Swipe down from rest → collapse (omit to ignore downward pulls at rest). */
+  onCollapse?: () => void;
   /** Jump (no spring) on the next outside state change — the bar is hidden, e.g. under the closing Customize editor. */
   jump?: boolean;
 }
 
 /** Returns the bar's lift (0 = rest, -LIFT = revealed) and pointer handlers for the bar root. */
-export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = false }: Options): {
+export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollapse, jump = false }: Options): {
   y: MotionValue<number>;
   handlers: Pick<React.DOMAttributes<HTMLElement>, 'onPointerDown' | 'onPointerMove' | 'onPointerUp' | 'onPointerCancel'>;
 } {
@@ -54,6 +58,8 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
     locked: boolean;
     snapped: boolean;
     fromRevealed: boolean;
+    /** Pulling down from rest to collapse the bar (not a reveal / hide). */
+    collapsing: boolean;
     base: number;
   } | null>(null);
   /** Touch direction decided by the touchmove claim below (null = undecided / not a touch). */
@@ -119,7 +125,7 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
     handlers: {
       onPointerDown: (e) => {
         if (!enabled || !e.isPrimary) return;
-        g.current = { id: e.pointerId, x: e.clientX, y: e.clientY, locked: false, snapped: false, fromRevealed: revealed, base: 0 };
+        g.current = { id: e.pointerId, x: e.clientX, y: e.clientY, locked: false, snapped: false, fromRevealed: revealed, collapsing: false, base: 0 };
       },
       onPointerMove: (e) => {
         const s = g.current;
@@ -135,7 +141,9 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
           if (touch && touchClaim.current === null) return; // claim decides on the next touchmove
           const horizontal = touch ? !touchClaim.current : Math.abs(dx) > Math.abs(dy) * HORIZONTAL_BIAS;
           // Horizontal → leave it to the native widget swipe. Wrong vertical direction → nothing to do.
-          if (horizontal || (s.fromRevealed ? dy > 0 : dy < 0)) {
+          // Down from rest → collapse, if the bar offers it.
+          s.collapsing = !s.fromRevealed && dy < 0 && !!onCollapse;
+          if (horizontal || (!s.collapsing && (s.fromRevealed ? dy > 0 : dy < 0))) {
             g.current = null;
             return;
           }
@@ -150,7 +158,15 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
         // Travel is measured past the slop, so the bar doesn't jump when the gesture locks.
         // Once it has snapped, the spring owns the bar until release (no following the finger → no bounce).
         if (s.snapped) return;
-        if (!s.fromRevealed) {
+        if (s.collapsing) {
+          const push = Math.max(0, -dy - AXIS_SLOP);
+          if (push >= COLLAPSE_LET_OFF) {
+            s.snapped = true;
+            // The pill pops in at the bar's spot; the lift heads home under it.
+            springTo(0, spring);
+            onCollapse?.();
+          } else y.set(Math.min(LIFT, s.base + push * HEAVY_GAIN));
+        } else if (!s.fromRevealed) {
           const pull = Math.max(0, dy - AXIS_SLOP);
           if (pull >= LET_OFF) {
             s.snapped = true;
@@ -171,6 +187,10 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
         if (s && e.pointerId !== s.id) return;
         g.current = null;
         if (!s?.locked) return;
+        if (s.collapsing) {
+          if (!s.snapped) springTo(0, spring);
+          return;
+        }
         // Snapped → stays where it snapped to; else springs back to where it started.
         settle(s.snapped ? !s.fromRevealed : s.fromRevealed, s.snapped);
       },
@@ -178,7 +198,12 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, jump = fa
         const s = g.current;
         if (s && e.pointerId !== s.id) return;
         g.current = null;
-        if (s?.locked) settle(s.snapped ? !s.fromRevealed : s.fromRevealed, s.snapped);
+        if (!s?.locked) return;
+        if (s.collapsing) {
+          if (!s.snapped) springTo(0, spring);
+          return;
+        }
+        settle(s.snapped ? !s.fromRevealed : s.fromRevealed, s.snapped);
       },
     },
   };

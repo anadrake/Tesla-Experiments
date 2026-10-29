@@ -1,4 +1,7 @@
 import album from '../../assets/media/album-vampire.png';
+import spotify from '../../assets/media/spotify.svg';
+import spotifyChip from '../../assets/media/spotify-chip.svg';
+import arrowUp from '../../assets/icons/arrow-up.svg';
 import spotifySource from '../../assets/media/spotify-source.svg';
 import favoriteIcon from '../../assets/media/favorite.svg';
 import previous from '../../assets/media/previous.svg';
@@ -15,20 +18,20 @@ import styles from './WidgetBar.module.css';
 export const TRACK = { title: 'Vampire', artist: 'Olivia Rodrigo', progress: 0.32 };
 
 /**
- * Figma ".Widget" Widget=Music, Size=Full. Album art tap → collapse to pill; play/pause toggles.
+ * Figma ".Widget" Widget=Music, Size=Full. Album art tap → collapses the bar (like a swipe down); play/pause toggles.
  * Favorite toggles (Q12): Figma has no active state, so "on" = muted → strong icon color.
  */
 export function MusicWidget() {
   const playing = useHud((s) => s.playing);
   const togglePlaying = useHud((s) => s.togglePlaying);
-  const toggleCollapsed = useHud((s) => s.toggleMusicCollapsed);
+  const setCollapsed = useHud((s) => s.setWidgetsCollapsed);
   const favorite = useHud((s) => s.favorite);
   const toggleFavorite = useHud((s) => s.toggleFavorite);
 
   return (
     <div className={styles.music}>
       <div className={styles.track}>
-        <Pressable className={styles.art} onClick={toggleCollapsed} aria-label="Collapse music" whileTap={{ scale: 0.97 }}>
+        <Pressable className={styles.art} onClick={() => setCollapsed(true)} aria-label="Collapse music" whileTap={{ scale: 0.97 }}>
           <img src={album} alt={`${TRACK.title} album art`} />
         </Pressable>
         <div className={styles.meta}>
@@ -70,5 +73,41 @@ export function MusicWidget() {
         </Pressable>
       </div>
     </div>
+  );
+}
+
+/** Collapsed bar pill: Spotify · title · expand arrow (Figma Widget=Music, Size=Collpased). */
+export function MusicPill() {
+  return (
+    <div className={`${styles.musicPill} text-title-l`}>
+      <span className={styles.pillIcon}>
+        <Icon src={spotify} size={28.8} color="var(--color-icon-strong)" />
+      </span>
+      <span className={styles.pillTitle}>{TRACK.title}</span>
+      <Icon src={arrowUp} color="var(--color-icon-strong)" />
+    </div>
+  );
+}
+
+/** Chicklet (Driving 220 rail) 4596:70708: album art + Spotify badge + progress strip. */
+export function MusicChicklet() {
+  return (
+    <>
+      <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
+      <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
+      <span className={styles.chickletProgress}>
+        <span style={{ width: `${TRACK.progress * 100}%` }} />
+      </span>
+    </>
+  );
+}
+
+/** Mini Chicklet (Parked 116 rail) 4666:74587: album art + Spotify badge. */
+export function MusicMini() {
+  return (
+    <>
+      <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
+      <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
+    </>
   );
 }

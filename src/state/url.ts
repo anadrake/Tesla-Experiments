@@ -29,7 +29,8 @@ export function initUrlSync() {
   if (mode === 'light' || mode === 'dark') useHud.getState().setMode(mode as Mode);
   const car = params.get('car');
   if (car === 'full' || car === 'collapsed') useHud.setState({ carView: car });
-  if (params.get('music') === 'collapsed') useHud.setState({ musicCollapsed: true });
+  // ?bar=collapsed (older links: ?music=collapsed) — the pill of the widget on ?widget=.
+  if (params.get('bar') === 'collapsed' || params.get('music') === 'collapsed') useHud.setState({ widgetsCollapsed: true });
   if (params.get('music') === 'paused') useHud.setState({ playing: false });
   const nav = params.get('nav');
   if (nav === 'typing' || nav === 'navigating') useHud.setState({ nav });
@@ -75,6 +76,9 @@ export function initUrlSync() {
     else p.delete('widgets');
     if (s.customize !== 'off') p.set('customize', s.customize);
     else p.delete('customize');
+    if (s.widgetsCollapsed) p.set('bar', 'collapsed');
+    else p.delete('bar');
+    if (p.get('music') === 'collapsed') p.delete('music');
     if (s.widgetPage) p.set('widget', String(s.widgetPage));
     else p.delete('widget');
     history.replaceState(null, '', `${location.pathname}?${p}`);

@@ -228,13 +228,50 @@
   top: 127px;
   height: 64px;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 29px;
+  padding: 0;
+  overflow: hidden;
+  border: none;
   border-radius: var(--radius-lg);
   background: var(--color-surface-floating);
   box-shadow: var(--elevation-panel);
   color: var(--color-content-primary);
+  text-align: left;
+}
+
+.pill p {
+  margin: 0;
+}
+
+/* Music pill: Spotify · title · expand arrow */
+.musicPill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 29px;
+}
+
+/* Odometer / Tire pills: the original designs show the Open widget's first line through a 64px window (inset 20 / 30) */
+.pillText {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  white-space: nowrap;
+  font-feature-settings: 'liga' 0;
+}
+
+.pillTire {
+  padding: 0 30px;
+}
+
+/* Apps without a designed pill: icon + name */
+.pillFallback {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: 0 var(--space-16);
 }
 
 .pillIcon {
@@ -340,11 +377,6 @@
   color: var(--color-content-primary);
 }
 
-.chickletLarge[data-widget='odometer'] {
-  width: 186px;
-  height: 185px;
-}
-
 /* Progress strip along the bottom of the album art (played = inverse, rest = canvas) */
 .chickletProgress {
   position: absolute;
@@ -376,6 +408,7 @@
 .chickletTireLarge {
   gap: 7px;
   padding: 20px 22px;
+  white-space: nowrap; /* "Front: 38,42psi" is one line in Figma (4596:70716) */
 }
 
 /* ---- Pictogram app icons (fixed colors; Energy art is stretched to the tile like Figma) ---- */

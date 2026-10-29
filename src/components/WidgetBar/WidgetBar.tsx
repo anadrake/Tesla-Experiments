@@ -1,38 +1,51 @@
 import { AnimatePresence, motion, useTransform } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
-import spotify from '../../assets/media/spotify.svg';
-import spotifyChip from '../../assets/media/spotify-chip.svg';
-import album from '../../assets/media/album-vampire.png';
-import arrowUp from '../../assets/icons/arrow-up.svg';
 import { useHud } from '../../state/store';
 import { presets, transition } from '../../tokens/motion';
-import { Icon } from '../Icon/Icon';
 import { InfoPages } from './pages';
-import { WidgetIcon, type WidgetId } from './registry';
+import { WIDGETS, WidgetIcon, type WidgetId } from './registry';
 import { LIFT, usePullUp } from './usePullUp';
 import { useDismissOnOutsideTap } from './useDismissOnOutsideTap';
-import { TRACK } from './MusicWidget';
 import styles from './WidgetBar.module.css';
 
 /**
  * Figma "Dynamic Widget Bar" (4416:12286), Dot Nav=Hidden.
  * Open: 600×192 window, swipe horizontally between the widgets on `widgetTrack` (registry.tsx).
  * Dot nav (Q11): appears while swiping, fades out after DOTS_IDLE_MS without scrolling.
- * Collapsed panel shows the active widget as a Chicklet — taps fall through to the panel (→ Panel):
- *   mini  (Parked, 116 rail):  Music 4666:74587 · Odometer 4666:74579 · Tire 4666:74583
- *   large (Driving, 220 rail): Music 4596:70708 · Odometer 4596:70712 · Tire 4596:70716
- * Collapsed (music): 382×64 pill — tap to expand. Size change = duration/base.
+ * Collapsed panel shows the active widget as a Chicklet (registry Mini / Chicklet) — taps fall through to the panel (→ Panel):
+ *   mini (Parked, 116 rail) · large (Driving, 220 rail). New set: Figma 4899:2892.
+ * Collapsed bar (Q26): swipe down on the widget (or tap Music's album art) → 382×64 pill of the widget that was
+ * showing; the page is kept, and tapping the pill opens the bar on it again.
  * Customize (Phase 8, Sketch 4802:103109): pull the bar up (usePullUp) → it lifts 64px and the Customize
  * button rises from under it. Tap anywhere else or pull down → back. Panel / Full, Parked or Driving (Q22) — not the Collapsed rail.
  */
 const DOTS_IDLE_MS = 1500;
-/** Widgets with a designed Chicklet; the rest show their app icon (placeholder). */
-const BESPOKE_CHICKLETS = new Set<WidgetId>(['music', 'odometer', 'tire']);
+
+/** An app's chicklet body, or its app icon centred on the card when the size isn't designed. */
+function ChickletBody({ id, size }: { id: WidgetId; size: 'Chicklet' | 'Mini' }) {
+  const Body = WIDGETS[id][size];
+  if (Body) return <Body />;
+  return (
+    <span className={styles.chickletIcon}>
+      <WidgetIcon id={id} />
+    </span>
+  );
+}
+
+function PillBody({ id }: { id: WidgetId }) {
+  const { Pill } = WIDGETS[id];
+  if (Pill) return <Pill />;
+  return (
+    <span className={styles.pillFallback}>
+      <WidgetIcon id={id} size={40} />
+      <span className="text-title-m">{WIDGETS[id].label}</span>
+    </span>
+  );
+}
 
 export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
-  // The music pill only exists while Music is on the track.
-  const collapsed = useHud((s) => s.musicCollapsed && s.widgetTrack.includes('music'));
-  const toggle = useHud((s) => s.toggleMusicCollapsed);
+  const collapsed = useHud((s) => s.widgetsCollapsed);
+  const setCollapsed = useHud((s) => s.setWidgetsCollapsed);
   const track = useHud((s) => s.widgetTrack);
   const page = useHud((s) => s.widgetPage);
   const active = track[page] ?? track[0];
@@ -53,10 +66,12 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   const { y, handlers } = usePullUp({
     jump: closingEditor,
     root,
-    enabled: canCustomize && customize !== 'editing',
+    // The pill is tap-only: no pull-up (Customize) or swipe from it.
+    enabled: canCustomize && customize !== 'editing' && !collapsed,
     revealed,
     onReveal: () => setCustomize('revealed'),
     onHide: () => setCustomize('off'),
+    onCollapse: () => setCollapsed(true),
   });
   const reveal = useTransform(y, [0, -LIFT], [0, 1]);
   const buttonY = useTransform(y, [0, -LIFT], [LIFT / 4, 0]);
@@ -88,39 +103,12 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
         <motion.div
           key={active}
           className={styles.chickletLarge}
+          style={WIDGETS[active].large}
           data-widget={active}
           {...presets.popIn}
           transition={transition.open}
         >
-          {active === 'music' && (
-            <>
-              <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
-              <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
-              <span className={styles.chickletProgress}>
-                <span style={{ width: `${TRACK.progress * 100}%` }} />
-              </span>
-            </>
-          )}
-          {active === 'odometer' && (
-            <div className={styles.chickletText}>
-              <p className="text-title-l">Odometer</p>
-              <p className="text-title-m">
-                26,422 <span className={styles.unit}>miles</span>
-              </p>
-            </div>
-          )}
-          {active === 'tire' && (
-            <div className={`${styles.chickletText} ${styles.chickletTireLarge}`}>
-              <p className="text-title-l">Tire Pressure</p>
-              <p className="text-title-m">Front: 38,42psi</p>
-              <p className="text-title-m">Rear: 38,42psi</p>
-            </div>
-          )}
-          {!BESPOKE_CHICKLETS.has(active) && (
-            <span className={styles.chickletIcon}>
-              <WidgetIcon id={active} />
-            </span>
-          )}
+          <ChickletBody id={active} size="Chicklet" />
         </motion.div>
       </div>
     );
@@ -128,25 +116,8 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
 
   if (chicklet === 'mini') {
     return (
-      <motion.div key={active} className={styles.chicklet} {...presets.popIn} transition={transition.open}>
-        {active === 'music' && (
-          <>
-            <img className={styles.chickletArt} src={album} alt={`${TRACK.title} album art`} />
-            <img className={styles.chickletBadge} src={spotifyChip} alt="" width={25.8} height={25.8} />
-          </>
-        )}
-        {active === 'odometer' && <p className={`text-title-m ${styles.chickletOdometer}`}>26,422</p>}
-        {active === 'tire' && (
-          <div className={`text-title-m ${styles.chickletTire}`}>
-            <p>38,42</p>
-            <p>38,42</p>
-          </div>
-        )}
-        {!BESPOKE_CHICKLETS.has(active) && (
-          <span className={styles.chickletIcon}>
-            <WidgetIcon id={active} />
-          </span>
-        )}
+      <motion.div key={active} className={styles.chicklet} data-widget={active} {...presets.popIn} transition={transition.open}>
+        <ChickletBody id={active} size="Mini" />
       </motion.div>
     );
   }
@@ -164,20 +135,17 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
         <AnimatePresence initial={false} mode="popLayout">
           {collapsed ? (
             <motion.button
-              key="pill"
+              key={`pill-${active}`}
               type="button"
-              className={`${styles.pill} text-title-l`}
-              onClick={toggle}
-              aria-label="Expand music"
+              className={styles.pill}
+              data-widget={active}
+              onClick={() => setCollapsed(false)}
+              aria-label={`Expand ${WIDGETS[active].ariaLabel}`}
               {...presets.popIn}
               transition={transition.open}
               whileTap={{ scale: 0.97 }}
             >
-              <span className={styles.pillIcon}>
-                <Icon src={spotify} size={28.8} color="var(--color-icon-strong)" />
-              </span>
-              <span className={styles.pillTitle}>{TRACK.title}</span>
-              <Icon src={arrowUp} color="var(--color-icon-strong)" />
+              <PillBody id={active} />
             </motion.button>
           ) : (
             <motion.div key="window" className={styles.window} {...presets.popIn} transition={transition.open}>

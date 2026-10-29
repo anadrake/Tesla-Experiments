@@ -1,5 +1,5 @@
 {
-  "_comment": "Every reviewable prototype state. name → URL query. ref = design-ref file to compare against.",
+  "_comment": "Every reviewable prototype state. name \u2192 URL query. ref = design-ref file to compare against.",
   "states": [
     {
       "name": "map-parked-light",
@@ -155,29 +155,150 @@
       "ref": "settings-lights-dark.png"
     },
     {
-      "name": "widgets-placeholder-light",
-      "query": "mode=light&widgets=music,energy,odometer,tire&widget=1",
-      "ref": "customize-dropped-light.png"
+      "name": "widgets-energy-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=3",
+      "ref": "widgets-set-light.png"
     },
     {
-      "name": "widgets-placeholder-dark",
-      "query": "mode=dark&widgets=music,energy,odometer,tire&widget=1"
+      "name": "widgets-energy-dark",
+      "query": "mode=dark&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=3"
     },
     {
-      "name": "widgets-placeholder-collapsed-light",
-      "query": "mode=light&car=collapsed&widgets=energy,music"
+      "name": "widgets-calendar-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=4",
+      "ref": "widgets-set-light.png"
     },
     {
-      "name": "widgets-placeholder-collapsed-dark",
-      "query": "mode=dark&car=collapsed&widgets=calendar,music"
+      "name": "widgets-calendar-dark",
+      "query": "mode=dark&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=4"
     },
     {
-      "name": "widgets-placeholder-driving-light",
-      "query": "mode=light&nav=navigating&car=collapsed&widgets=phone,music"
+      "name": "widgets-phone-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=5",
+      "ref": "widgets-set-light.png"
     },
     {
-      "name": "widgets-placeholder-driving-dark",
-      "query": "mode=dark&nav=navigating&car=collapsed&widgets=quickActions,music"
+      "name": "widgets-phone-dark",
+      "query": "mode=dark&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=5"
+    },
+    {
+      "name": "widgets-quickactions-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=6",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-quickactions-dark",
+      "query": "mode=dark&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=6"
+    },
+    {
+      "name": "widgets-pill-music-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=0&bar=collapsed",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-pill-odometer-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=1&bar=collapsed",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-pill-tire-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=2&bar=collapsed",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-pill-energy-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=3&bar=collapsed",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-pill-calendar-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=4&bar=collapsed",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-pill-phone-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=5&bar=collapsed",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-pill-quickactions-light",
+      "query": "mode=light&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=6&bar=collapsed",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-pill-energy-dark",
+      "query": "mode=dark&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=3&bar=collapsed"
+    },
+    {
+      "name": "widgets-pill-phone-dark",
+      "query": "mode=dark&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=5&bar=collapsed"
+    },
+    {
+      "name": "widgets-mini-energy-light",
+      "query": "mode=light&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=3",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-chicklet-music-light",
+      "query": "mode=light&nav=navigating&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=0",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-chicklet-odometer-light",
+      "query": "mode=light&nav=navigating&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=1",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-chicklet-tire-light",
+      "query": "mode=light&nav=navigating&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=2",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-chicklet-energy-light",
+      "query": "mode=light&nav=navigating&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=3",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-mini-calendar-light",
+      "query": "mode=light&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=4",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-chicklet-calendar-light",
+      "query": "mode=light&nav=navigating&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=4",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-mini-phone-light",
+      "query": "mode=light&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=5",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-chicklet-phone-light",
+      "query": "mode=light&nav=navigating&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=5",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-mini-quickactions-light",
+      "query": "mode=light&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=6",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-chicklet-quickactions-light",
+      "query": "mode=light&nav=navigating&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=6",
+      "ref": "widgets-set-light.png"
+    },
+    {
+      "name": "widgets-mini-calendar-dark",
+      "query": "mode=dark&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=4"
+    },
+    {
+      "name": "widgets-chicklet-energy-dark",
+      "query": "mode=dark&nav=navigating&car=collapsed&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=3"
+    },
+    {
+      "name": "customize-editing-newset-light",
+      "query": "mode=light&customize=editing&widgets=music,odometer,tire,energy,calendar,phone,quickActions&widget=3"
     },
     {
       "name": "customize-revealed-light",

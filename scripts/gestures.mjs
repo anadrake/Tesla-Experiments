@@ -439,6 +439,33 @@ await open('customize=revealed');
 }
 await page.emulateMedia({ reducedMotion: 'no-preference' });
 
+// --- 9.1 Swipe down collapses the bar to the pill of the widget showing (Q26) ---
+const pill = () => page.locator('button[aria-label^="Expand"]');
+/** Centre of the visible widget window (barCentre measures the first page, off-screen when paged). */
+const windowCentre = async () => {
+  const box = await page.locator('[class*="_window_"]').first().boundingBox();
+  return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+};
+await open('widgets=music,odometer,tire,energy&widget=3');
+await drag(await windowCentre(), 0, 30);
+check('short swipe down springs back', param('bar') === null && Math.abs(await liftY()) < 1, `bar=${param('bar')} y=${await liftY()}`);
+await drag(await windowCentre(), 0, 140);
+check('swipe down collapses to the showing widget’s pill', param('bar') === 'collapsed' && (await pill().getAttribute('data-widget')) === 'energy', page.url());
+check('…page remembered', param('widget') === '3', `widget=${param('widget')}`);
+const pillBox = await pill().boundingBox();
+await drag({ x: pillBox.x + pillBox.width / 2, y: pillBox.y + 32 }, 0, -140);
+check('pulling up on the pill does nothing (no Customize)', param('bar') === 'collapsed' && param('customize') === null, page.url());
+await tap(pillBox.x + pillBox.width / 2, pillBox.y + 32);
+check('tap the pill reopens on the same widget', param('bar') === null && param('widget') === '3' && (await page.locator('section[data-widget="energy"]').isVisible()), page.url());
+await touchDrag(await windowCentre(), 4, 140);
+check('touch: swipe down collapses', param('bar') === 'collapsed', `bar=${param('bar')}`);
+await open('');
+await drag(await barCentre(), 0, -140);
+await drag(await barCentre(), 0, 140);
+check('swipe down while Customize is revealed only hides it', param('customize') === null && param('bar') === null, page.url());
+await tap(...(await page.locator('[data-widget="music"] button[aria-label="Collapse music"]').boundingBox().then((b) => [b.x + 40, b.y + 40])));
+check('album art tap collapses to the music pill', param('bar') === 'collapsed' && (await pill().getAttribute('data-widget')) === 'music', page.url());
+
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();
 process.exitCode = failed ? 1 : 0;

@@ -50,11 +50,12 @@ export interface HudState {
   carView: CarView;
   setCarView: (v: CarView) => void;
 
-  /** Music widget: playback + Full/collapsed (pill) size. */
+  /** Music widget playback. */
   playing: boolean;
-  musicCollapsed: boolean;
   togglePlaying: () => void;
-  toggleMusicCollapsed: () => void;
+  /** Widget bar collapsed to the pill of the widget that was showing (Q26: swipe down; tap the pill to reopen). */
+  widgetsCollapsed: boolean;
+  setWidgetsCollapsed: (v: boolean) => void;
   favorite: boolean;
   toggleFavorite: () => void;
 
@@ -139,9 +140,9 @@ export const useHud = create<HudState>()((set) => ({
     })),
 
   playing: true,
-  musicCollapsed: false,
   togglePlaying: () => set((s) => ({ playing: !s.playing })),
-  toggleMusicCollapsed: () => set((s) => ({ musicCollapsed: !s.musicCollapsed })),
+  widgetsCollapsed: false,
+  setWidgetsCollapsed: (widgetsCollapsed) => set({ widgetsCollapsed }),
   favorite: false,
   toggleFavorite: () => set((s) => ({ favorite: !s.favorite })),
 

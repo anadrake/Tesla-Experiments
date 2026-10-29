@@ -1,0 +1,385 @@
+/* New widget set (Figma 4899:2892) — Energy, Calendar, Phone, Quick Actions. Sizes in Figma px; specs in docs/SPECS-P9.md. */
+
+.energy,
+.calendar,
+.phone,
+.quickActions,
+.compactRow,
+.chicklet,
+.mini {
+  color: var(--color-content-primary);
+  font-feature-settings: 'liga' 0;
+}
+
+.energy p,
+.calendar p,
+.phone p,
+.quickActions p,
+.compactRow p,
+.chicklet p,
+.mini p {
+  margin: 0;
+}
+
+.secondary {
+  color: var(--color-content-secondary);
+}
+
+.success {
+  color: var(--color-status-success);
+}
+
+.fill {
+  flex: 1 0 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ThemedSvg wrapper: the plot stretches to its box (export is preserveAspectRatio="none") */
+.plot {
+  position: relative;
+  overflow: hidden;
+}
+
+.plot svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Energy · Open ---- */
+.energy {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  height: 100%;
+  padding: var(--space-20);
+}
+
+.liveStats {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-8);
+  width: 152px;
+  height: 152px;
+  white-space: nowrap;
+}
+
+.consumption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: 40px;
+  white-space: nowrap;
+}
+
+.chart {
+  flex: 1 0 0;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.legend {
+  height: 18px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.plotRow {
+  flex: 1 0 0;
+  min-height: 0;
+  display: flex;
+  gap: var(--space-4);
+}
+
+.plotRow > .plot {
+  flex: 1 0 0;
+}
+
+.scale {
+  flex: none;
+  width: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.distance {
+  height: 18px;
+  display: flex;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+
+/* ---- Calendar · Open ---- */
+.calendar {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-16);
+  height: 100%;
+  padding: var(--space-32) var(--space-20) var(--space-20);
+}
+
+.dateTile {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  width: 89px;
+  height: 88px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-field);
+}
+
+/* Figma divider: surface/inverse at 20% */
+.vDivider,
+.vDividerFull,
+.hDivider,
+.pillDivider {
+  flex: none;
+  background: var(--color-surface-inverse);
+  opacity: 0.2;
+}
+
+.vDivider {
+  width: 1px;
+  height: 112px;
+}
+
+.event {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  width: 210px;
+  height: 112px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.eventTitle {
+  width: 193px;
+  white-space: normal;
+}
+
+/* ---- Phone · Open ---- */
+.phone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  height: 100%;
+  padding: var(--space-20);
+}
+
+.phoneHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+  height: 28px;
+}
+
+.connection {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: 112px;
+  white-space: nowrap;
+}
+
+.connectedDot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-status-success);
+}
+
+.hDivider {
+  width: 100%;
+  height: 1px;
+}
+
+.favorites {
+  flex: 1 0 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  width: 100%;
+}
+
+.vDividerFull {
+  width: 1px;
+  align-self: stretch;
+}
+
+.contact {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-sunken);
+}
+
+.contactDetails {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+/* ---- Quick Actions · Open ---- */
+.quickActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  height: 100%;
+  padding: var(--space-16);
+}
+
+.action {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 128px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.actionTile {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 64px;
+  border-radius: var(--radius-md);
+}
+
+.actionLabel {
+  width: 100%;
+  /* Figma wraps "Heated steering" in its 107px column; Inter here measures a little narrower, so inset to match */
+  padding: 0 var(--space-4);
+  text-align: center;
+}
+
+/* ---- Pill (382×64 collapsed bar) ---- */
+.compactRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-16);
+  white-space: nowrap;
+}
+
+.sparkPill {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 32px;
+}
+
+/* Figma divider here: border/subtle, full pill height */
+.pillDivider {
+  width: 1px;
+  height: 44px;
+  background: var(--color-border-subtle);
+  opacity: 1;
+}
+
+.pillContact {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.pillAction {
+  flex: 1 0 0;
+  display: grid;
+  place-items: center;
+  height: 32px;
+}
+
+/* ---- Chicklet (200×185, Driving rail) ---- */
+.chicklet {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-8);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-16);
+  white-space: nowrap;
+}
+
+.sparkChicklet {
+  flex: none;
+  width: 100%;
+  height: 45px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  height: 24px;
+}
+
+.chickletContact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+  height: 44px;
+}
+
+.quickActionsChicklet {
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-12);
+}
+
+/* ---- Mini (92², Collapsed rail) ---- */
+.mini {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  width: 100%;
+  height: 100%;
+  padding: var(--space-12);
+  white-space: nowrap;
+}
+
+.miniCentred {
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
