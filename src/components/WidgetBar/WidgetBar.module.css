@@ -446,6 +446,7 @@
 .lift {
   position: absolute;
   inset: 0;
+  transform-origin: 50% 96px; /* popped out (9.4) it scales around the card, not the box with the dots */
 }
 
 /* Sits 20px under the lifted bar (anchor/bottom gap 20): 208 + 20 − 64 */
@@ -480,4 +481,39 @@
   content: '';
   position: absolute;
   inset: calc((46px - var(--size-touch-min)) / 2) 0;
+}
+
+/* ---- Move widget (9.4): stage-level layer, move fields, popped-out card ---- */
+.dockLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none !important; /* beats the shell's `.slot > *`; the bar and editor opt back in */
+}
+
+.dockSlot {
+  position: absolute;
+}
+
+/* A second panel shadow under the card, faded in while it's popped out */
+.liftShadow {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 192px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-panel);
+  pointer-events: none;
+}
+
+/* Sketch fields are a flat grey; surface-sunken (opacity in WidgetLayer) reads the same in Light and works in Dark */
+.moveField {
+  position: absolute;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-sunken);
+  pointer-events: none;
+}
+
+/* Move mode: the card is dragged, not paged */
+.bar[data-moving] .list {
+  touch-action: none;
+  overflow-x: hidden;
 }

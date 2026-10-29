@@ -1,4 +1,4 @@
-import type { CarView } from '../../state/store';
+import type { CarView, WidgetDock } from '../../state/store';
 
 /**
  * Figma "Car Status Panel" (4268:3115) layer rects for Size=Panel (630), Size=Full (1920)
@@ -175,3 +175,67 @@ export const selfDrive = {
     { left: 20, top: 752, width: 177, height: 86 }, // 4917:58754, above the chicklet
   ),
 };
+
+/* ------------------------------------------------------------------ */
+/* Widget dock (9.4, Sketches › Update 3)                              */
+/* ------------------------------------------------------------------ */
+
+const DOCK_GAP = 24; // Figma's Full shuffle has 14; 24 like every other gap here (PLAN 9.4)
+/** The map's trip card (Map.module.css .tripCard): 16 in from the map's left edge, 464 wide, 854–1046. */
+const MAP_TRIP = { inset: 16, width: 464 };
+/** Docked on the map: right of the trip card's spot (with or without a trip — Q34), following the map's edge. */
+const mapDock = (view: CarView, driving: boolean): Rect => ({
+  left: mapLeft(view, driving) + MAP_TRIP.inset + MAP_TRIP.width + DOCK_GAP,
+  top: bottom.widgetBar.panel.top,
+  width: 600,
+  height: 208,
+  opacity: 1,
+});
+/** Full: the widget + Navigate / trip card pair stays centred whichever side the widget is on ("smart shuffle" 4889:43408). */
+const FULL_LEFT = (1920 - (600 + DOCK_GAP + 400)) / 2; // 448
+const FULL = {
+  left: { bar: FULL_LEFT, card: FULL_LEFT + 600 + DOCK_GAP },
+  right: { bar: FULL_LEFT + 400 + DOCK_GAP, card: FULL_LEFT },
+};
+
+/** Where the widget bar sits. Collapsed: the rail chicklet (`chicklet`), unless it's docked on the map (Q37). */
+export function widgetBarRect(view: CarView, driving: boolean, dock: WidgetDock, chicklet = bottom.widgetBar.collapsed): Rect {
+  if (dock.panel === 'map' && view !== 'full') return mapDock(view, driving);
+  if (view === 'full') return { ...bottom.widgetBar.full, left: FULL[dock.full].bar };
+  return view === 'panel' ? bottom.widgetBar.panel : chicklet;
+}
+
+/** Car status trip card — it shuffles to keep the pair centred. */
+export const tripCardRect = (view: CarView, dock: WidgetDock): Rect =>
+  view === 'full' ? { ...bottom.tripCard.full, left: FULL[dock.full].card } : bottom.tripCard[view];
+
+/** A move target: where the 600×192 card lands (top-left), and the dock it stands for. */
+export type MoveSpot = { key: string; dock: Partial<WidgetDock>; left: number; top: number };
+
+/**
+ * Move fields (9.4): the origin and the other spot. Panel: panel ⇄ map. Full: the target is beside the card where it
+ * is now (so it may run off the screen edge, as in Figma 4889:43676); the drop then shuffles the pair to centre.
+ * Not in the Collapsed rail until 9.6 (Q35).
+ */
+export function moveSpots(view: CarView, driving: boolean, dock: WidgetDock): MoveSpot[] {
+  if (view === 'panel') {
+    const { left, top } = bottom.widgetBar.panel;
+    const map = mapDock(view, driving);
+    return [
+      { key: 'panel', dock: { panel: 'panel' }, left, top },
+      { key: 'map', dock: { panel: 'map' }, left: map.left, top: map.top },
+    ];
+  }
+  if (view !== 'full') return [];
+  const { top } = bottom.widgetBar.full;
+  const card = FULL[dock.full].card;
+  const other = dock.full === 'left' ? card + 400 + DOCK_GAP : card - DOCK_GAP - 600;
+  return [
+    { key: dock.full, dock: { full: dock.full }, left: FULL[dock.full].bar, top },
+    { key: dock.full === 'left' ? 'right' : 'left', dock: { full: dock.full === 'left' ? 'right' : 'left' }, left: other, top },
+  ];
+}
+
+/** Move field (sketch "Rectangle 41"): 581×180, centred on the 600×192 card spot. */
+export const MOVE_FIELD = { width: 581, height: 180 };
+export const WIDGET_CARD = { width: 600, height: 192 };

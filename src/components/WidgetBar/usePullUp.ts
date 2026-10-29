@@ -12,6 +12,7 @@ import { reducible, spring, springSnap } from '../../tokens/motion';
  * let-off point it "gives" and snaps the rest of the way up on its own, where it holds. Let go before
  * the let-off and it springs back. Pulling down on a revealed bar works the same way in reverse.
  * After the snap the bar no longer follows the finger — the spring finishes the move on its own.
+ * Keep pulling past the snap and hold → the widget pops out of its socket and the gesture becomes a move (9.4, `pop`).
  * Tune the feel here — all values in design px.
  */
 export const LIFT = 64; // revealed: bar sits 64px higher (sketch anchor 848 → 784)
@@ -30,6 +31,19 @@ const CLAIM_SLOP = 6;
  */
 const MAX_SNAP_VELOCITY = 300;
 
+/** Move widget hand-off (9.4): past the reveal, the pull drives these instead of the bar. Client px. */
+export interface PopHandlers {
+  /** Holding at POP_PULL past the let-off this long pops it. */
+  pull: number;
+  holdMs: number;
+  /** 0 → 1 as the finger pulls on past the let-off (before the pop). */
+  onTension: (t: number) => void;
+  /** `from` = where the finger first pressed (the grab point on the card). */
+  onPop: (client: { x: number; y: number }, from: { x: number; y: number }) => void;
+  onMove: (client: { x: number; y: number }) => void;
+  onEnd: () => void;
+}
+
 interface Options {
   /** The bar root — needed to stop Safari turning a vertical drag into a native scroll. */
   root: RefObject<HTMLElement>;
@@ -39,12 +53,14 @@ interface Options {
   onHide: () => void;
   /** Swipe down from rest → collapse (omit to ignore downward pulls at rest). */
   onCollapse?: () => void;
+  /** Pop the widget out to move it (omit = no move gesture, e.g. the Collapsed rail until 9.6). */
+  pop?: PopHandlers;
   /** Jump (no spring) on the next outside state change — the bar is hidden, e.g. under the closing Customize editor. */
   jump?: boolean;
 }
 
 /** Returns the bar's lift (0 = rest, -LIFT = revealed) and pointer handlers for the bar root. */
-export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollapse, jump = false }: Options): {
+export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollapse, pop, jump = false }: Options): {
   y: MotionValue<number>;
   handlers: Pick<React.DOMAttributes<HTMLElement>, 'onPointerDown' | 'onPointerMove' | 'onPointerUp' | 'onPointerCancel'>;
 } {
@@ -61,6 +77,13 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
     /** Pulling down from rest to collapse the bar (not a reveal / hide). */
     collapsing: boolean;
     base: number;
+    /** Popped out (move mode) — the rest of the gesture is a move. */
+    popped: boolean;
+    /** Pop hold timer, running while the finger is far enough past the let-off. */
+    popTimer?: ReturnType<typeof setTimeout>;
+    /** Last finger position (client px) — where the pop happens. */
+    cx: number;
+    cy: number;
   } | null>(null);
   /** Touch direction decided by the touchmove claim below (null = undecided / not a touch). */
   const touchClaim = useRef<boolean | null>(null);
@@ -125,7 +148,10 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
     handlers: {
       onPointerDown: (e) => {
         if (!enabled || !e.isPrimary) return;
-        g.current = { id: e.pointerId, x: e.clientX, y: e.clientY, locked: false, snapped: false, fromRevealed: revealed, collapsing: false, base: 0 };
+        g.current = {
+          id: e.pointerId, x: e.clientX, y: e.clientY, locked: false, snapped: false, fromRevealed: revealed,
+          collapsing: false, base: 0, popped: false, cx: e.clientX, cy: e.clientY,
+        };
       },
       onPointerMove: (e) => {
         const s = g.current;
@@ -155,9 +181,29 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
           s.base = y.get();
           capture(e);
         }
+        s.cx = e.clientX;
+        s.cy = e.clientY;
+        if (s.popped) return pop?.onMove({ x: e.clientX, y: e.clientY });
         // Travel is measured past the slop, so the bar doesn't jump when the gesture locks.
-        // Once it has snapped, the spring owns the bar until release (no following the finger → no bounce).
-        if (s.snapped) return;
+        // Once it has snapped, the spring owns the bar until release (no following the finger → no bounce) —
+        // pulling on past it builds up to the pop instead.
+        if (s.snapped) {
+          if (pop && !s.fromRevealed && !s.collapsing) {
+            const past = Math.max(0, dy - AXIS_SLOP - LET_OFF);
+            pop.onTension(past / pop.pull);
+            if (past < pop.pull) {
+              clearTimeout(s.popTimer);
+              s.popTimer = undefined;
+            } else if (!s.popTimer) {
+              s.popTimer = setTimeout(() => {
+                if (g.current !== s) return;
+                s.popped = true;
+                pop.onPop({ x: s.cx, y: s.cy }, { x: s.x, y: s.y });
+              }, pop.holdMs);
+            }
+          }
+          return;
+        }
         if (s.collapsing) {
           const push = Math.max(0, -dy - AXIS_SLOP);
           if (push >= COLLAPSE_LET_OFF) {
@@ -187,6 +233,9 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
         if (s && e.pointerId !== s.id) return;
         g.current = null;
         if (!s?.locked) return;
+        clearTimeout(s.popTimer);
+        if (s.popped) return pop?.onEnd();
+        if (s.snapped && !s.fromRevealed) pop?.onTension(0);
         if (s.collapsing) {
           if (!s.snapped) springTo(0, spring);
           return;
@@ -199,6 +248,9 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
         if (s && e.pointerId !== s.id) return;
         g.current = null;
         if (!s?.locked) return;
+        clearTimeout(s.popTimer);
+        if (s.popped) return pop?.onEnd();
+        if (s.snapped && !s.fromRevealed) pop?.onTension(0);
         if (s.collapsing) {
           if (!s.snapped) springTo(0, spring);
           return;

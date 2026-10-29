@@ -21,7 +21,15 @@ export const DEFAULT_DESTINATION = 'Tesla Headquarters';
 export const isDriving = (s: Pick<HudState, 'nav' | 'resumeTrip'>) =>
   s.nav === 'navigating' || (s.nav === 'typing' && s.resumeTrip);
 
-export type CustomizeState = 'off' | 'revealed' | 'editing';
+/** `moving` (9.4): the widget popped out of its socket — move fields + Done showing, drag it to another spot. */
+export type CustomizeState = 'off' | 'revealed' | 'editing' | 'moving';
+
+/**
+ * Where the widget bar lives (9.4, Update 3). Panel view: in the car panel, or docked on the map beside the trip
+ * card's spot (Q34) — it stays there when the panel collapses (Q37). Full: left or right of the Navigate / trip card.
+ */
+export type WidgetDock = { panel: 'panel' | 'map'; full: 'left' | 'right' };
+export const DEFAULT_DOCK: WidgetDock = { panel: 'panel', full: 'left' };
 
 export type ClimateAction = 'frontDefrost' | 'rearDefrost' | 'leftSeat' | 'heatedSteering' | 'wipers';
 
@@ -68,6 +76,9 @@ export interface HudState {
    */
   customize: CustomizeState;
   setCustomize: (c: CustomizeState) => void;
+  /** Where the bar is docked per view (9.4). Persisted like the track (Q35). */
+  widgetDock: WidgetDock;
+  setWidgetDock: (patch: Partial<WidgetDock>) => void;
   /** The Customize editor is on screen (incl. its close animation) — the widget bar stays hidden until it's gone. */
   customizeEditorShown: boolean;
   setCustomizeEditorShown: (shown: boolean) => void;
@@ -152,6 +163,8 @@ export const useHud = create<HudState>()((set) => ({
   customize: 'off',
   // Editing works in Panel and Full alike (Full stays Full — Anastasiya). One thing at a time: other overlays close.
   setCustomize: (customize) => set((s) => (customize === 'editing' ? { customize, ...closeAll(s) } : { customize })),
+  widgetDock: DEFAULT_DOCK,
+  setWidgetDock: (patch) => set((s) => ({ widgetDock: { ...s.widgetDock, ...patch } })),
   customizeEditorShown: false,
   setCustomizeEditorShown: (customizeEditorShown) => set({ customizeEditorShown }),
   widgetPage: 0,

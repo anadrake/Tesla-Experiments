@@ -131,8 +131,9 @@ check('Driving: pull reveals too (Q22, 2026-10-28)', param('customize') === 'rev
 
 // --- 8.1 fixes: no bounce / fights, diagonal + touch ---
 await open();
-let ys = await dragSampled(await barCentre(), 0, -260, 40, false);
-await page.waitForTimeout(500); // finger still down, far past the let-off
+// Past the let-off but short of the pop (9.4: POP_PULL further + a hold pops the widget out)
+let ys = await dragSampled(await barCentre(), 0, -140, 40, false);
+await page.waitForTimeout(500); // finger still down past the let-off
 const held = await liftY();
 await page.mouse.up();
 await page.waitForTimeout(400);
@@ -505,6 +506,78 @@ check('tap the peek → map in Panel', param('car') === null, page.url());
 check('peek inert outside Full', await peek().evaluate((el) => el.inert), '');
 await open('car=full');
 check('no route in the peek when idle', (await peek().locator('polyline').count()) === 0, page.url());
+
+// --- 9.4 Move widget: pull past the reveal + hold → pops out; drop into a field (Q33–Q38) ---
+const fields = () => page.locator('[data-move-field]');
+/** Pull up past the reveal and hold until it pops; the finger stays down. */
+const popOut = async (from) => {
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(from.x, from.y - 220, { steps: 20 });
+  await page.waitForTimeout(500);
+};
+/** Pop, then drag the finger so the card's centre lands near `to` (display px), and let go. */
+const popAndDrop = async (to) => {
+  const c = await barCentre();
+  await popOut(c);
+  await page.mouse.move(to.x, to.y, { steps: 25 });
+  await page.waitForTimeout(250); // the pop's catch-up spring
+  await page.mouse.up();
+  await page.waitForTimeout(700);
+};
+const cardBox = () => page.locator('[class*="_window_"]').first().boundingBox();
+await open();
+await popOut(await barCentre());
+check('pull past the reveal + hold pops it out (move mode)', param('customize') === 'moving', page.url());
+check('…two move fields show (panel + map)', (await fields().count()) === 2, `${await fields().count()}`);
+await page.mouse.up();
+await page.waitForTimeout(500);
+check('let go without dragging: move mode stays (Q38)', param('customize') === 'moving' && (await fields().count()) === 2, page.url());
+await page.getByRole('button', { name: 'Done' }).click();
+await page.waitForTimeout(600);
+check('Done ends move mode, bar back at rest', param('customize') === null && Math.abs(await liftY()) < 1 && (await fields().count()) === 0, `y=${await liftY()}`);
+await open();
+await drag(await barCentre(), 0, -140);
+check('a normal pull still only reveals Customize', param('customize') === 'revealed', page.url());
+await open();
+await popAndDrop({ x: 1434, y: 950 });
+const mapBox = await cardBox();
+check('drop on the map field docks it on the map', param('widgetDock') === 'map' && param('customize') === null, page.url());
+check('…beside the trip card spot (1134, 854)', Math.abs(mapBox.x - 1134) < 2 && Math.abs(mapBox.y - 854) < 2, `${mapBox.x},${mapBox.y}`);
+await page.goto(`${base}?mode=light`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(300);
+check('the dock is saved (reload without the param)', param('widgetDock') === 'map', page.url());
+await popAndDrop({ x: 315, y: 950 });
+check('drag it back into the panel field', param('widgetDock') === null, page.url());
+await open();
+await popAndDrop({ x: 1000, y: 400 });
+check('drop away from any field floats back (dock unchanged)', param('widgetDock') === null && param('customize') === null, page.url());
+await open();
+await popOut(await barCentre());
+await page.mouse.up();
+await tap(1300, 500);
+check('move mode: tap the map ends it, swallowed', param('customize') === null && param('nav') === null && param('widgetDock') === null, page.url());
+await open('widgetDock=map');
+await drag(await barCentre(), 0, -140);
+await page.getByRole('button', { name: 'Customize' }).click();
+await page.waitForTimeout(600);
+const editFrame = await page.locator('[data-customize-surface]').nth(1).boundingBox();
+check('Customize on the map dock opens the editor in place (Q36)', param('customize') === 'editing' && editFrame.x > 1100, `${editFrame?.x}`);
+await open('car=collapsed&widgetDock=map');
+const railBox = await cardBox();
+check('collapsed: the docked widget stays on the map (Q37)', Math.abs(railBox.x - 620) < 2, `${railBox.x}`);
+await drag(await barCentre(), 0, -220);
+check('collapsed: no pull-up / move until 9.6', param('customize') === null, page.url());
+await open('car=full');
+await popAndDrop({ x: 1796, y: 915 });
+const navBox = await page.locator('[data-car-panel]').getByText('Navigate').boundingBox();
+check('Full: drop right of the card → widgetDock=right', param('widgetDock') === 'right' && param('car') === 'full', page.url());
+check('…smart shuffle: card moves left, pair centred', navBox.x < 600 && Math.abs((await cardBox()).x - 872) < 2, `${navBox.x} / ${(await cardBox()).x}`);
+await popAndDrop({ x: 200, y: 915 }); // the left field sits left of the card now, partly off-screen (Figma 4889:43676)
+check('Full: and back to the left', param('widgetDock') === null && Math.abs((await cardBox()).x - 448) < 2, page.url());
+await open('nav=navigating');
+await popAndDrop({ x: 1434, y: 950 });
+check('Driving: docks on the map beside the trip card', param('widgetDock') === 'map' && param('nav') === 'navigating', page.url());
 
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();

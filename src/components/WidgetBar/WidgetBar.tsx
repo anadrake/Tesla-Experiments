@@ -1,10 +1,13 @@
 import { AnimatePresence, motion, useTransform } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
+import { capture } from '../../lib/pointer';
+import { useStageScale } from '../../shell/Stage';
 import { useHud } from '../../state/store';
 import { presets, transition } from '../../tokens/motion';
 import { InfoPages } from './pages';
 import { WIDGETS, WidgetIcon, type WidgetId } from './registry';
 import { LIFT, usePullUp } from './usePullUp';
+import { POP_HOLD_MS, POP_PULL, dragTo, grab, liftOut, move, popOut, release, settleMove, tension } from './move';
 import { useDismissOnOutsideTap } from './useDismissOnOutsideTap';
 import styles from './WidgetBar.module.css';
 
@@ -18,6 +21,7 @@ import styles from './WidgetBar.module.css';
  * showing; the page is kept, and tapping the pill opens the bar on it again.
  * Customize (Phase 8, Sketch 4802:103109): pull the bar up (usePullUp) → it lifts 64px and the Customize
  * button rises from under it. Tap anywhere else or pull down → back. Panel / Full, Parked or Driving (Q22) — not the Collapsed rail.
+ * Move (9.4, move.ts): keep pulling past the reveal and hold → the widget pops out; Done replaces Customize.
  */
 const DOTS_IDLE_MS = 1500;
 
@@ -55,7 +59,9 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   // Panel and Full, Parked or Driving (Anastasiya, 2026-10-28) — not the Collapsed rail.
   const canCustomize = useHud((s) => !chicklet && s.carView !== 'collapsed');
   const revealed = canCustomize && customize !== 'off';
+  const moving = revealed && customize === 'moving';
   const root = useRef<HTMLDivElement>(null);
+  const scale = useStageScale();
   // Customize mode closing: the editor shrinks back into the bar's resting outline (Customize/motion.ts), so the
   // hidden bar jumps straight to rest and takes over there — no drop, and the Customize button doesn't flash.
   const prevCustomize = useRef(customize);
@@ -72,10 +78,49 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
     onReveal: () => setCustomize('revealed'),
     onHide: () => setCustomize('off'),
     onCollapse: () => setCollapsed(true),
+    pop: {
+      pull: POP_PULL,
+      holdMs: POP_HOLD_MS,
+      onTension: tension,
+      onPop: (p, from) => popOut(p, from, scale, y.get()),
+      onMove: (p) => dragTo(p, y.get()),
+      onEnd: () => release(y.get()),
+    },
   });
+  // Move mode: a press on the popped widget drags it again (Q38). The gesture that popped it keeps going through
+  // usePullUp (it owns that pointer until it lifts), so moves / ups go to both — each ignores what isn't its own.
+  const barHandlers: typeof handlers = moving
+    ? {
+        onPointerDown: (e) => {
+          if (!e.isPrimary || (e.target as Element).closest('[data-move-ignore]')) return; // Done keeps its tap
+          capture(e);
+          grab({ x: e.clientX, y: e.clientY }, scale);
+        },
+        onPointerMove: (e) => {
+          handlers.onPointerMove?.(e);
+          dragTo({ x: e.clientX, y: e.clientY }, y.get());
+        },
+        onPointerUp: (e) => {
+          handlers.onPointerUp?.(e);
+          release(y.get());
+        },
+        onPointerCancel: (e) => {
+          handlers.onPointerCancel?.(e);
+          release(y.get());
+        },
+      }
+    : handlers;
+  // Move mode ended (drop, Done, tap outside): back into the socket — after WidgetLayer rebased on a new dock.
+  const wasMoving = useRef(moving);
+  useEffect(() => {
+    if (wasMoving.current && !moving) settleMove();
+    if (moving) liftOut(); // no-op after a pop; lifts the card for ?customize=moving
+    wasMoving.current = moving;
+  }, [moving]);
+  const liftY = useTransform(() => y.get() + move.y.get());
   const reveal = useTransform(y, [0, -LIFT], [0, 1]);
   const buttonY = useTransform(y, [0, -LIFT], [LIFT / 4, 0]);
-  useDismissOnOutsideTap(root, revealed && customize === 'revealed', () => setCustomize('off'));
+  useDismissOnOutsideTap(root, revealed && (customize === 'revealed' || moving), () => setCustomize('off'));
   // While editing, the editor (CustomizeEditor) replaces the bar and the Customize button.
   const editing = revealed && customize === 'editing';
   const hidden = useHud((s) => editing || s.customizeEditorShown);
@@ -126,12 +171,15 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
     <motion.div
       ref={root}
       className={styles.bar}
-      {...handlers}
+      data-moving={moving || undefined}
+      {...barHandlers}
       // Hand-off, no cross-fade: hidden while the editor is on screen, back as soon as it's gone
       // (plain style, not an animation, so the swap lands in one painted frame — CustomizeEditor).
       style={{ opacity: hidden ? 0 : 1, pointerEvents: hidden ? 'none' : undefined }}
     >
-      <motion.div className={styles.lift} style={{ y }}>
+      <motion.div className={styles.lift} style={{ x: move.x, y: liftY, scale: move.scale }}>
+        {/* Popped out: a second panel shadow fades in under the card (lifted further off the screen) */}
+        <motion.div className={styles.liftShadow} style={{ opacity: move.lifted }} aria-hidden />
         <AnimatePresence initial={false} mode="popLayout">
           {collapsed ? (
             <motion.button
@@ -167,6 +215,7 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
       </motion.div>
       <motion.div
         className={styles.customizeSlot}
+        data-move-ignore
         style={{ opacity: reveal, y: buttonY }}
         data-revealed={revealed || undefined}
       >
@@ -175,11 +224,11 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
           className={`${styles.customize} text-body-l`}
           tabIndex={revealed ? 0 : -1}
           aria-hidden={!revealed}
-          onClick={() => setCustomize('editing')}
+          onClick={() => setCustomize(moving ? 'off' : 'editing')}
           whileTap={{ scale: 0.96 }}
           transition={transition.press}
         >
-          Customize
+          {moving ? 'Done' : 'Customize'}
         </motion.button>
       </motion.div>
     </motion.div>

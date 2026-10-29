@@ -10,15 +10,12 @@ import { presets, transition } from '../../tokens/motion';
 import { TripCardActive } from '../Navigation/TripCardActive';
 import { Icon } from '../Icon/Icon';
 import { TripSearchCard } from '../TripCard/TripSearchCard';
-import { CustomizeEditor } from '../Customize/CustomizeEditor';
 import { MapPeek } from '../MapPeek/MapPeek';
-import { WIDGETS } from '../WidgetBar/registry';
-import { WidgetBar } from '../WidgetBar/WidgetBar';
 import { Callouts } from './Callouts';
 import { PanelStatusBar, Telltales } from './PanelStatusBar';
 import { DrivingScene } from './DrivingScene';
 import { SpeedCluster } from './SpeedCluster';
-import { bottom, chickletLargeRect, chickletRect, panelWidth, scene, selfDrive } from './geometry';
+import { panelWidth, scene, selfDrive, tripCardRect } from './geometry';
 import { Button } from '../settings/controls';
 import styles from './CarPanel.module.css';
 import { capture } from '../../lib/pointer';
@@ -46,7 +43,7 @@ const TAP_SLOP = 10;
 export function CarPanel() {
   const view = useHud((s) => s.carView);
   const setCarView = useHud((s) => s.setCarView);
-  const activeWidget = useHud((s) => s.widgetTrack[s.widgetPage] ?? s.widgetTrack[0]);
+  const dock = useHud((s) => s.widgetDock);
   const driving = useHud(isDriving);
   const scale = useStageScale();
   const tripLayer = useRef<HTMLDivElement>(null);
@@ -56,14 +53,13 @@ export function CarPanel() {
     if (tripLayer.current) tripLayer.current.inert = view !== 'full';
   }, [view]);
   const start = useRef<{ x: number; y: number; onHandle: boolean } | null>(null);
-  const panelRef = useRef<HTMLElement>(null);
-  const editing = useHud((s) => s.customize === 'editing');
+  // Customize / move mode: the panel holds still (no Full / collapse) — only the editor / moved widget is live.
+  const editing = useHud((s) => s.customize === 'editing' || s.customize === 'moving');
 
   const onPointerDown = (e: React.PointerEvent) => {
     const target = e.target as Element;
     // Controls opt out (and must not lose their tap to pointer capture). In the rail the Chicklet opts back in.
     if (target.closest('[data-no-panel-gesture]')) return;
-    // Customize mode: the panel holds still (no Full / collapse) — only the editor is live.
     if (editing) return;
     start.current = { x: e.clientX, y: e.clientY, onHandle: !!target.closest('[data-panel-handle]') };
     // Keep receiving the gesture when the finger leaves the panel (e.g. dragging right out of the 116px rail).
@@ -92,9 +88,9 @@ export function CarPanel() {
 
   return (
     <motion.section
-      ref={panelRef}
       className={styles.panel}
       aria-label="Car status"
+      data-car-panel
       initial={false}
       animate={{ width: panelWidth(view, driving), backgroundColor: panelBg(view, driving) }}
       transition={transition.screen}
@@ -165,22 +161,12 @@ export function CarPanel() {
       {/* Figma "handle": transparent 64×320 hit area over the grab pill */}
       <div className={styles.handle} data-panel-handle aria-hidden />
 
+      {/* The widget bar lives in its own layer above the panel (WidgetBar/WidgetLayer) so it can dock on the map */}
       <motion.div
         className={styles.layer}
         initial={false}
-        animate={
-          view !== 'collapsed' ? bottom.widgetBar[view] : driving ? chickletLargeRect : chickletRect(WIDGETS[activeWidget].mini)
-        }
-        transition={transition.screen}
-        // Chicklet taps fall through to the panel (Collapsed → Panel); the full widget bar is interactive
-        data-no-panel-gesture={view !== 'collapsed' || undefined}
-      >
-        <WidgetBar chicklet={view !== 'collapsed' ? undefined : driving ? 'large' : 'mini'} />
-      </motion.div>
-      <motion.div
-        className={styles.layer}
-        initial={false}
-        animate={bottom.tripCard[view]}
+        // Full: shuffles to keep the widget + card pair centred, whichever side the widget is docked (9.4)
+        animate={tripCardRect(view, dock)}
         transition={transition.screen}
         ref={tripLayer}
         data-no-panel-gesture
@@ -192,7 +178,6 @@ export function CarPanel() {
           </motion.div>
         </AnimatePresence>
       </motion.div>
-      <CustomizeEditor panel={panelRef} />
     </motion.section>
   );
 }

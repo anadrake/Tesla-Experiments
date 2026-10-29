@@ -286,7 +286,7 @@ Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **On
 - States: `map-peek-{idle,routed}-{parked,driving}-{light,dark}` (8).
 - Review: fidelity (vs `map-peek-*`) + function (start / end trip while in Full updates the peek, morph in/out, no pan/pinch in the peek).
 
-### 9.4 — Move widget (L)
+### 9.4 — Move widget (L) ✅ 2026-10-28 (reviewed; iPad test pending)
 - Store: where the widget bar lives — Panel: `panel | map` (docked on the map beside the trip card); Full: `left | right` of the Navigate / trip card. Persisted like the track; `?widgetDock=`.
 - Gesture (Q33): keep holding the pull-up past the Customize reveal → after a beat the widget **pops out, like out of a socket** (quick lift + scale overshoot with `springSnap`, shadow grows) and move mode starts. Move mode: Done replaces Customize, grey drop fields at the origin and the target(s), widget follows the finger (lifted, panel shadow), snaps into the nearest field on release, otherwise floats back. Full: dropping right of the card "smart-shuffles" the card left so the pair stays centred.
 - Reuse `Customize/drag.ts` pieces (finger-based targeting, `springSnap`, `reducible()`); new checks in `scripts/gestures.mjs` (pop out, drop on map, drop back, cancel, Full shuffle).

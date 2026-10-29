@@ -1,7 +1,16 @@
-import { SETTINGS_PAGES, useHud, type Mode, type SettingsPage } from './store';
+import { SETTINGS_PAGES, useHud, type Mode, type SettingsPage, type WidgetDock } from './store';
 import { DEFAULT_TRACK, parseTrack } from './widgets';
 
 const TRACK_KEY = 'hud.widgetTrack';
+const DOCK_KEY = 'hud.widgetDock';
+
+/** "map,right" → dock (only the non-default spots are listed; unknown words ignored). Null when empty. */
+function parseDock(raw: string | null | undefined): WidgetDock | null {
+  if (raw == null) return null;
+  const words = raw.split(',');
+  return { panel: words.includes('map') ? 'map' : 'panel', full: words.includes('right') ? 'right' : 'left' };
+}
+const dockParam = (d: WidgetDock) => [d.panel === 'map' && 'map', d.full === 'right' && 'right'].filter(Boolean).join(',');
 
 /** localStorage can throw (private mode, blocked storage) — persistence is best-effort. */
 function loadTrack() {
@@ -12,8 +21,18 @@ function loadTrack() {
   }
 }
 function saveTrack(track: readonly string[]) {
+  save(TRACK_KEY, track.join(','));
+}
+function loadDock() {
   try {
-    localStorage.setItem(TRACK_KEY, track.join(','));
+    return parseDock(localStorage.getItem(DOCK_KEY));
+  } catch {
+    return null;
+  }
+}
+function save(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
   } catch {
     /* ignore */
   }
@@ -21,7 +40,7 @@ function saveTrack(track: readonly string[]) {
 
 /**
  * Deep links: URL params mirror store state so any state can be opened directly
- * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widgets=music,energy,…&widget=<index>&customize=revealed|editing&nav=typing|navigating&overlay=apps&settings=<page>&keyboard=1 (Settings search typing)
+ * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widgets=music,energy,…&widget=<index>&customize=revealed|editing|moving&widgetDock=map,right&nav=typing|navigating&overlay=apps&settings=<page>&keyboard=1 (Settings search typing)
  */
 export function initUrlSync() {
   const params = new URLSearchParams(location.search);
@@ -49,11 +68,16 @@ export function initUrlSync() {
   if (Number.isInteger(widget) && widget >= 0 && widget < useHud.getState().widgetTrack.length)
     useHud.setState({ widgetPage: widget });
 
+  // Dock (9.4): ?widgetDock= wins over the saved one (Q35), like the track. `?widgetDock=` (empty) = defaults.
+  const dock = parseDock(params.get('widgetDock')) ?? loadDock();
+  if (dock) useHud.setState({ widgetDock: dock });
+
   const customize = params.get('customize');
   // Through the action, so editing gets the same rules as a tap (Full → Panel, other overlays close).
-  if (customize === 'revealed' || customize === 'editing') useHud.getState().setCustomize(customize);
+  if (customize === 'revealed' || customize === 'editing' || customize === 'moving') useHud.getState().setCustomize(customize);
 
   let savedTrack = useHud.getState().widgetTrack;
+  let savedDock = useHud.getState().widgetDock;
 
   const sync = (s: ReturnType<typeof useHud.getState>) => {
     const p = new URLSearchParams(location.search);
@@ -72,6 +96,13 @@ export function initUrlSync() {
       savedTrack = s.widgetTrack;
       saveTrack(s.widgetTrack);
     }
+    if (s.widgetDock !== savedDock) {
+      savedDock = s.widgetDock;
+      save(DOCK_KEY, dockParam(s.widgetDock));
+    }
+    const dockP = dockParam(s.widgetDock);
+    if (dockP) p.set('widgetDock', dockP);
+    else p.delete('widgetDock');
     if (s.widgetTrack.join() !== DEFAULT_TRACK.join()) p.set('widgets', s.widgetTrack.join(','));
     else p.delete('widgets');
     if (s.customize !== 'off') p.set('customize', s.customize);

@@ -1,5 +1,5 @@
 {
-  "_comment": "Every reviewable prototype state. name \u2192 URL query. ref = design-ref file to compare against.",
+  "_comment": "Every reviewable prototype state. name → URL query. ref = design-ref file to compare against.",
   "states": [
     {
       "name": "map-parked-light",
@@ -422,6 +422,70 @@
     {
       "name": "map-peek-routed-dark",
       "query": "mode=dark&car=full&nav=navigating"
+    },
+    {
+      "name": "move-panel-fields-light",
+      "query": "mode=light&customize=moving",
+      "ref": "move-panel-2-light.png"
+    },
+    {
+      "name": "move-panel-docked-light",
+      "query": "mode=light&nav=navigating&widgetDock=map",
+      "ref": "move-panel-4-light.png"
+    },
+    {
+      "name": "move-panel-docked-idle-light",
+      "query": "mode=light&widgetDock=map"
+    },
+    {
+      "name": "move-full-fields-light",
+      "query": "mode=light&car=full&customize=moving",
+      "ref": "move-full-2-light.png"
+    },
+    {
+      "name": "move-full-right-light",
+      "query": "mode=light&car=full&widgetDock=right",
+      "ref": "move-full-4-light.png"
+    },
+    {
+      "name": "move-collapsed-map-light",
+      "query": "mode=light&car=collapsed&widgetDock=map"
+    },
+    {
+      "name": "move-map-customize-light",
+      "query": "mode=light&widgetDock=map&customize=editing"
+    },
+    {
+      "name": "move-panel-fields-dark",
+      "query": "mode=dark&customize=moving",
+      "ref": "move-panel-2-light.png"
+    },
+    {
+      "name": "move-panel-docked-dark",
+      "query": "mode=dark&nav=navigating&widgetDock=map",
+      "ref": "move-panel-4-light.png"
+    },
+    {
+      "name": "move-panel-docked-idle-dark",
+      "query": "mode=dark&widgetDock=map"
+    },
+    {
+      "name": "move-full-fields-dark",
+      "query": "mode=dark&car=full&customize=moving",
+      "ref": "move-full-2-light.png"
+    },
+    {
+      "name": "move-full-right-dark",
+      "query": "mode=dark&car=full&widgetDock=right",
+      "ref": "move-full-4-light.png"
+    },
+    {
+      "name": "move-collapsed-map-dark",
+      "query": "mode=dark&car=collapsed&widgetDock=map"
+    },
+    {
+      "name": "move-map-customize-dark",
+      "query": "mode=dark&widgetDock=map&customize=editing"
     }
   ]
 }

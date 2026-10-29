@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useHud } from '../../state/store';
-import { bottom } from '../CarPanel/geometry';
+import type { Rect } from '../CarPanel/geometry';
 import { transition } from '../../tokens/motion';
 import { useDismissOnOutsideTap } from '../WidgetBar/useDismissOnOutsideTap';
 import { CustomizeTrack } from './CustomizeTrack';
@@ -13,19 +13,19 @@ import styles from './Customize.module.css';
 
 /**
  * The editor is laid out in panel coords from the sketch, where the widget bar sits at 15,848; it moves with the
- * real bar — Panel 15,854 (lined up with the map's trip card) and Full 448,819.
+ * real bar wherever it's docked — Panel 15,854 (lined up with the map's trip card), on the map, Full 448 / 872,819.
  */
 const SKETCH_BAR = { left: 15, top: 848 };
 const offsetTo = (bar: { left: number; top: number }) => ({ x: bar.left - SKETCH_BAR.left, y: bar.top - SKETCH_BAR.top });
-const OFFSET = { panel: offsetTo(bottom.widgetBar.panel), full: offsetTo(bottom.widgetBar.full) };
 
 /**
- * Customize mode (Sketch "Tap customize" 4802:103107), drawn over the car panel (panel coordinates):
+ * Customize mode (Sketch "Tap customize" 4802:103107), drawn around the widget bar (display = panel coordinates):
  * picker card (top 307) · edit frame with the shrunken track (top 670) · Done (where Customize was).
- * Done or a tap outside closes it (that tap is swallowed). Panel: outside = outside the car panel; taps elsewhere
- * in the panel do nothing. Full (the panel is the whole screen): outside = off the picker, edit frame and Done.
+ * Done or a tap outside closes it (that tap is swallowed). Bar in the panel: outside = outside the car panel; taps
+ * elsewhere in the panel do nothing. Full (the panel is the whole screen) or docked on the map (Q36): outside = off
+ * the picker, edit frame and Done.
  */
-export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
+export function CustomizeEditor({ bar, inPanel }: { bar: Rect; inPanel: boolean }) {
   const view = useHud((s) => s.carView);
   const editing = useHud((s) => s.customize === 'editing' && s.carView !== 'collapsed');
   const setCustomize = useHud((s) => s.setCustomize);
@@ -43,10 +43,11 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
     if (editing) setShown(true);
   }, [editing, setShown]);
   useDismissOnOutsideTap(
-    full ? (t) => !!(t as Element).closest?.('[data-customize-surface]') : panel,
+    (t) => !!(t as Element).closest?.(inPanel ? '[data-car-panel], [data-customize-surface]' : '[data-customize-surface]'),
     editing,
     close,
   );
+  const offset = offsetTo(bar);
 
   return (
     <AnimatePresence
@@ -68,12 +69,12 @@ export function CustomizeEditor({ panel }: { panel: RefObject<HTMLElement> }) {
           initial="lifted"
           animate="shown"
           exit="rest"
-          style={OFFSET[full ? 'full' : 'panel']}
+          style={offset}
         >
           {/* Clipped at the edit frame's top edge, so the picker slides up out from behind the frame */}
           <motion.div className={styles.pickerClip} variants={pickerClip}>
-            {/* Panel: the picker keeps its sketch spot (307) — moved down with the bar it'd uncover the Trunk callout */}
-            <div style={{ transform: `translateY(${-OFFSET.panel.y * (full ? 0 : 1)}px)` }}>
+            {/* Panel / map: the picker keeps its sketch spot (307) — moved down with the bar it'd uncover the Trunk callout */}
+            <div style={{ transform: `translateY(${full ? 0 : -offset.y}px)` }}>
               <motion.div className={styles.pickerLayer} variants={picker} data-customize-surface>
                 <WidgetPicker editor={editor} />
               </motion.div>

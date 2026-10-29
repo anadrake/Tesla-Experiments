@@ -4,6 +4,7 @@ import { DisplayShell } from './shell/DisplayShell';
 import { Stage } from './shell/Stage';
 import { MapView } from './screens/Map/Map';
 import { CarPanel } from './components/CarPanel/CarPanel';
+import { WidgetLayer } from './components/WidgetBar/WidgetLayer';
 import { StatusCluster } from './shell/StatusCluster';
 import { Overlays } from './overlays/Overlays';
 import { useHud } from './state/store';
@@ -22,7 +23,12 @@ export function App() {
   return (
     <MotionConfig reducedMotion="user">
       <Stage>
-        <DisplayShell main={<MapView />} left={<CarPanel />} status={<StatusCluster />} overlay={<Overlays />} />
+        <DisplayShell main={<MapView />} left={
+            <>
+              <CarPanel />
+              <WidgetLayer />
+            </>
+          } status={<StatusCluster />} overlay={<Overlays />} />
       </Stage>
     </MotionConfig>
   );
