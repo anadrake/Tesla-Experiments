@@ -1,7 +1,7 @@
 import { AnimatePresence, animate, motion, useMotionValue } from 'motion/react';
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 import { isDriving, useHud } from '../../state/store';
-import { transition } from '../../tokens/motion';
+import { reducible, transition } from '../../tokens/motion';
 import {
   MOVE_FIELD,
   WIDGET_CARD,
@@ -76,8 +76,8 @@ function useSlotMotion(el: RefObject<HTMLElement>, rect: Rect, dockKey: string, 
       height.jump(rect.height);
       return;
     }
-    animate(width, rect.width, transition.screen);
-    animate(height, rect.height, transition.screen);
+    animate(width, rect.width, reducible(transition.screen));
+    animate(height, rect.height, reducible(transition.screen));
   }, [rect.left, rect.top, rect.width, rect.height, rect.opacity, dockKey, sceneKey]);
   return {
     size: { left: 0, top: 0, width, height },

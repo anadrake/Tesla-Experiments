@@ -24,26 +24,41 @@ export const easing = {
   exit: [0.4, 0, 1, 1],
 } as const satisfies Record<string, [number, number, number, number]>;
 
-export const spring = { type: 'spring', mass: 1, stiffness: 300, damping: 30 } as const;
+/**
+ * Reduce Motion for `transform` strings: MotionConfig reducedMotion="user" only cuts x / y / scale / left / width…,
+ * not a `transform` key — so every transition token carries a live per-value override that cuts `transform` while
+ * Reduce Motion is on (motion reads `transition.transform` first). Opacity and colour still fade. Enumerable, so
+ * spreads (`{ ...transition.open, delay }`) keep it.
+ */
+const cutsTransform = <T extends object>(t: T): T =>
+  Object.defineProperty(t, 'transform', {
+    enumerable: true,
+    get: () => (prefersReducedMotion() ? { duration: 0 } : undefined),
+  });
+
+export const spring = cutsTransform({ type: 'spring', mass: 1, stiffness: 300, damping: 30 } as const);
 
 /**
  * Snappier spring with a little overshoot (ζ ≈ 0.6) for things that "click" into place:
  * the widget bar's let-off snap, dragged icons settling. Not a Figma token (Figma has one spring) — logged in WORKLOG.
  */
-export const springSnap = { type: 'spring', mass: 1, stiffness: 500, damping: 28 } as const;
+export const springSnap = cutsTransform({ type: 'spring', mass: 1, stiffness: 500, damping: 28 } as const);
 
 /** Ready-made transitions for motion components. */
 export const transition = {
-  press: { duration: duration.instant },
+  press: cutsTransform({ duration: duration.instant }),
   /** A hard cut (hand-offs between two elements showing the same thing). */
-  cut: { duration: 0 },
-  toggle: { duration: duration.fast, ease: easing.standard },
-  open: { duration: duration.base, ease: easing.enter },
-  close: { duration: duration.base, ease: easing.exit },
-  screen: { duration: duration.slow, ease: easing.standard },
-  dayNight: { duration: duration.deliberate, ease: easing.standard },
+  cut: cutsTransform({ duration: 0 }),
+  toggle: cutsTransform({ duration: duration.fast, ease: easing.standard }),
+  open: cutsTransform({ duration: duration.base, ease: easing.enter }),
+  close: cutsTransform({ duration: duration.base, ease: easing.exit }),
+  /** Full-height sheets (the keyboard): `open` / `close` easing over `slow` — they travel further. */
+  sheetOpen: cutsTransform({ duration: duration.slow, ease: easing.enter }),
+  sheetClose: cutsTransform({ duration: duration.slow, ease: easing.exit }),
+  screen: cutsTransform({ duration: duration.slow, ease: easing.standard }),
+  dayNight: cutsTransform({ duration: duration.deliberate, ease: easing.standard }),
   /** Three blinks, one `slow` each (presets.flash). */
-  flash: { duration: duration.slow * 3, ease: 'linear' },
+  flash: cutsTransform({ duration: duration.slow * 3, ease: 'linear' }),
 } as const;
 
 /**

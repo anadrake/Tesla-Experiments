@@ -8,7 +8,7 @@ import rightIcon from '../../assets/keyboard/cursor-right.svg';
 import { Icon } from '../../components/Icon/Icon';
 import { Key } from '../../components/Key/Key';
 import { useHud } from '../../state/store';
-import { duration, easing } from '../../tokens/motion';
+import { transition } from '../../tokens/motion';
 import styles from './Keyboard.module.css';
 
 const ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm,.-'];
@@ -35,8 +35,8 @@ export function Keyboard() {
       className={styles.keyboard}
       // `transform` (not `y`) so motion runs the slide on the compositor — full frame rate on iPad (perf, 9.5)
       initial={{ transform: 'translateY(100%)' }}
-      animate={{ transform: 'translateY(0%)', transition: { duration: duration.slow, ease: easing.enter } }}
-      exit={{ transform: 'translateY(100%)', transition: { duration: duration.slow, ease: easing.exit } }}
+      animate={{ transform: 'translateY(0%)', transition: transition.sheetOpen }}
+      exit={{ transform: 'translateY(100%)', transition: transition.sheetClose }}
       role="group"
       aria-label="Keyboard"
     >

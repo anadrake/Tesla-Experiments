@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import destinationPin from '../../assets/map/marker-destination.svg';
 import navArrow from '../../assets/map/nav-arrow.svg';
 import { useHud } from '../../state/store';
-import { duration, easing, presets, transition } from '../../tokens/motion';
+import { duration, easing, presets, reducible, transition } from '../../tokens/motion';
 import route from './routeData.json';
 import styles from './Map.module.css';
 
@@ -29,7 +29,8 @@ export function RouteLayer() {
               strokeLinejoin="round"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: duration.deliberate, ease: easing.enter }}
+              // Reduce Motion: the route is just there (MotionConfig doesn't cut pathLength)
+              transition={reducible({ duration: duration.deliberate, ease: easing.enter })}
             />
           </svg>
           <motion.img

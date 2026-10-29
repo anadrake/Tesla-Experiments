@@ -9,7 +9,7 @@ import { Icon } from '../../components/Icon/Icon';
 import { capture } from '../../lib/pointer';
 import { useStageScale } from '../../shell/Stage';
 import { useHud, type SettingsPage } from '../../state/store';
-import { presets, transition } from '../../tokens/motion';
+import { presets, reducible, transition } from '../../tokens/motion';
 import { NAV_ITEMS } from './navItems';
 import { ComingSoonPage } from './pages/ComingSoonPage';
 import { ControlsPage } from './pages/ControlsPage';
@@ -76,7 +76,7 @@ export function SettingsWindow() {
     if (!g?.active) return;
     const dy = (e.clientY - g.startY) / scale;
     if (dy > SWIPE_CLOSE || g.v > SWIPE_FLICK) useHud.getState().toggleSettings();
-    else animate(y, 0, transition.toggle);
+    else animate(y, 0, reducible(transition.toggle));
   };
 
   return (

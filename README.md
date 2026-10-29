@@ -15,7 +15,10 @@ A tap-driven, web-based prototype of an in-car center display, built from my Fig
 | Tap **P/R/N/D** in the car panel | Start a trip (Driving) / end it (Parked) |
 | Drag the car panel handle right / left | Expand to Full car view / collapse to the chicklet |
 | Swipe the widget bar | Page through your widgets (Music → Odometer → Tire pressure by default) |
+| Swipe the widget bar down | Collapse it to a pill of the widget showing; tap the pill to open it again |
 | Pull the widget bar up, tap **Customize** | Edit the widgets: drag apps from the top in, hold a widget to move it, **X** removes it, **Done** saves |
+| Keep pulling the widget bar up and hold | It pops out of its spot: drag it onto the map or the other side of the trip card in Full; **Done** or tap outside ends it |
+| Tap the map peek (top right of the Full car view) | Back to the map |
 | Tap **Navigate** | Keyboard; type and tap **Enter** to start navigating |
 | Tap the car icon in the dock | Settings (Controls, Pedals & Steering, Display, Lights, Search) |
 | Tap the Settings search field | Keyboard over the bottom of the screen |
@@ -29,8 +32,11 @@ npm install
 npm run dev        # open the Network URL on your iPad (same Wi-Fi)
 npm run build      # typecheck + production build
 npm run shots      # screenshot every state in scripts/states.json → shots/ (dev server must be running)
-npm run gestures   # drive the widget pull-up / Customize / drag & drop gestures and check the result (dev server)
+npm run gestures   # drive the widget pull-up / Customize / drag & drop / move gestures and check the result (dev server)
+node scripts/perf.mjs   # frame times + paint/layout cost of the main animations, CPU-throttled (dev server)
 ```
+
+**Motion & performance.** Animate `transform` / `opacity` (as strings) so they run on the compositor and keep iPad's 120Hz; `x` / `y` / `left` / `width` run in JS at 60fps. Rect morphs use `flip()` / `move()` in `CarPanel/geometry.ts`. **Reduce Motion** (iPad Settings › Accessibility) is honoured: moves and springs cut, fades stay — the transition tokens in `motion.ts` handle `transform`, and imperative `animate()` calls go through `reducible()`.
 
 ### Deploy
 Every push to `main` builds and deploys to GitHub Pages (`.github/workflows/deploy.yml`). The build uses a relative base, so it works at any Pages path.
@@ -38,7 +44,7 @@ Every push to `main` builds and deploys to GitHub Pages (`.github/workflows/depl
 ### Deep links
 Any state opens from URL params, which the reviewer and `npm run shots` rely on:
 
-`?mode=light|dark` · `car=full|collapsed` · `music=collapsed|paused` · `widgets=music,odometer,…` (the track) · `widget=<index>` · `customize=revealed|editing` · `nav=typing|navigating` · `overlay=apps` · `settings=<page>` · `keyboard=1` (with `settings=search`)
+`?mode=light|dark` · `car=full|collapsed` · `music=collapsed|paused` · `widgets=music,odometer,…` (the track) · `widget=<index>` · `customize=revealed|editing|moving` · `widgetDock=map,right` (where the widget bar sits in Panel / Full) · `bar=collapsed` · `nav=typing|navigating` · `overlay=apps` · `settings=<page>` · `keyboard=1` (with `settings=search`)
 
 e.g. `?mode=dark&nav=navigating&car=collapsed`
 

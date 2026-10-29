@@ -293,7 +293,7 @@ Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **On
 - Map drop field sits in the **same spot as during a trip** (beside where the trip card is), with or without a trip (Q34). Position is **saved** (localStorage, URL wins) (Q35). Moving is **disabled from the Collapsed rail** until 9.6.
 - Review: fidelity (vs `move-*`) + function (gesture script + manual walk at iPad size).
 
-### 9.5 — Integration sweep (S)
+### 9.5 — Integration sweep (S) ✅ 2026-10-29
 - Reduce Motion for 9.2–9.4, README/COMPONENTS/WORKLOG, full reviewer sweep of all states + regression of P8 (`npm run gestures`), iPad letterbox shots.
 
 ### 9.6 — Move widget from the Collapsed rail (M) — last
