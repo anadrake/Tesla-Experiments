@@ -242,6 +242,14 @@
   margin: 0;
 }
 
+/* Pill bodies fill the button's height explicitly: Safari doesn't stretch a flex item inside a <button>, so with
+   only `flex: 1` the row sat at the top of the pill on iPad (Anastasiya, 2026-10-29) — Chrome stretches it. */
+.musicPill,
+.pillText,
+.pillFallback {
+  height: 100%;
+}
+
 /* Music pill: Spotify · title · expand arrow */
 .musicPill {
   flex: 1;
