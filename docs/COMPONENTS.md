@@ -40,7 +40,7 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Car Render Scene=Driving | `4479:49839` | `src/components/CarPanel/DrivingScene.tsx` | ✅ P4 | Road lines, beam, lead + ego car; % layout scales Panel → Full |
 | Speed + Speed Limit Sign + compact Direction Primary | in Car Status Panel (Driving) | `src/components/CarPanel/SpeedCluster.tsx` | ✅ P4 | Enlarged in the 220 rail |
 | Chicklet (Music / Odometer / Tire) | `4596:70708` / `70712` / `70716` | `WidgetBar.tsx` (`chicklet="large"`) | ✅ P4 | Driving collapsed rail |
-| Quick Actions | `4273:450` | `src/overlays/QuickActions/` | ✅ P5 | Pinned dark; climate tiles toggle |
+| Quick Actions | `4273:450` (in `4300:2105`) | `src/overlays/QuickActions/` | ✅ P5 · updated 2026-10-29 | Pinned dark; Customize button (no action yet); 6 climate toggles (+ Climate fan); 23 apps 6/6/6/5, PNG pictograms `assets/apps/qa/` (192px, cropped per Figma artwork) |
 | App Tile | `4231:398` | `src/components/AppTile/` | ✅ P5 | Default / Pressed; On = blue glyph (Q14) |
 | Settings Window + Navtree + Settings Panel | `4258:39` / `4275:556` | `src/overlays/Settings/` | ✅ P6a | Pages registered in `SettingsWindow.tsx` PAGES; nav items in `navItems.ts` |
 | Tile / Tile Group | `4231:164` / `4231:385` | `src/components/settings/Tiles.tsx` | ✅ P6a | TileChoice (single) · TileToggles · ToggleTile (On / Active) |

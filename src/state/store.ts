@@ -39,7 +39,7 @@ export const linkDock = (patch: Partial<WidgetDock>): WidgetDock => {
   return right ? { panel: 'map', full: 'right' } : DEFAULT_DOCK;
 };
 
-export type ClimateAction = 'frontDefrost' | 'rearDefrost' | 'leftSeat' | 'heatedSteering' | 'wipers';
+export type ClimateAction = 'frontDefrost' | 'rearDefrost' | 'leftSeat' | 'heatedSteering' | 'climate' | 'wipers';
 
 /** Settings nav tree pages (Figma Navtree 4258:39). 6a: search, controls. 6b: pedals, display, lights. */
 export const SETTINGS_PAGES = [
@@ -213,7 +213,7 @@ export const useHud = create<HudState>()((set) => ({
   toggleQuickActions: () =>
     set((s) => ({ ...closeAll(s), quickActions: !s.quickActions })),
   closeOverlays: () => set((s) => closeAll(s)),
-  climate: { frontDefrost: false, rearDefrost: false, leftSeat: false, heatedSteering: false, wipers: false },
+  climate: { frontDefrost: false, rearDefrost: false, leftSeat: false, heatedSteering: false, climate: false, wipers: false },
   toggleClimate: (a) => set((s) => ({ climate: { ...s.climate, [a]: !s.climate[a] } })),
 
   settingsOpen: false,

@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-8);
-  padding: var(--space-12);
+  padding: var(--space-12) var(--space-4); /* Figma 12 / 4 — room for "Heated Steering" */
   border-radius: var(--radius-md);
   color: var(--color-content-primary);
   transition: background-color var(--duration-instant) linear;
