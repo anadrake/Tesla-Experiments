@@ -1,4 +1,4 @@
-import { SETTINGS_PAGES, useHud, type Mode, type SettingsPage, type WidgetDock } from './store';
+import { SETTINGS_PAGES, linkDock, useHud, type Mode, type SettingsPage, type WidgetDock } from './store';
 import { DEFAULT_TRACK, parseTrack } from './widgets';
 
 const TRACK_KEY = 'hud.widgetTrack';
@@ -8,9 +8,10 @@ const DOCK_KEY = 'hud.widgetDock';
 function parseDock(raw: string | null | undefined): WidgetDock | null {
   if (raw == null) return null;
   const words = raw.split(',');
-  return { panel: words.includes('map') ? 'map' : 'panel', full: words.includes('right') ? 'right' : 'left' };
+  // One linked side (linkDock): either word means on the map / right.
+  return linkDock({ panel: words.includes('map') || words.includes('right') ? 'map' : 'panel' });
 }
-const dockParam = (d: WidgetDock) => [d.panel === 'map' && 'map', d.full === 'right' && 'right'].filter(Boolean).join(',');
+const dockParam = (d: WidgetDock) => (d.panel === 'map' ? 'map' : ''); // one linked side: `map` = on the map / right of the card
 
 /** localStorage can throw (private mode, blocked storage) — persistence is best-effort. */
 function loadTrack() {
@@ -40,7 +41,7 @@ function save(key: string, value: string) {
 
 /**
  * Deep links: URL params mirror store state so any state can be opened directly
- * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widgets=music,energy,…&widget=<index>&customize=revealed|editing|moving&widgetDock=map,right&nav=typing|navigating&overlay=apps&settings=<page>&keyboard=1 (Settings search typing)
+ * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widgets=music,energy,…&widget=<index>&customize=revealed|editing|moving&widgetDock=map (= right in Full; `right` reads the same)&nav=typing|navigating&overlay=apps&settings=<page>&keyboard=1 (Settings search typing)
  */
 export function initUrlSync() {
   const params = new URLSearchParams(location.search);

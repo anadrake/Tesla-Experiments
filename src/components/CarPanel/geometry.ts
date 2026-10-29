@@ -207,9 +207,14 @@ const DOCK_GAP = 24; // map dock: beside the trip card's spot
 const FULL_GAP = 14;
 /** The map's trip card (Map.module.css .tripCard): 16 in from the map's left edge, 464 wide, 854–1046. */
 const MAP_TRIP = { inset: 16, width: 464 };
-/** Docked on the map: right of the trip card's spot (with or without a trip — Q34), following the map's edge. */
-const mapDock = (view: CarView, driving: boolean): Rect => ({
-  left: mapLeft(view, driving) + MAP_TRIP.inset + MAP_TRIP.width + DOCK_GAP,
+/**
+ * Docked on the map: anchored to the map's right side (Anastasiya, 2026-10-29) — where it sits beside the trip card's
+ * spot in Panel (with or without a trip — Q34), kept that far from the right edge, so it stays put on the map when the
+ * panel collapses (was: it followed the map's left edge).
+ */
+const MAP_DOCK_LEFT = mapLeft('panel', false) + MAP_TRIP.inset + MAP_TRIP.width + DOCK_GAP; // 1134 → 186 from the right
+const mapDock = (): Rect => ({
+  left: MAP_DOCK_LEFT,
   top: bottom.widgetBar.panel.top,
   width: 600,
   height: 208,
@@ -223,8 +228,8 @@ const FULL = {
 };
 
 /** Where the widget bar sits. Collapsed: the rail chicklet (`chicklet`), unless it's docked on the map (Q37). */
-export function widgetBarRect(view: CarView, driving: boolean, dock: WidgetDock, chicklet = bottom.widgetBar.collapsed): Rect {
-  if (dock.panel === 'map' && view !== 'full') return mapDock(view, driving);
+export function widgetBarRect(view: CarView, dock: WidgetDock, chicklet = bottom.widgetBar.collapsed): Rect {
+  if (dock.panel === 'map' && view !== 'full') return mapDock();
   if (view === 'full') return { ...bottom.widgetBar.full, left: FULL[dock.full].bar };
   return view === 'panel' ? bottom.widgetBar.panel : chicklet;
 }
@@ -241,10 +246,10 @@ export type MoveSpot = { key: string; dock: Partial<WidgetDock>; left: number; t
  * is now (so it may run off the screen edge, as in Figma 4889:43676 — kept, Q39); the drop then shuffles the pair to centre.
  * Not in the Collapsed rail until 9.6 (Q35).
  */
-export function moveSpots(view: CarView, driving: boolean, dock: WidgetDock): MoveSpot[] {
+export function moveSpots(view: CarView, dock: WidgetDock): MoveSpot[] {
   if (view === 'panel') {
     const { left, top } = bottom.widgetBar.panel;
-    const map = mapDock(view, driving);
+    const map = mapDock();
     return [
       { key: 'panel', dock: { panel: 'panel' }, left, top },
       { key: 'map', dock: { panel: 'map' }, left: map.left, top: map.top },

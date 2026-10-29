@@ -30,7 +30,7 @@ export function WidgetLayer() {
   const activeWidget = useHud((s) => s.widgetTrack[s.widgetPage] ?? s.widgetTrack[0]);
   // The Collapsed rail shows the chicklet — unless the bar is docked on the map.
   const chicklet = view === 'collapsed' && dock.panel === 'panel' ? (driving ? 'large' : 'mini') : undefined;
-  const rect = widgetBarRect(view, driving, dock, driving ? chickletLargeRect : chickletRect(WIDGETS[activeWidget].mini));
+  const rect = widgetBarRect(view, dock, driving ? chickletLargeRect : chickletRect(WIDGETS[activeWidget].mini));
   const slot = useRef<HTMLDivElement>(null);
   const box = useSlotMotion(slot, rect, `${dock.panel}:${dock.full}`, `${view}:${driving}`);
 
@@ -92,13 +92,12 @@ const FIELD_OPACITY = { rest: 0.6, target: 1 };
 /** Move fields (sketch "Rectangle 41"): where the popped widget can go. */
 function MoveFields() {
   const view = useHud((s) => s.carView);
-  const driving = useHud(isDriving);
   const dock = useHud((s) => s.widgetDock);
   const moving = useHud((s) => s.customize === 'moving');
   const target = useMove((s) => s.target);
   const dragging = useMove((s) => s.dragging);
   // Spots are fixed while moving (the dock only changes on the drop that ends it).
-  const spots = moving ? moveSpots(view, driving, dock) : [];
+  const spots = moving ? moveSpots(view, dock) : [];
   return (
     <AnimatePresence>
       {spots.map((s) => (

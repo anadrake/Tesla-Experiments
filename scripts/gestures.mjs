@@ -17,6 +17,7 @@ const check = (name, ok, detail = '') => {
   if (!ok) failed++;
 };
 const param = (k) => new URL(page.url()).searchParams.get(k);
+const hud = (fn) => page.evaluate(`(${fn})(window.hud.getState())`);
 const open = async (query = '') => {
   // Clear the saved track first, so one check's drop doesn't leak into the next page load.
   await page.evaluate(() => localStorage.clear()).catch(() => {});
@@ -591,19 +592,27 @@ const editFrame = await page.locator('[data-customize-surface]').nth(1).bounding
 check('Customize on the map dock opens the editor in place (Q36)', param('customize') === 'editing' && editFrame.x > 1100, `${editFrame?.x}`);
 await open('car=collapsed&widgetDock=map');
 const railBox = await cardBox();
-check('collapsed: the docked widget stays on the map (Q37)', Math.abs(railBox.x - 620) < 2, `${railBox.x}`);
+check('collapsed: the docked widget stays put on the map, anchored right (Q37)', Math.abs(railBox.x - 1134) < 2, `${railBox.x}`);
 await drag(await barCentre(), 0, -220);
 check('collapsed: no pull-up / move until 9.6', param('customize') === null, page.url());
 await open('car=full');
 await popAndDrop({ x: 1796, y: 915 });
 const navBox = await page.locator('[data-car-panel]').getByText('Navigate').boundingBox();
-check('Full: drop right of the card → widgetDock=right', param('widgetDock') === 'right' && param('car') === 'full', page.url());
+check('Full: drop right of the card → on the right (widgetDock=map)', param('widgetDock') === 'map' && param('car') === 'full', page.url());
 check('…smart shuffle: card moves left, pair centred', navBox.x < 600 && Math.abs((await cardBox()).x - 867) < 2, `${navBox.x} / ${(await cardBox()).x}`);
+await hud("s => s.setCarView('panel')");
+await page.waitForTimeout(600);
+check('…linked: back in Panel it sits on the map', Math.abs((await cardBox()).x - 1134) < 2, `${(await cardBox()).x}`);
+await hud("s => s.setCarView('full')");
+await page.waitForTimeout(600);
 await popAndDrop({ x: 200, y: 915 }); // the left field sits left of the card now, partly off-screen (Figma 4889:43676)
 check('Full: and back to the left', param('widgetDock') === null && Math.abs((await cardBox()).x - 453) < 2, page.url());
 await open('nav=navigating');
 await popAndDrop({ x: 1434, y: 950 });
 check('Driving: docks on the map beside the trip card', param('widgetDock') === 'map' && param('nav') === 'navigating', page.url());
+await hud("s => s.setCarView('full')");
+await page.waitForTimeout(600);
+check('…linked: in Full it sits right of the card', Math.abs((await cardBox()).x - 867) < 2, `${(await cardBox()).x}`);
 
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();

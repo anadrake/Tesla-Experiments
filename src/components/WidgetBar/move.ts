@@ -1,6 +1,6 @@
 import { animate, motionValue } from 'motion/react';
 import { create } from 'zustand';
-import { isDriving, useHud } from '../../state/store';
+import { useHud } from '../../state/store';
 import { reducible, spring, springSnap } from '../../tokens/motion';
 import { WIDGET_CARD, moveSpots, widgetBarRect, type MoveSpot } from '../CarPanel/geometry';
 
@@ -77,13 +77,13 @@ function landCatchUp() {
 
 const spots = (): MoveSpot[] => {
   const s = useHud.getState();
-  return moveSpots(s.carView, isDriving(s), s.widgetDock);
+  return moveSpots(s.carView, s.widgetDock);
 };
 
 /** The dragged card's centre in display px, where the finger has it — not counting the pop's catch-up (`lift` = usePullUp's y). */
 function cardCentre(lift: number) {
   const s = useHud.getState();
-  const r = widgetBarRect(s.carView, isDriving(s), s.widgetDock);
+  const r = widgetBarRect(s.carView, s.widgetDock);
   return { x: r.left + WIDGET_CARD.width / 2 + move.x.get(), y: r.top + lift + WIDGET_CARD.height / 2 + move.y.get() };
 }
 
