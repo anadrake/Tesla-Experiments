@@ -554,15 +554,15 @@ check('revealed: a short pull up (no hold) stays revealed (Q40)', param('customi
   await page.waitForTimeout(600);
 }
 await open();
-await popAndDrop({ x: 1434, y: 950 });
+await popAndDrop({ x: 1594, y: 950 });
 const mapBox = await cardBox();
 check('drop on the map field docks it on the map', param('widgetDock') === 'map' && param('customize') === null, page.url());
-check('…beside the trip card spot (1134, 854)', Math.abs(mapBox.x - 1134) < 2 && Math.abs(mapBox.y - 854) < 2, `${mapBox.x},${mapBox.y}`);
+check('…right-aligned with the map controls (1294, 854)', Math.abs(mapBox.x - 1294) < 2 && Math.abs(mapBox.y - 854) < 2, `${mapBox.x},${mapBox.y}`);
 await open();
 {
   const c = await barCentre();
   await popOut(c);
-  await page.mouse.move(1434, 950, { steps: 25 });
+  await page.mouse.move(1594, 950, { steps: 25 });
   await page.waitForTimeout(250);
   await page.mouse.up();
   const o = await customizeOpacity();
@@ -592,7 +592,7 @@ const editFrame = await page.locator('[data-customize-surface]').nth(1).bounding
 check('Customize on the map dock opens the editor in place (Q36)', param('customize') === 'editing' && editFrame.x > 1100, `${editFrame?.x}`);
 await open('car=collapsed&widgetDock=map');
 const railBox = await cardBox();
-check('collapsed: the docked widget stays put on the map, anchored right (Q37)', Math.abs(railBox.x - 1134) < 2, `${railBox.x}`);
+check('collapsed: the docked widget stays put on the map, anchored right (Q37)', Math.abs(railBox.x - 1294) < 2, `${railBox.x}`);
 await popOut(await barCentre());
 check('collapsed on the map: pull + hold pops it out (9.6)', param('customize') === 'moving' && param('car') === 'collapsed', page.url());
 const railField = await page.locator('[data-move-field="panel"]').boundingBox();
@@ -604,7 +604,7 @@ await page.waitForTimeout(700);
 check('…drop in the rail: back in the panel, shown as the rail chicklet', param('widgetDock') === null && param('customize') === null && (await page.locator('[class*="_chicklet_"]').count()) === 1, page.url());
 await hud("s => s.setCarView('panel')");
 await page.waitForTimeout(600);
-check('…linked: expanding, it sits in the panel', Math.abs((await cardBox()).x - 15) < 2, `${(await cardBox()).x}`);
+check('…expanding, it sits in the panel', Math.abs((await cardBox()).x - 15) < 2, `${(await cardBox()).x}`);
 await open('car=collapsed');
 await drag(await barCentre(), 0, -220);
 check('collapsed rail chicklet: no pull-up / move', param('customize') === null, page.url());
@@ -613,25 +613,38 @@ await popAndDrop({ x: 110, y: 950 });
 check('collapsed Driving: drop in the 220 rail → chicklet', param('widgetDock') === null && (await page.locator('[class*="_chickletLarge_"]').count()) === 1, page.url());
 await open('car=collapsed&widgetDock=map');
 await popAndDrop({ x: 700, y: 500 });
-check('collapsed: drop away from the fields floats back to the map', param('widgetDock') === 'map' && Math.abs((await cardBox()).x - 1134) < 2, page.url());
+check('collapsed: drop away from the fields floats back to the map', param('widgetDock') === 'map' && Math.abs((await cardBox()).x - 1294) < 2, page.url());
 await open('car=full');
 await popAndDrop({ x: 1796, y: 915 });
 const navBox = await page.locator('[data-car-panel]').getByText('Navigate').boundingBox();
-check('Full: drop right of the card → on the right (widgetDock=map)', param('widgetDock') === 'map' && param('car') === 'full', page.url());
+check('Full: drop right of the card → on the right (widgetDock=right)', param('widgetDock') === 'right' && param('car') === 'full', page.url());
 check('…smart shuffle: card moves left, pair centred', navBox.x < 600 && Math.abs((await cardBox()).x - 867) < 2, `${navBox.x} / ${(await cardBox()).x}`);
 await hud("s => s.setCarView('panel')");
 await page.waitForTimeout(600);
-check('…linked: back in Panel it sits on the map', Math.abs((await cardBox()).x - 1134) < 2, `${(await cardBox()).x}`);
+check('…separate: back in Panel it stays in the panel', Math.abs((await cardBox()).x - 15) < 2, `${(await cardBox()).x}`);
 await hud("s => s.setCarView('full')");
 await page.waitForTimeout(600);
 await popAndDrop({ x: 200, y: 915 }); // the left field sits left of the card now, partly off-screen (Figma 4889:43676)
 check('Full: and back to the left', param('widgetDock') === null && Math.abs((await cardBox()).x - 453) < 2, page.url());
 await open('nav=navigating');
-await popAndDrop({ x: 1434, y: 950 });
-check('Driving: docks on the map beside the trip card', param('widgetDock') === 'map' && param('nav') === 'navigating', page.url());
+await popAndDrop({ x: 1594, y: 950 });
+check('Driving: docks on the map', param('widgetDock') === 'map' && param('nav') === 'navigating', page.url());
 await hud("s => s.setCarView('full')");
 await page.waitForTimeout(600);
-check('…linked: in Full it sits right of the card', Math.abs((await cardBox()).x - 867) < 2, `${(await cardBox()).x}`);
+check('…separate: in Full it stays left of the card', Math.abs((await cardBox()).x - 453) < 2, `${(await cardBox()).x}`);
+
+// Quick Actions: swipe down closes (2026-10-29)
+await open('overlay=apps');
+await drag({ x: 974, y: 700 }, 0, 60);
+check('Quick Actions: a short swipe down springs back (stays open)', param('overlay') === 'apps', page.url());
+await drag({ x: 974, y: 700 }, 0, 220);
+check('…a long swipe down closes it', param('overlay') === null, page.url());
+await open('overlay=apps');
+await drag({ x: 1196, y: 340 }, 0, 200); // starting on the Climate tile
+check('…a swipe that starts on a tile closes, and does not toggle the tile', param('overlay') === null && !(await hud('s => s.climate.climate')), page.url());
+await open('overlay=apps');
+await tap(1196, 340);
+check('…a tap on a tile still toggles it', (await hud('s => s.climate.climate')) === true && param('overlay') === 'apps', page.url());
 
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();

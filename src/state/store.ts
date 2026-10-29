@@ -30,15 +30,6 @@ export type CustomizeState = 'off' | 'revealed' | 'editing' | 'moving';
  */
 export type WidgetDock = { panel: 'panel' | 'map'; full: 'left' | 'right' };
 export const DEFAULT_DOCK: WidgetDock = { panel: 'panel', full: 'left' };
-/**
- * One side, remembered across views (Anastasiya, 2026-10-29): on the map (Panel / Collapsed) = right of the card (Full),
- * in the panel = left. Moving it in one view moves it in the others.
- */
-export const linkDock = (patch: Partial<WidgetDock>): WidgetDock => {
-  const right = patch.panel ? patch.panel === 'map' : patch.full === 'right';
-  return right ? { panel: 'map', full: 'right' } : DEFAULT_DOCK;
-};
-
 export type ClimateAction = 'frontDefrost' | 'rearDefrost' | 'leftSeat' | 'heatedSteering' | 'climate' | 'wipers';
 
 /** Settings nav tree pages (Figma Navtree 4258:39). 6a: search, controls. 6b: pedals, display, lights. */
@@ -172,7 +163,8 @@ export const useHud = create<HudState>()((set) => ({
   // Editing works in Panel and Full alike (Full stays Full — Anastasiya). One thing at a time: other overlays close.
   setCustomize: (customize) => set((s) => (customize === 'editing' ? { customize, ...closeAll(s) } : { customize })),
   widgetDock: DEFAULT_DOCK,
-  setWidgetDock: (patch) => set({ widgetDock: linkDock(patch) }),
+  // Two separate spots (Anastasiya, 2026-10-29): the map views (Panel + Collapsed share `panel`) and the car Full view.
+  setWidgetDock: (patch) => set((s) => ({ widgetDock: { ...s.widgetDock, ...patch } })),
   customizeEditorShown: false,
   setCustomizeEditorShown: (customizeEditorShown) => set({ customizeEditorShown }),
   widgetPage: 0,

@@ -202,17 +202,14 @@ export const selfDrive = {
 /* Widget dock (9.4, Sketches › Update 3)                              */
 /* ------------------------------------------------------------------ */
 
-const DOCK_GAP = 24; // map dock: beside the trip card's spot
 /** Full: widget ⇄ Navigate / trip card gap, as Figma's smart shuffle (Q39). */
 const FULL_GAP = 14;
-/** The map's trip card (Map.module.css .tripCard): 16 in from the map's left edge, 464 wide, 854–1046. */
-const MAP_TRIP = { inset: 16, width: 464 };
 /**
- * Docked on the map: anchored to the map's right side (Anastasiya, 2026-10-29) — where it sits beside the trip card's
- * spot in Panel (with or without a trip — Q34), kept that far from the right edge, so it stays put on the map when the
- * panel collapses (was: it followed the map's left edge).
+ * Docked on the map: right-aligned with the map controls (Map.module.css `.controls`, 26 in from the display's right
+ * edge — Anastasiya, 2026-10-29), in every view, so it stays put on the map when the panel collapses.
  */
-const MAP_DOCK_LEFT = mapLeft('panel', false) + MAP_TRIP.inset + MAP_TRIP.width + DOCK_GAP; // 1134 → 186 from the right
+const MAP_CONTROLS_RIGHT = 26;
+const MAP_DOCK_LEFT = 1920 - MAP_CONTROLS_RIGHT - 600; // 1294
 const mapDock = (): Rect => ({
   left: MAP_DOCK_LEFT,
   top: bottom.widgetBar.panel.top,

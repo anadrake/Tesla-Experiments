@@ -4,6 +4,10 @@
   left: 502px;
   bottom: 18px;
   width: 944px;
+}
+
+.swipe {
+  will-change: transform;
   display: flex;
   flex-direction: column;
   align-items: center;

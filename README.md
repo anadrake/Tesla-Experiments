@@ -17,6 +17,7 @@ A tap-driven, web-based prototype of an in-car center display, built from my Fig
 | Swipe the widget bar | Page through your widgets (Music → Odometer → Tire pressure by default) |
 | Swipe the widget bar down | Collapse it to a pill of the widget showing; tap the pill to open it again |
 | Pull the widget bar up, tap **Customize** | Edit the widgets: drag apps from the top in, hold a widget to move it, **X** removes it, **Done** saves |
+| Swipe down on Quick Actions | Closes it |
 | Keep pulling the widget bar up and hold | It pops out of its spot: drag it onto the map, the other side of the trip card in Full, or (panel collapsed) back into the rail; **Done** or tap outside ends it |
 | Tap the map peek (top right of the Full car view) | Back to the map |
 | Tap **Navigate** | Keyboard; type and tap **Enter** to start navigating |
