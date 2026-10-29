@@ -13,6 +13,7 @@ import { reducible, spring, springSnap } from '../../tokens/motion';
  * the let-off and it springs back. Pulling down on a revealed bar works the same way in reverse.
  * After the snap the bar no longer follows the finger — the spring finishes the move on its own.
  * Keep pulling past the snap and hold → the widget pops out of its socket and the gesture becomes a move (9.4, `pop`).
+ * A fresh pull up on the revealed bar builds up to the pop the same way (Q40); let go before it and it stays revealed.
  * Tune the feel here — all values in design px.
  */
 export const LIFT = 64; // revealed: bar sits 64px higher (sketch anchor 848 → 784)
@@ -76,6 +77,8 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
     fromRevealed: boolean;
     /** Pulling down from rest to collapse the bar (not a reveal / hide). */
     collapsing: boolean;
+    /** Pulling up on the revealed bar — only towards the pop (Q40). */
+    extending: boolean;
     base: number;
     /** Popped out (move mode) — the rest of the gesture is a move. */
     popped: boolean;
@@ -150,7 +153,7 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
         if (!enabled || !e.isPrimary) return;
         g.current = {
           id: e.pointerId, x: e.clientX, y: e.clientY, locked: false, snapped: false, fromRevealed: revealed,
-          collapsing: false, base: 0, popped: false, cx: e.clientX, cy: e.clientY,
+          collapsing: false, extending: false, base: 0, popped: false, cx: e.clientX, cy: e.clientY,
         };
       },
       onPointerMove: (e) => {
@@ -169,7 +172,10 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
           // Horizontal → leave it to the native widget swipe. Wrong vertical direction → nothing to do.
           // Down from rest → collapse, if the bar offers it.
           s.collapsing = !s.fromRevealed && dy < 0 && !!onCollapse;
-          if (horizontal || (!s.collapsing && (s.fromRevealed ? dy > 0 : dy < 0))) {
+          // Up on the revealed bar → on towards the pop; it's already where a pull from rest snaps to.
+          s.extending = s.fromRevealed && dy > 0 && !!pop;
+          s.snapped = s.extending;
+          if (horizontal || (!s.collapsing && !s.extending && (s.fromRevealed ? dy > 0 : dy < 0))) {
             g.current = null;
             return;
           }
@@ -188,8 +194,9 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
         // Once it has snapped, the spring owns the bar until release (no following the finger → no bounce) —
         // pulling on past it builds up to the pop instead.
         if (s.snapped) {
-          if (pop && !s.fromRevealed && !s.collapsing) {
-            const past = Math.max(0, dy - AXIS_SLOP - LET_OFF);
+          if (pop && (s.extending || (!s.fromRevealed && !s.collapsing))) {
+            // From rest the pop pull starts at the let-off; on the revealed bar, straight away.
+            const past = Math.max(0, dy - AXIS_SLOP - (s.extending ? 0 : LET_OFF));
             pop.onTension(past / pop.pull);
             if (past < pop.pull) {
               clearTimeout(s.popTimer);
@@ -235,7 +242,8 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
         if (!s?.locked) return;
         clearTimeout(s.popTimer);
         if (s.popped) return pop?.onEnd();
-        if (s.snapped && !s.fromRevealed) pop?.onTension(0);
+        if (s.extending || (s.snapped && !s.fromRevealed)) pop?.onTension(0);
+        if (s.extending) return; // no pop → still revealed
         if (s.collapsing) {
           if (!s.snapped) springTo(0, spring);
           return;
@@ -250,7 +258,8 @@ export function usePullUp({ root, enabled, revealed, onReveal, onHide, onCollaps
         if (!s?.locked) return;
         clearTimeout(s.popTimer);
         if (s.popped) return pop?.onEnd();
-        if (s.snapped && !s.fromRevealed) pop?.onTension(0);
+        if (s.extending || (s.snapped && !s.fromRevealed)) pop?.onTension(0);
+        if (s.extending) return; // no pop → still revealed
         if (s.collapsing) {
           if (!s.snapped) springTo(0, spring);
           return;

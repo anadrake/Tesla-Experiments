@@ -180,7 +180,9 @@ export const selfDrive = {
 /* Widget dock (9.4, Sketches › Update 3)                              */
 /* ------------------------------------------------------------------ */
 
-const DOCK_GAP = 24; // Figma's Full shuffle has 14; 24 like every other gap here (PLAN 9.4)
+const DOCK_GAP = 24; // map dock: beside the trip card's spot
+/** Full: widget ⇄ Navigate / trip card gap, as Figma's smart shuffle (Q39). */
+const FULL_GAP = 14;
 /** The map's trip card (Map.module.css .tripCard): 16 in from the map's left edge, 464 wide, 854–1046. */
 const MAP_TRIP = { inset: 16, width: 464 };
 /** Docked on the map: right of the trip card's spot (with or without a trip — Q34), following the map's edge. */
@@ -192,10 +194,10 @@ const mapDock = (view: CarView, driving: boolean): Rect => ({
   opacity: 1,
 });
 /** Full: the widget + Navigate / trip card pair stays centred whichever side the widget is on ("smart shuffle" 4889:43408). */
-const FULL_LEFT = (1920 - (600 + DOCK_GAP + 400)) / 2; // 448
+const FULL_LEFT = (1920 - (600 + FULL_GAP + 400)) / 2; // 453
 const FULL = {
-  left: { bar: FULL_LEFT, card: FULL_LEFT + 600 + DOCK_GAP },
-  right: { bar: FULL_LEFT + 400 + DOCK_GAP, card: FULL_LEFT },
+  left: { bar: FULL_LEFT, card: FULL_LEFT + 600 + FULL_GAP },
+  right: { bar: FULL_LEFT + 400 + FULL_GAP, card: FULL_LEFT },
 };
 
 /** Where the widget bar sits. Collapsed: the rail chicklet (`chicklet`), unless it's docked on the map (Q37). */
@@ -214,7 +216,7 @@ export type MoveSpot = { key: string; dock: Partial<WidgetDock>; left: number; t
 
 /**
  * Move fields (9.4): the origin and the other spot. Panel: panel ⇄ map. Full: the target is beside the card where it
- * is now (so it may run off the screen edge, as in Figma 4889:43676); the drop then shuffles the pair to centre.
+ * is now (so it may run off the screen edge, as in Figma 4889:43676 — kept, Q39); the drop then shuffles the pair to centre.
  * Not in the Collapsed rail until 9.6 (Q35).
  */
 export function moveSpots(view: CarView, driving: boolean, dock: WidgetDock): MoveSpot[] {
@@ -229,7 +231,7 @@ export function moveSpots(view: CarView, driving: boolean, dock: WidgetDock): Mo
   if (view !== 'full') return [];
   const { top } = bottom.widgetBar.full;
   const card = FULL[dock.full].card;
-  const other = dock.full === 'left' ? card + 400 + DOCK_GAP : card - DOCK_GAP - 600;
+  const other = dock.full === 'left' ? card + 400 + FULL_GAP : card - FULL_GAP - 600;
   return [
     { key: dock.full, dock: { full: dock.full }, left: FULL[dock.full].bar, top },
     { key: dock.full === 'left' ? 'right' : 'left', dock: { full: dock.full === 'left' ? 'right' : 'left' }, left: other, top },

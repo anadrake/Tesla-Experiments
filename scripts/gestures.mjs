@@ -539,6 +539,19 @@ check('Done ends move mode, bar back at rest', param('customize') === null && Ma
 await open();
 await drag(await barCentre(), 0, -140);
 check('a normal pull still only reveals Customize', param('customize') === 'revealed', page.url());
+await drag(await barCentre(), 0, -40);
+check('revealed: a short pull up (no hold) stays revealed (Q40)', param('customize') === 'revealed' && Math.abs((await liftY()) + 64) < 2, `y=${await liftY()}`);
+{
+  const c = await barCentre();
+  await page.mouse.move(c.x, c.y);
+  await page.mouse.down();
+  await page.mouse.move(c.x, c.y - 140, { steps: 20 });
+  await page.waitForTimeout(500);
+  check('revealed: pull up + hold pops it out too (Q40)', param('customize') === 'moving', page.url());
+  await page.mouse.up();
+  await page.getByRole('button', { name: 'Done' }).click();
+  await page.waitForTimeout(600);
+}
 await open();
 await popAndDrop({ x: 1434, y: 950 });
 const mapBox = await cardBox();
@@ -572,9 +585,9 @@ await open('car=full');
 await popAndDrop({ x: 1796, y: 915 });
 const navBox = await page.locator('[data-car-panel]').getByText('Navigate').boundingBox();
 check('Full: drop right of the card → widgetDock=right', param('widgetDock') === 'right' && param('car') === 'full', page.url());
-check('…smart shuffle: card moves left, pair centred', navBox.x < 600 && Math.abs((await cardBox()).x - 872) < 2, `${navBox.x} / ${(await cardBox()).x}`);
+check('…smart shuffle: card moves left, pair centred', navBox.x < 600 && Math.abs((await cardBox()).x - 867) < 2, `${navBox.x} / ${(await cardBox()).x}`);
 await popAndDrop({ x: 200, y: 915 }); // the left field sits left of the card now, partly off-screen (Figma 4889:43676)
-check('Full: and back to the left', param('widgetDock') === null && Math.abs((await cardBox()).x - 448) < 2, page.url());
+check('Full: and back to the left', param('widgetDock') === null && Math.abs((await cardBox()).x - 453) < 2, page.url());
 await open('nav=navigating');
 await popAndDrop({ x: 1434, y: 950 });
 check('Driving: docks on the map beside the trip card', param('widgetDock') === 'map' && param('nav') === 'navigating', page.url());
