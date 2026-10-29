@@ -16,7 +16,20 @@ import styles from './MapPeek.module.css';
  * Figma's mask box differs Light (647×660 @ 1393,−105) vs Dark (741×735 @ 1372,−289) — built midway (Q30).
  * The map sits rotated −14.3° and at 0.6× (as Figma's pasted map), with the car where Figma's arrow is.
  */
-const BOX = { left: 1383, top: -197, width: 694, height: 698 };
+/** Figma's mask ellipse, midway Light ↔ Dark (Q30): 694×698 at (1383, −197). */
+const ELLIPSE = { left: 1383, top: -197, width: 694, height: 698 };
+/**
+ * The box is the mask: Figma's ellipse grown 1.25× toward the lower left (top-right corner fixed), so its soft
+ * core lands on screen (the midway spot sits ~90px higher than Light's). Mask and box are the same size, so the
+ * fade reaches 0 before any box edge — no hard corners (the box used to clip a larger mask in Dark).
+ */
+const GROW = 1.25;
+const BOX = {
+  left: ELLIPSE.left + ELLIPSE.width * (1 - GROW),
+  top: ELLIPSE.top,
+  width: ELLIPSE.width * GROW,
+  height: ELLIPSE.height * GROW,
+};
 /** Where the car lands inside the box (Figma Light: car arrow at display 1626,125). */
 const CAR_AT = { x: 1626 - BOX.left, y: 125 - BOX.top };
 const ROTATE = -14.3;

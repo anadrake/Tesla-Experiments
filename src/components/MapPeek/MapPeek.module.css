@@ -6,13 +6,10 @@
   padding: 0;
   border: none;
   background: none;
-  /* The midway box (Q30) sits ~90px higher than Light's, which pushed the ellipse's opaque core off-screen and
-     made the peek read faint (P9.3 review). Grow the mask and pin it top-right so the core lands in view. */
-  mask-size: 125% 125%;
-  mask-position: 100% 0;
+  /* Mask = the whole box (see BOX in MapPeek.tsx), so the fade ends inside it. */
+  mask-size: 100% 100%;
   mask-repeat: no-repeat;
-  -webkit-mask-size: 125% 125%;
-  -webkit-mask-position: 100% 0;
+  -webkit-mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
 }
 
