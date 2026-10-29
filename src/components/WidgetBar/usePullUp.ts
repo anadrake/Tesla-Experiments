@@ -54,7 +54,7 @@ interface Options {
   onHide: () => void;
   /** Swipe down from rest → collapse (omit to ignore downward pulls at rest). */
   onCollapse?: () => void;
-  /** Pop the widget out to move it (omit = no move gesture, e.g. the Collapsed rail until 9.6). */
+  /** Pop the widget out to move it (omit = no move gesture). */
   pop?: PopHandlers;
   /** Jump (no spring) on the next outside state change — the bar is hidden, e.g. under the closing Customize editor. */
   jump?: boolean;

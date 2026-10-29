@@ -1,6 +1,6 @@
 import { animate, motionValue } from 'motion/react';
 import { create } from 'zustand';
-import { useHud } from '../../state/store';
+import { isDriving, useHud } from '../../state/store';
 import { reducible, spring, springSnap } from '../../tokens/motion';
 import { WIDGET_CARD, moveSpots, widgetBarRect, type MoveSpot } from '../CarPanel/geometry';
 
@@ -77,7 +77,7 @@ function landCatchUp() {
 
 const spots = (): MoveSpot[] => {
   const s = useHud.getState();
-  return moveSpots(s.carView, s.widgetDock);
+  return moveSpots(s.carView, s.widgetDock, isDriving(s));
 };
 
 /** The dragged card's centre in display px, where the finger has it — not counting the pop's catch-up (`lift` = usePullUp's y). */
@@ -89,16 +89,15 @@ function cardCentre(lift: number) {
 
 function nearest(lift: number) {
   const c = cardCentre(lift);
-  // Card and spot are the same size, so they're within CATCH of touching when the centres are within size + CATCH.
-  const reach = { x: WIDGET_CARD.width + CATCH, y: WIDGET_CARD.height + CATCH };
   let best: MoveSpot | null = null;
   let bestD = Infinity;
-  for (const s of spots()) {
-    const dx = c.x - (s.left + WIDGET_CARD.width / 2);
-    const dy = c.y - (s.top + WIDGET_CARD.height / 2);
-    if (Math.abs(dx) > reach.x || Math.abs(dy) > reach.y) continue;
+  for (const { field: f, ...s } of spots()) {
+    // Within CATCH of touching: the centres are within half of both sizes + CATCH (the rail field is narrow, 9.6).
+    const dx = c.x - (f.left + f.width / 2);
+    const dy = c.y - (f.top + f.height / 2);
+    if (Math.abs(dx) > (WIDGET_CARD.width + f.width) / 2 + CATCH || Math.abs(dy) > (WIDGET_CARD.height + f.height) / 2 + CATCH) continue;
     const d = Math.hypot(dx, dy);
-    if (d < bestD) [best, bestD] = [s, d];
+    if (d < bestD) [best, bestD] = [{ ...s, field: f }, d];
   }
   return best;
 }

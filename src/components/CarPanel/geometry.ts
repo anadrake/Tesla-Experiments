@@ -238,33 +238,47 @@ export function widgetBarRect(view: CarView, dock: WidgetDock, chicklet = bottom
 export const tripCardRect = (view: CarView, dock: WidgetDock): Rect =>
   view === 'full' ? { ...bottom.tripCard.full, left: FULL[dock.full].card } : bottom.tripCard[view];
 
-/** A move target: where the 600×192 card lands (top-left), and the dock it stands for. */
-export type MoveSpot = { key: string; dock: Partial<WidgetDock>; left: number; top: number };
-
-/**
- * Move fields (9.4): the origin and the other spot. Panel: panel ⇄ map. Full: the target is beside the card where it
- * is now (so it may run off the screen edge, as in Figma 4889:43676 — kept, Q39); the drop then shuffles the pair to centre.
- * Not in the Collapsed rail until 9.6 (Q35).
- */
-export function moveSpots(view: CarView, dock: WidgetDock): MoveSpot[] {
-  if (view === 'panel') {
-    const { left, top } = bottom.widgetBar.panel;
-    const map = mapDock();
-    return [
-      { key: 'panel', dock: { panel: 'panel' }, left, top },
-      { key: 'map', dock: { panel: 'map' }, left: map.left, top: map.top },
-    ];
-  }
-  if (view !== 'full') return [];
-  const { top } = bottom.widgetBar.full;
-  const card = FULL[dock.full].card;
-  const other = dock.full === 'left' ? card + 400 + FULL_GAP : card - FULL_GAP - 600;
-  return [
-    { key: dock.full, dock: { full: dock.full }, left: FULL[dock.full].bar, top },
-    { key: dock.full === 'left' ? 'right' : 'left', dock: { full: dock.full === 'left' ? 'right' : 'left' }, left: other, top },
-  ];
-}
+/** A move target: the field drawn for it (and that catches the drop), and the dock it stands for. */
+export type MoveSpot = { key: string; dock: Partial<WidgetDock>; field: Rect };
 
 /** Move field (sketch "Rectangle 41"): 581×180, centred on the 600×192 card spot. */
 export const MOVE_FIELD = { width: 581, height: 180 };
 export const WIDGET_CARD = { width: 600, height: 192 };
+const cardField = (left: number, top: number): Rect => ({
+  left: left + (WIDGET_CARD.width - MOVE_FIELD.width) / 2,
+  top: top + (WIDGET_CARD.height - MOVE_FIELD.height) / 2,
+  ...MOVE_FIELD,
+});
+/**
+ * Collapsed rail field (9.6, 4923:59013): 88×232 at (20, 802) in the 116 rail. The 220 Driving rail has no sketch —
+ * same inset, as wide as the rail allows, under the Start Self-Driving button (ends 838) down to the chicklet's foot.
+ */
+const RAIL_FIELD: Record<'parked' | 'driving', Rect> = {
+  parked: { left: 20, top: 802, width: 88, height: 232 },
+  driving: { left: 20, top: 846, width: 180, height: 218 },
+};
+
+/**
+ * Move fields (9.4): the origin and the other spot. Panel: panel ⇄ map. Full: the target is beside the card where it
+ * is now (so it may run off the screen edge, as in Figma 4889:43676 — kept, Q39); the drop then shuffles the pair to centre.
+ * Collapsed (9.6): docked on the map → map ⇄ the rail (the rail chicklet itself doesn't move).
+ */
+export function moveSpots(view: CarView, dock: WidgetDock, driving: boolean): MoveSpot[] {
+  if (view !== 'full') {
+    const map = mapDock();
+    const mapSpot = { key: 'map', dock: { panel: 'map' as const }, field: cardField(map.left, map.top) };
+    if (view === 'panel') {
+      const { left, top } = bottom.widgetBar.panel;
+      return [{ key: 'panel', dock: { panel: 'panel' }, field: cardField(left, top) }, mapSpot];
+    }
+    if (dock.panel !== 'map') return [];
+    return [mapSpot, { key: 'panel', dock: { panel: 'panel' }, field: RAIL_FIELD[driving ? 'driving' : 'parked'] }];
+  }
+  const { top } = bottom.widgetBar.full;
+  const card = FULL[dock.full].card;
+  const other = dock.full === 'left' ? card + 400 + FULL_GAP : card - FULL_GAP - 600;
+  return [
+    { key: dock.full, dock: { full: dock.full }, field: cardField(FULL[dock.full].bar, top) },
+    { key: dock.full === 'left' ? 'right' : 'left', dock: { full: dock.full === 'left' ? 'right' : 'left' }, field: cardField(other, top) },
+  ];
+}

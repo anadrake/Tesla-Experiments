@@ -20,8 +20,10 @@ import styles from './WidgetBar.module.css';
  * Collapsed bar (Q26): swipe down on the widget (or tap Music's album art) → 382×64 pill of the widget that was
  * showing; the page is kept, and tapping the pill opens the bar on it again.
  * Customize (Phase 8, Sketch 4802:103109): pull the bar up (usePullUp) → it lifts 64px and the Customize
- * button rises from under it. Tap anywhere else or pull down → back. Panel / Full, Parked or Driving (Q22) — not the Collapsed rail.
+ * button rises from under it. Tap anywhere else or pull down → back. Panel / Full, Parked or Driving (Q22), and docked on the
+ * map while collapsed (9.6) — not the rail chicklet.
  * Move (9.4, move.ts): keep pulling past the reveal and hold → the widget pops out; Done replaces Customize.
+ * Collapsed (9.6, 4923:59013): from the map it can drop into the rail, where it shows as the chicklet again.
  */
 const DOTS_IDLE_MS = 1500;
 
@@ -56,8 +58,8 @@ export function WidgetBar({ chicklet }: { chicklet?: 'mini' | 'large' }) {
   const setPage = useHud((s) => s.setWidgetPage);
   const customize = useHud((s) => s.customize);
   const setCustomize = useHud((s) => s.setCustomize);
-  // Panel and Full, Parked or Driving (Anastasiya, 2026-10-28) — not the Collapsed rail.
-  const canCustomize = useHud((s) => !chicklet && s.carView !== 'collapsed');
+  // Panel and Full, Parked or Driving (Anastasiya, 2026-10-28), and on the map while collapsed (9.6) — not the rail chicklet.
+  const canCustomize = !chicklet;
   const revealed = canCustomize && customize !== 'off';
   const moving = revealed && customize === 'moving';
   const root = useRef<HTMLDivElement>(null);

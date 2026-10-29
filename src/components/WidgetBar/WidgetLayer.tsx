@@ -3,8 +3,6 @@ import { useLayoutEffect, useRef, type RefObject } from 'react';
 import { isDriving, useHud } from '../../state/store';
 import { reducible, transition } from '../../tokens/motion';
 import {
-  MOVE_FIELD,
-  WIDGET_CARD,
   chickletLargeRect,
   chickletRect,
   moveSpots,
@@ -92,12 +90,13 @@ const FIELD_OPACITY = { rest: 0.6, target: 1 };
 /** Move fields (sketch "Rectangle 41"): where the popped widget can go. */
 function MoveFields() {
   const view = useHud((s) => s.carView);
+  const driving = useHud(isDriving);
   const dock = useHud((s) => s.widgetDock);
   const moving = useHud((s) => s.customize === 'moving');
   const target = useMove((s) => s.target);
   const dragging = useMove((s) => s.dragging);
   // Spots are fixed while moving (the dock only changes on the drop that ends it).
-  const spots = moving ? moveSpots(view, dock) : [];
+  const spots = moving ? moveSpots(view, dock, driving) : [];
   return (
     <AnimatePresence>
       {spots.map((s) => (
@@ -110,12 +109,7 @@ function MoveFields() {
           animate={{ opacity: dragging && target === s.key ? FIELD_OPACITY.target : FIELD_OPACITY.rest }}
           exit={{ opacity: 0, transition: transition.close }}
           transition={transition.toggle}
-          style={{
-            left: s.left + (WIDGET_CARD.width - MOVE_FIELD.width) / 2,
-            top: s.top + (WIDGET_CARD.height - MOVE_FIELD.height) / 2,
-            width: MOVE_FIELD.width,
-            height: MOVE_FIELD.height,
-          }}
+          style={{ left: s.field.left, top: s.field.top, width: s.field.width, height: s.field.height }}
         />
       ))}
     </AnimatePresence>

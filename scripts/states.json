@@ -448,6 +448,19 @@
       "ref": "move-full-4-light.png"
     },
     {
+      "name": "move-collapsed-fields-light",
+      "query": "mode=light&car=collapsed&widgetDock=map&customize=moving",
+      "ref": "move-collapsed-light.png"
+    },
+    {
+      "name": "move-collapsed-fields-driving-light",
+      "query": "mode=light&car=collapsed&widgetDock=map&customize=moving&nav=navigating"
+    },
+    {
+      "name": "move-collapsed-fields-dark",
+      "query": "mode=dark&car=collapsed&widgetDock=map&customize=moving"
+    },
+    {
       "name": "move-collapsed-map-light",
       "query": "mode=light&car=collapsed&widgetDock=map"
     },
