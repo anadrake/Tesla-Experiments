@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 import type { CarView } from '../../state/store';
 import { transition } from '../../tokens/motion';
 import { DirectionPrimary } from '../Navigation/TurnList';
-import { directionCard, speed, speedSign } from './geometry';
+import { directionCard, directionCardWidth, speed, speedSign } from './geometry';
 import styles from './SpeedCluster.module.css';
 
 /** Driving: speed (Heading 80), speed-limit sign and the compact next-turn card. Enlarged in the Collapsed rail. */
@@ -36,7 +36,7 @@ export function SpeedCluster({ view, visible }: { view: CarView; visible: boolea
       <motion.div
         className={styles.direction}
         initial={false}
-        animate={{ ...directionCard[view], opacity: fade(directionCard[view].opacity) }}
+        animate={{ ...directionCard[view], width: directionCardWidth[view], opacity: fade(directionCard[view].opacity) }}
         transition={transition.screen}
       >
         <DirectionPrimary />

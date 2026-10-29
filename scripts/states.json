@@ -350,6 +350,60 @@
     {
       "name": "customize-editing-full-dark",
       "query": "mode=dark&car=full&customize=editing"
+    },
+    {
+      "name": "selfdrive-parked-light",
+      "query": "mode=light",
+      "ref": "self-drive-states.png"
+    },
+    {
+      "name": "selfdrive-full-light",
+      "query": "mode=light&car=full",
+      "ref": "self-drive-states.png"
+    },
+    {
+      "name": "selfdrive-driving-light",
+      "query": "mode=light&nav=navigating",
+      "ref": "self-drive-states.png"
+    },
+    {
+      "name": "selfdrive-rail-light",
+      "query": "mode=light&nav=navigating&car=collapsed",
+      "ref": "self-drive-states.png"
+    },
+    {
+      "name": "selfdrive-driving-full-light",
+      "query": "mode=light&nav=navigating&car=full",
+      "ref": "self-drive-states.png"
+    },
+    {
+      "name": "selfdrive-parked-rail-light",
+      "query": "mode=light&car=collapsed",
+      "ref": "self-drive-states.png"
+    },
+    {
+      "name": "selfdrive-parked-dark",
+      "query": "mode=dark"
+    },
+    {
+      "name": "selfdrive-full-dark",
+      "query": "mode=dark&car=full"
+    },
+    {
+      "name": "selfdrive-driving-dark",
+      "query": "mode=dark&nav=navigating"
+    },
+    {
+      "name": "selfdrive-rail-dark",
+      "query": "mode=dark&nav=navigating&car=collapsed"
+    },
+    {
+      "name": "selfdrive-driving-full-dark",
+      "query": "mode=dark&nav=navigating&car=full"
+    },
+    {
+      "name": "selfdrive-parked-rail-dark",
+      "query": "mode=dark&car=collapsed"
     }
   ]
 }

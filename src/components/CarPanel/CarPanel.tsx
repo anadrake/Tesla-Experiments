@@ -17,7 +17,8 @@ import { Callouts } from './Callouts';
 import { PanelStatusBar, Telltales } from './PanelStatusBar';
 import { DrivingScene } from './DrivingScene';
 import { SpeedCluster } from './SpeedCluster';
-import { bottom, chickletLargeRect, chickletRect, panelWidth, scene } from './geometry';
+import { bottom, chickletLargeRect, chickletRect, panelWidth, scene, selfDrive } from './geometry';
+import { Button } from '../settings/controls';
 import styles from './CarPanel.module.css';
 import { capture } from '../../lib/pointer';
 
@@ -152,6 +153,8 @@ export function CarPanel() {
       <PanelStatusBar view={view} driving={driving} />
       <Telltales view={view} driving={driving} />
 
+      <SelfDriveLayer rect={selfDrive[driving ? 'driving' : 'parked'][view]} />
+
       <div className={styles.divider} aria-hidden>
         <img src={divider} alt="" width={240} height={104} />
       </div>
@@ -187,5 +190,28 @@ export function CarPanel() {
       </motion.div>
       <CustomizeEditor panel={panelRef} />
     </motion.section>
+  );
+}
+
+/** Start Self-Driving: morphs with the panel like the other layers; hidden (and untappable) where Figma has none. */
+function SelfDriveLayer({ rect }: { rect: (typeof selfDrive)['parked']['panel'] }) {
+  const shown = rect.opacity !== 0;
+  const layer = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (layer.current) layer.current.inert = !shown; // React 18 types lack `inert`
+  }, [shown]);
+  return (
+    <motion.div
+      ref={layer}
+      className={styles.layer}
+      initial={false}
+      animate={rect}
+      transition={transition.screen}
+      data-no-panel-gesture
+    >
+      <Button variant="primary-transparent" width="100%" className={styles.selfDrive}>
+        Start Self-Driving
+      </Button>
+    </motion.div>
   );
 }

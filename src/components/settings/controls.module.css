@@ -157,6 +157,12 @@
   color: var(--color-content-primary);
 }
 
+.button[data-variant='primary-transparent'] {
+  border: var(--stroke-3) solid var(--color-border-accent);
+  background: var(--color-action-primary-transparent-bg-default);
+  color: var(--color-content-accent);
+}
+
 /* ---- Search Field ---- */
 .searchField {
   width: 100%;

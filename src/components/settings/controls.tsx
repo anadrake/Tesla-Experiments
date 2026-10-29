@@ -108,9 +108,33 @@ export function Slider({ setting, initial = 50, icon }: { setting: string; initi
 }
 
 /** Button (4227:127). Primary = blue; `active` keeps it pressed-in for toggle buttons like brightness Auto. */
-export function Button({ children, onPress, variant = 'primary', width = 158 }: { children: ReactNode; onPress?: () => void; variant?: 'primary' | 'secondary'; width?: number }) {
+/**
+ * Button (4227:127). Primary Transparent = 25% blue fill + blue outline and label, for use over imagery
+ * (Start Self-Driving). `width` in design px, or any CSS width (e.g. '100%' to fill a positioned layer).
+ */
+export function Button({
+  children,
+  onPress,
+  variant = 'primary',
+  width = 158,
+  className,
+}: {
+  children: ReactNode;
+  onPress?: () => void;
+  variant?: 'primary' | 'secondary' | 'primary-transparent';
+  width?: number | string;
+  className?: string;
+}) {
   return (
-    <motion.button type="button" className={`${styles.button} text-title-l`} data-variant={variant} style={{ width }} onClick={onPress} whileTap={{ scale: 0.97 }} transition={transition.press}>
+    <motion.button
+      type="button"
+      className={`${styles.button} text-title-l ${className ?? ''}`}
+      data-variant={variant}
+      style={{ width }}
+      onClick={onPress}
+      whileTap={{ scale: 0.97 }}
+      transition={transition.press}
+    >
       {children}
     </motion.button>
   );

@@ -273,7 +273,7 @@ Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **On
 - States: `widget-{energy,calendar,phone,quickActions}-{light,dark}`, plus collapsed / chicklet (Driving rail) / mini (Collapsed rail), and the Customize track showing real widgets.
 - Review: fidelity (shots vs `widgets-set-light`) + function (paging, rails, Customize track/drag still pass `npm run gestures`).
 
-### 9.2 — Start Self-Driving button (S–M)
+### 9.2 — Start Self-Driving button (S–M) ✅ 2026-10-28 (reviewed; iPad test pending)
 - New `SelfDriveButton` component; placed per state: Parked Panel (top-right), Driving Panel (right of the turn card), Driving Collapsed 220 rail (above the chicklet), Parked Full (beside the telltales). Moves with the panel morph like the other status items.
 - Tap does **nothing** (Q32) — standard press feedback only, no state. Shown only where Figma has it (not Driving Full / Parked 116 rail).
 - States: `selfdrive-{parked,driving,full,rail}-{light,dark}`.

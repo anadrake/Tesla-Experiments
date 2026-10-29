@@ -3,7 +3,8 @@
   left: 0;
   top: 0;
   height: var(--stage-h);
-  overflow: hidden;
+  /* clip, not hidden: a hidden box can still be scrolled (focus scroll-into-view shifted the whole Full scene once) */
+  overflow: clip;
   box-shadow: 1px 1px 12px 0 var(--color-shadow-panel-3), -2px -2px 20px 0 var(--color-shadow-panel-2),
     5px -3px 30px 0 var(--color-shadow-panel-1);
   touch-action: none;
@@ -87,4 +88,12 @@
   width: 64px;
   height: 320px;
   transform: translateY(-50%);
+}
+
+/* Start Self-Driving: fills its layer; the label wraps in the narrow Driving spots (168 / 177 wide) */
+.selfDrive {
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--space-24);
+  font-feature-settings: 'liga' 0;
 }

@@ -466,6 +466,30 @@ check('swipe down while Customize is revealed only hides it', param('customize')
 await tap(...(await page.locator('[data-widget="music"] button[aria-label="Collapse music"]').boundingBox().then((b) => [b.x + 40, b.y + 40])));
 check('album art tap collapses to the music pill', param('bar') === 'collapsed' && (await pill().getAttribute('data-widget')) === 'music', page.url());
 
+// --- 9.2 Start Self-Driving: press feedback only (Q32) ---
+const selfDrive = () => page.getByRole('button', { name: 'Start Self-Driving' });
+const tapSelfDrive = async () => {
+  const b = await selfDrive().boundingBox();
+  await tap(b.x + b.width / 2, b.y + b.height / 2);
+};
+for (const [label, query] of [
+  ['Parked Panel', ''],
+  ['Parked Full', 'car=full'],
+  ['Driving Panel', 'nav=navigating'],
+  ['Driving rail', 'nav=navigating&car=collapsed'],
+]) {
+  await open(query);
+  const before = page.url();
+  await tapSelfDrive();
+  check(`Self-Driving tap does nothing (${label})`, page.url() === before, `${before} → ${page.url()}`);
+}
+// Role queries ignore `inert` (see Learnings), so check the layer itself.
+const selfDriveInert = () => selfDrive().evaluate((el) => !!el.closest('[inert]'));
+await open('nav=navigating&car=full');
+check('Self-Driving hidden + inert in Driving Full', await selfDriveInert(), page.url());
+await open('car=collapsed');
+check('Self-Driving hidden + inert in the Parked rail', await selfDriveInert(), page.url());
+
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();
 process.exitCode = failed ? 1 : 0;

@@ -47,7 +47,7 @@
 }
 
 .direction {
-  width: 464px;
+  /* width per size: geometry.ts directionCardWidth */
   border-radius: var(--radius-lg);
   overflow: hidden;
 }

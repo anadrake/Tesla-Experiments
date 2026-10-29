@@ -140,7 +140,11 @@ export const telltalesDriving = pair(
   { left: 19, top: 296, width: 48, height: 160 },
   { left: 19, top: 455, width: 48, height: 160 },
 );
-/** Compact Direction Primary (464-wide card at 0.644) beside the speed. Off-rail (hidden) when collapsed. */
+/**
+ * Compact Direction Primary at 0.644 beside the speed. Off-rail (hidden) when collapsed.
+ * Unscaled width per size: Panel 410 (= Figma 264, leaves 32px before Start Self-Driving) · Full 464 (= ~299, no button there).
+ */
+export const directionCardWidth: Record<CarView, number> = { panel: 410, full: 464, collapsed: 410 };
 export const directionCard = placed(
   { left: 144, top: 72, scale: 0.644, opacity: 1 },
   { left: 144, top: 72, scale: 0.644, opacity: 1 },
@@ -154,3 +158,20 @@ export const batteryDrivingCollapsed = {
 
 /** Chicklet (200×208) in the 220 rail while driving. */
 export const chickletLargeRect: Rect = { left: 10, top: 862, width: 200, height: 208, opacity: 1 };
+
+/**
+ * Start Self-Driving (Button Primary Transparent, Car Status Panel 4268:3115). Its width changes per size, so the
+ * label wraps to two lines in the narrow Driving spots, as in Figma. Not in Driving Full or the Parked 116 rail
+ * (faded out where it was). Tap = press feedback only (Q32).
+ */
+export const selfDrive = {
+  parked: pair(
+    { left: 352, top: 73, width: 256, height: 86 }, // 4889:37307
+    { left: 94, top: 72, width: 240, height: 86 }, // New Map 4889:40466
+  ),
+  driving: pair(
+    { left: 440, top: 73, width: 168, height: 86 }, // 4829:108281, right of the compact turn card
+    { left: 440, top: 73, width: 168, height: 86, opacity: 0 },
+    { left: 20, top: 752, width: 177, height: 86 }, // 4917:58754, above the chicklet
+  ),
+};
