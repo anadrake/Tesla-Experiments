@@ -257,7 +257,7 @@ I triage both reports, fix, and log the result in WORKLOG before you test on the
 ## Sub-phases (each ends: 2 reviewer runs → fix → you test on iPad → WORKLOG → commit + push)
 Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **One sub-phase per session.**
 
-### 9.0 — References & specs (S)
+### 9.0 — References & specs (S) ✅ 2026-10-28 → `docs/SPECS-P9.md`, 14 refs in `design-ref/`, tokens `border-accent`, `action-primary-transparent-bg-default`, `chart-over-rated`
 - Save small refs to `design-ref/`: `widgets-set-light` (size review `4901:8483`), `map-peek-{light,dark}`, `move-panel-{1..4}`, `move-full-{1..4}`, `self-drive-states` (`4268:3115`). One screenshot each, ≤1024px.
 - `get_design_context` **only on the 4 new base components' Open size** (`4899:2637` Energy, `4899:2696` Calendar, `4899:2736` Phone, `4899:2800` Quick Actions) + the Self Drive instance + the map Mask group. Pull Collapsed / Chicklet / Mini from metadata + screenshot unless they need more.
 - Diff the refreshed Music / Odometer / Tire against what's built (pills are 382 wide — Q27; Odometer chicklet 186) → list for 9.1.

@@ -25,6 +25,9 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Customize pull-up + Customize button | Sketch `4802:103109` (button `4766:97815`) | `WidgetBar/usePullUp.ts`, `useDismissOnOutsideTap.ts`, `WidgetBar.tsx` | ✅ P8.1 | Feel constants at the top of usePullUp; `?customize=revealed` |
 | Customize editor: Widget Picker · Customize Track · Done | Sketch `4802:103107` (Add Apps Frame `…4802:104691`, edit frame `…4802:104705`), placeholder `4802:107503` | `src/components/Customize/` | ✅ P8.2 | Panel coords (`Customize/geometry.ts`); track = own pager; `?customize=editing` |
 | Customize drag & drop: insertion bar · drop slot · drag ghost | Sketches `4802:103108` (bar), `4802:103453` (slot), `4802:104649` (dropped) | `Customize/drag.ts` (state + rules), `DragLayer.tsx`, `CustomizeTrack.tsx`, `WidgetPicker.tsx` | ✅ P8.3 | Timings / reach at the top of drag.ts; `npm run gestures` covers every drop path. Reduce Motion (P8.4): editor fades in place (`useEditorMotion`), imperative springs go through `reducible()` (tokens/motion.ts) |
+| Energy · Calendar · Phone · Quick Actions widgets | `4899:2637` · `4899:2696` · `4899:2736` · `4899:2800` (set `4899:2892`) | `src/components/WidgetBar/` (9.1) | 📝 P9 specced | Static concept widgets; specs in `docs/SPECS-P9.md` |
+| Start Self-Driving | `4889:40466` (Button Primary Transparent `4227:127`) | — (9.2) | 📝 P9 specced | Press feedback only |
+| Map peek | Mask group `4889:40166` | — (9.3) | 📝 P9 specced | Live map in a rotated, alpha-masked box (`assets/map/peek-mask.svg`) |
 | Trip Card / Search | `359:9111` | `src/components/TripCard/TripSearchCard.tsx` | ✅ P3 | Navigate → map + keyboard; Home/Work → trip |
 | Keyboard | `52:32037` | `src/overlays/Keyboard/` | ✅ P3 | Slides up (slow/enter); shift one-shot; ?#&, mic, cursor = press only |
 | Key | `4271:2318` | `src/components/Key/` | ✅ P3 | Character 104×88 / Action; Pressed = 8% overlay |

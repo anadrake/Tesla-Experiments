@@ -33,3 +33,16 @@ Figma Sketches `4766:94038` — **light only, wireframes**, captured 2026-10-27 
 | customize-drag-bar-light | Drag widget, insertion bar `4802:103108` |
 | customize-drag-slot-light | Drag widget, slot opens `4802:103453` |
 | customize-dropped-light | Dropped, placeholder widget `4802:104649` |
+
+## Phase 9 references (captured 2026-10-28, light unless noted)
+Specs pulled from these nodes live in `docs/SPECS-P9.md`.
+
+| File | Figma node | Notes |
+|---|---|---|
+| widgets-set-light | `4901:8483` size review | New widgets in Open / Collapsed / Chicklet / Mini, inside the card |
+| widgets-base-light | `4899:2892` `.Widget / new full set` | All 7 widgets × 4 sizes, content only (no card), 1:1 px |
+| map-peek-light / -dark | `4889:40430` / `4889:40167` | Car status Full with map peek + Start Self-Driving (2020×1180 incl. frame margin) |
+| self-drive-states | `4268:3115` Car Status Panel set | Where the Start Self-Driving button sits per state |
+| move-panel-{1..4}-light | `4889:38248` · `40694` · `41114` · `41518` | Move widget, Panel: reveal → fields → dragged → docked on the map |
+| move-full-{1..4}-light | `4889:43675` · `43676` · `43677` · `43408` | Move widget, Full: reveal → fields → dragged → smart shuffle |
+| move-collapsed-light | `4923:59013` | 9.6 only: move from the Collapsed rail (1920×1200 incl. control bar) |

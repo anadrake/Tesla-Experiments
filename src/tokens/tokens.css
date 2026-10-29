@@ -119,6 +119,9 @@
   --color-action-primary-bg-default: #005aff;
   --color-action-secondary-bg-default: #d0d1d2;
   --color-content-accent: #005aff;
+  --color-border-accent: #005aff; /* Start Self-Driving outline */
+  --color-action-primary-transparent-bg-default: #005aff40; /* Button Primary Transparent (Start Self-Driving) */
+  --color-chart-over-rated: #ff8a00; /* Energy widget trace above rated — unbound in Figma, same both modes */
   --color-control-track-off: #d0d1d2;
   --color-control-knob: #ffffff;
   --color-border-focus: #005aff;
@@ -160,6 +163,9 @@
   --color-border-focus: #8fb4ff;
   --color-action-secondary-bg-default: #5c5c5c;
   --color-content-accent: #8fb4ff;
+  --color-border-accent: #8fb4ff;
+  --color-action-primary-transparent-bg-default: #005aff40;
+  --color-chart-over-rated: #ff8a00;
   --color-control-track-off: #5c5c5c;
   --color-state-pressed-overlay: #ffffff14; /* Dark value not in Figma vars (8% black is invisible on dark) — assumed 8% white */
   --color-status-info: #8fb4ff;
