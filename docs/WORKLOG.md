@@ -96,6 +96,7 @@ Running record of feedback, decisions, discussions and learnings. Newest entries
 - 2026-10-26 — Bezel art excluded; render the 1920×1200 display only (per brief).
 
 ## Feedback from Anastasiya
+- 2026-10-28 — Dark map peek 30% less opaque (Dark only): `[data-mode='dark'] .map { opacity: 0.7 }` in MapPeek.module.css; fades with the Day/Night dissolve.
 - 2026-10-28 — Map peek showed hard edges/corners (Dark, a bit in Light) — should be a soft round mask only. Cause: the 125% mask (review fix) was bigger than the peek box, so the box clipped the map in straight lines. Now the box *is* the grown mask (ellipse ×1.25 toward the lower left, top-right fixed), mask 100% of it, so the fade reaches 0 before any edge.
 - 2026-10-28 — Phase 9 answers (Q25–Q35): widgets static; swipe-down collapse with remembered page; live map peek (tap → map + Panel); Self-Driving does nothing; pop-out-of-a-socket move; drop where the trip card area is; save position; Collapsed-rail move last (new sketch `4923:59013`).
 - 2026-10-28 — Close is clean on the iPad; Phase 8 signed off. Wrap up the session.
