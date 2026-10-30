@@ -12,8 +12,9 @@ const same = (a: Values, b: Values) => Object.keys(b).every((k) => a[k] === b[k]
  * When `scene` changes and `fade` is on: opacity dips to 0 and back (`transition.fadeSwap`) while every other value
  * jumps to `to` at the dip (`transition.fadeSwapJump`). Any other change returns `to` as is with `transition.screen` (the normal slide).
  * The result is kept (same values) until the next change, so a re-render mid-fade doesn't restart it as a slide.
+ * `soft`: slower, eased in and out (`transition.fadeSwapSoft`).
  */
-export function useFadeSwap<T extends Values>(to: T, scene: string, fade: boolean) {
+export function useFadeSwap<T extends Values>(to: T, scene: string, fade: boolean, soft = false) {
   const last = useRef<{ scene: string; to: T; animate: T | Animate<T>; swapping: boolean; swaps: number } | null>(null);
   const prev = last.current;
   let animate: T | Animate<T> = to;
@@ -36,6 +37,7 @@ export function useFadeSwap<T extends Values>(to: T, scene: string, fade: boolea
   useEffect(() => {
     last.current = { scene, to, animate, swapping, swaps };
   });
-  const jumps = Object.fromEntries(Object.keys(to).filter((k) => k !== 'opacity').map((k) => [k, transition.fadeSwapJump]));
-  return { animate, transition: swapping ? { ...transition.fadeSwap, ...jumps } : transition.screen };
+  const jump = soft ? transition.fadeSwapSoftJump : transition.fadeSwapJump;
+  const jumps = Object.fromEntries(Object.keys(to).filter((k) => k !== 'opacity').map((k) => [k, jump]));
+  return { animate, transition: swapping ? { ...(soft ? transition.fadeSwapSoft : transition.fadeSwap), ...jumps } : transition.screen };
 }

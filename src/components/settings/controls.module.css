@@ -158,7 +158,8 @@
 }
 
 .button[data-variant='primary-transparent'] {
-  border: var(--stroke-3) solid var(--color-border-accent);
+  /* Start Self-Driving: 2px at 70% (Anastasiya, 2026-10-29 — Figma's literal 3px read heavy) */
+  border: var(--stroke-2) solid color-mix(in srgb, var(--color-border-accent) 70%, transparent);
   background: var(--color-action-primary-transparent-bg-default);
   color: var(--color-content-accent);
 }

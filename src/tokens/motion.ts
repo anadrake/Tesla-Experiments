@@ -22,6 +22,8 @@ export const easing = {
   standard: [0.2, 0, 0, 1],
   enter: [0, 0, 0.2, 1],
   exit: [0.4, 0, 1, 1],
+  /** Slow in, slow out — the soft cross-fade (Start Self-Driving, Anastasiya 2026-10-29). App token, not in Figma. */
+  gentle: [0.45, 0, 0.55, 1],
 } as const satisfies Record<string, [number, number, number, number]>;
 
 /**
@@ -62,6 +64,9 @@ export const transition = {
   fadeSwap: cutsTransform({ duration: duration.slow, ease: [easing.standard, 'linear', easing.standard], times: [0, 0.5, 0.5, 1] }),
   /** …and the jump, at its midpoint (position values; keyframes there flashed the start value for a frame on finish). */
   fadeSwapJump: { duration: 0, delay: duration.slow / 2 },
+  /** Softer cross-fade: slower, eased in and out on both halves (Start Self-Driving). */
+  fadeSwapSoft: cutsTransform({ duration: duration.deliberate, ease: [easing.gentle, 'linear', easing.gentle], times: [0, 0.5, 0.5, 1] }),
+  fadeSwapSoftJump: { duration: 0, delay: duration.deliberate / 2 },
   dayNight: cutsTransform({ duration: duration.deliberate, ease: easing.standard }),
   /** Three blinks, one `slow` each (presets.flash). */
   flash: cutsTransform({ duration: duration.slow * 3, ease: 'linear' }),

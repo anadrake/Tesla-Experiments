@@ -211,7 +211,7 @@ function FlipLayer({ rects, view, children }: { rects: Record<CarView, Rect>; vi
 /** Any view change cross-fades it between its spots rather than sliding (Full, and the Driving rail — Anastasiya, 2026-10-29). */
 function SelfDriveLayer({ rect, view }: { rect: (typeof selfDrive)['parked']['panel']; view: CarView }) {
   const shown = rect.opacity !== 0;
-  const { animate, transition: t } = useFadeSwap({ ...rect, opacity: rect.opacity ?? 1 }, view, true);
+  const { animate, transition: t } = useFadeSwap({ ...rect, opacity: rect.opacity ?? 1 }, view, true, true); // soft (Anastasiya, 2026-10-29)
   const layer = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (layer.current) layer.current.inert = !shown; // React 18 types lack `inert`
