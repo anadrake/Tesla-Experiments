@@ -56,8 +56,8 @@ const AFTER_FADE = { ...transition.cut, delay: duration.fast };
  */
 const PEEK_IN = 48;
 const PEEK_FADE = { duration: duration.base, ease: easing.gentle }; // slow (0.4) dragged (Anastasiya)
-/** They start halfway through the open morph, not after it (Anastasiya): the clip has nearly closed in by then. */
-const PEEK_START = duration.base / 2;
+/** They start a quarter into the open morph, not after it (Anastasiya): still all but transparent while the clip closes in. */
+const PEEK_START = duration.base / 4;
 const SLOT_MOTION = { ...transition.screen, x: spring, opacity: PEEK_FADE };
 /** The X goes first on close, before the card starts shrinking back (Anastasiya, 2026-10-30: it lingered). */
 const X_OUT = { duration: duration.instant };
