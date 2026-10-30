@@ -84,14 +84,11 @@
   font-feature-settings: 'liga' 0;
 }
 
-/* Focused: glass + focus ring + Elevation/Map (keyboard open) */
+/* Focused (keyboard open): focus ring only — it keeps its fill (Anastasiya, 2026-10-29: Figma's glass fill read as
+   the field changing colour, near-black in Dark) */
 .navigateField[data-focused] {
-  background: var(--color-surface-glass);
   border: var(--stroke-2) solid var(--color-border-focus);
   padding: calc(var(--space-16) - 2px) calc(var(--space-8) - 2px); /* ring sits inside the same 464 box */
-  box-shadow: var(--elevation-map-shadow);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   color: var(--color-content-primary);
 }
 

@@ -139,7 +139,8 @@
 .divider {
   width: 2px;
   height: 48px;
-  background: var(--color-surface-sunken);
+  /* Same as the rule above it: light grey in Dark too (surface-sunken went near-black there — Anastasiya, 2026-10-29) */
+  background: var(--color-border-default);
 }
 
 .more {

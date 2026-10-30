@@ -215,11 +215,20 @@ check('swipe the edit track → next widget', param('widget') === '1', `widget=$
 await drag(viewC, 150, 0);
 check('swipe back', param('widget') === null, `widget=${param('widget')}`);
 
+{
+  // Each card carries its own X: it slides with the card (2026-10-29)
+  const xOf = (id) => page.getByRole('button', { name: `Remove ${id}` }).boundingBox();
+  const before = await xOf('Odometer');
+  await drag(viewC, -150, 0);
+  const after = await xOf('Odometer');
+  check('each card has its own X, and it slides with its card', (await page.getByRole('button', { name: /^Remove / }).count()) >= 2 && before && after && before.x - after.x > 300, `${before?.x} → ${after?.x}`);
+  await open('customize=editing');
+}
 await page.getByRole('button', { name: 'Remove Music' }).click();
 await page.waitForTimeout(600);
 check('X removes the centred widget', param('widgets') === 'odometer,tire' && (await dotCount()) === 2, `widgets=${param('widgets')} dots=${await dotCount()}`);
 check('…saved for reload (Q24)', (await page.evaluate(() => localStorage.getItem('hud.widgetTrack'))) === 'odometer,tire');
-await page.getByRole('button', { name: /^Remove / }).click();
+await page.getByRole('button', { name: 'Remove Odometer' }).click();
 await page.waitForTimeout(600);
 check('removed widget loses its on-track bar in the picker', (await page.locator('[data-picker-app="music"] [data-on-track]').count()) === 0);
 check('last widget has no X (never empty, Q18)', (await page.getByRole('button', { name: /^Remove / }).count()) === 0 && param('widgets') === 'tire', `widgets=${param('widgets')}`);
@@ -303,7 +312,7 @@ const flashSamples = [];
   await page.waitForTimeout(500);
   await page.mouse.up();
   for (let i = 0; i < 12; i++) {
-    flashSamples.push(await page.locator('[data-track-widget="music"] > *').evaluate((el) => Number(getComputedStyle(el).opacity)));
+    flashSamples.push(await page.locator('[data-track-widget="music"] > :first-child').evaluate((el) => Number(getComputedStyle(el).opacity)));
     await page.waitForTimeout(80);
   }
   await page.waitForTimeout(800);

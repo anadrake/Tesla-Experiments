@@ -167,9 +167,10 @@ export const telltalesDriving = pair(
  * Unscaled width per size: Panel 410 (= Figma 264, leaves 32px before Start Self-Driving) · Full 464 (= ~299, no button there).
  */
 export const directionCardWidth: Record<CarView, number> = { panel: 410, full: 464, collapsed: 410 };
+/** Top 64, 80 tall — level with the map's Navigate field and Start Self-Driving (Anastasiya, 2026-10-29). */
 export const directionCard = placed(
-  { left: 144, top: 72, scale: 0.644, opacity: 1 },
-  { left: 144, top: 72, scale: 0.644, opacity: 1 },
+  { left: 144, top: 64, scale: 0.644, opacity: 1 },
+  { left: 144, top: 64, scale: 0.644, opacity: 1 },
   { left: 247, top: 65, scale: 0.644, opacity: 0 },
 );
 
@@ -188,12 +189,13 @@ export const chickletLargeRect: Rect = { left: 10, top: 862, width: 200, height:
  */
 export const selfDrive = {
   parked: pair(
-    { left: 352, top: 73, width: 256, height: 86 }, // 4889:37307
+    // Panel: top 64, 80 tall — level with the map's Navigate field (and the turn card while driving) (Anastasiya, 2026-10-29)
+    { left: 352, top: 64, width: 256, height: 80 }, // 4889:37307 (73 / 86)
     { left: 94, top: 72, width: 240, height: 86 }, // New Map 4889:40466
   ),
   driving: pair(
-    { left: 440, top: 73, width: 168, height: 86 }, // 4829:108281, right of the compact turn card
-    { left: 440, top: 73, width: 168, height: 86, opacity: 0 },
+    { left: 440, top: 64, width: 168, height: 80 }, // 4829:108281 (73 / 86), right of the compact turn card
+    { left: 440, top: 64, width: 168, height: 80, opacity: 0 },
     { left: 20, top: 752, width: 177, height: 86 }, // 4917:58754, above the chicklet
   ),
 };

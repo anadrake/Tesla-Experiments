@@ -117,9 +117,10 @@
   inset: 0;
 }
 
+/* Above each card: frame top 12, the card row starts at 69 — so 57 above the card, centred on it */
 .closeSlot {
   position: absolute;
-  top: 12px;
+  top: -57px;
   left: 0;
   right: 0;
   height: 48px;

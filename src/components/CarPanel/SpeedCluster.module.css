@@ -51,3 +51,16 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
+
+/* Compact Direction Primary: 80 tall on screen (÷ 0.644 scale) like the Navigate field, content re-centred
+   (labels 56 + 4 + 29 = 89; turn icon 70) — Anastasiya, 2026-10-29. Was the full card's 139. */
+.direction > div {
+  --compact-h: calc(80px / 0.644);
+  height: var(--compact-h);
+  padding-top: calc((var(--compact-h) - 89px) / 2);
+  padding-bottom: 0;
+}
+
+.direction > div > :first-child {
+  top: calc((var(--compact-h) - 70px) / 2);
+}

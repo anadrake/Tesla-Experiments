@@ -29,7 +29,7 @@ import styles from './Customize.module.css';
 
 /**
  * Sketch "edit frame" (4802:104705): the track shrunk to 486-wide cards (the 600×192 widget at 0.8107),
- * 20px apart, centred with the neighbours peeking. X above removes the centred widget (not on the last
+ * 20px apart, centred with the neighbours peeking. The X above each card removes that widget (not on the last
  * one — the track is never empty, Q18); its name below; dots always on.
  * Swipe pages like the normal bar (our own pager, design px). Hold a card 0.3s → it lifts and drags (Q19).
  * While something is dragged near a gap, the cards either side move apart around the insertion bar / drop slot.
@@ -116,9 +116,12 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
   }, [moved, x]);
 
   const active = track[page] ?? track[0];
-  const remove = () => {
+  const remove = (id: WidgetId) => {
     if (track.length < 2 || useDrag.getState().source) return; // not mid-drag (a second finger on X)
-    setTrack(track.filter((id) => id !== active));
+    const at = track.indexOf(id);
+    setTrack(track.filter((t) => t !== id));
+    // A card left of the centred one: step the page back so the card you're looking at stays centred.
+    if (at < page) setPage(page - 1);
   };
 
   const open = target ? GAP_OPEN[target.mode] : 0;
@@ -143,18 +146,6 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
         variants={frameClip}
         onAnimationComplete={(def) => def === 'shown' && setSettled(true)}
       >
-        <motion.div className={styles.closeSlot} variants={chrome}>
-          <AnimatePresence initial={false}>
-            {track.length > 1 && (
-              <motion.div key="x" {...presets.fadeIn} transition={transition.toggle}>
-                <Pressable className={styles.close} aria-label={`Remove ${WIDGETS[active].label}`} onClick={remove}>
-                  <Icon src={closeIcon} color="var(--color-icon-strong)" />
-                </Pressable>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
         <motion.div
           className={styles.view}
           variants={trackView}
@@ -241,6 +232,22 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
                   >
                     <TrackCard id={id} />
                   </motion.div>
+                  {/* Each card carries its own X, above it, so it slides with the card (Anastasiya, 2026-10-29) */}
+                  <AnimatePresence initial={false}>
+                    {track.length > 1 && dragged !== id && (
+                      <motion.div key="x" className={styles.closeSlot} {...presets.fadeIn} transition={transition.toggle}>
+                        <Pressable
+                          className={styles.close}
+                          aria-label={`Remove ${WIDGETS[id].label}`}
+                          // Keep the press off the track's swipe / hold gesture (it captures the pointer).
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onClick={() => remove(id)}
+                        >
+                          <Icon src={closeIcon} color="var(--color-icon-strong)" />
+                        </Pressable>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               ))}
             </AnimatePresence>
