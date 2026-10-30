@@ -27,6 +27,10 @@ Runs on iPad Pro (GitHub Pages, Add to Home Screen). Design concept — not affi
 - **iPad:** touch only. No hover-dependent UI. Every tap target ≥ `--size-touch-min` (64px) unless Figma is smaller on purpose. `touch-action: none` globally; opt in per component for gestures.
 - **Figma reads are expensive.** Target node IDs (see `design-ref/README.md`, `docs/COMPONENTS.md`), never whole pages; screenshots ≤1024px.
 
+## Settings pages (Phase 10)
+- Build settings pages from the static **photo kit** (`src/overlays/Settings/photo/Photo.tsx`) and `--photo-*` tokens; register them in `SettingsWindow.tsx` PAGES. Pages are static (Q41). Check each against its Figma frame with `npm run fidelity -- --only settings26-<page>-light` (state + `ref` in `scripts/states.json`).
+- Settings backgrounds use `--color-surface-panel` (grey), not `--photo-surface-panel`.
+
 ## Adding a screen (vibe-coding recipe)
 1. Add state for it in `store.ts` (+ `url.ts` if deep-linkable).
 2. Build it in `screens/` or `overlays/` from existing components; new components go in `components/` and get a row in `COMPONENTS.md`.

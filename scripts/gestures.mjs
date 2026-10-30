@@ -743,6 +743,11 @@ await open();
   check('Control bar taps still work with the swipe on it (temperature up)', (await hud('s => s.driverTemp')) === before + 1 && param('overlay') === null);
 }
 
+await open('settings=controls');
+await drag({ x: 1300, y: 1140 }, 0, -420, 14);
+await page.waitForTimeout(700);
+check('Climate: a swipe up over an open Settings window replaces it (Anastasiya)', param('overlay') === 'climate' && param('settings') === null, page.url());
+
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();
 process.exitCode = failed ? 1 : 0;

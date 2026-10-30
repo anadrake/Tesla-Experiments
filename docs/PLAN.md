@@ -300,7 +300,7 @@ Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **On
 - Per `4923:59013` and its row: widget docked on the map while the panel is collapsed; drop field in the 116 rail. Re-enable the gesture there; extend `gestures.mjs`.
 - Review: fidelity + function, then a final P8/P9 regression run.
 
-# Phase 10 — Settings 2026 + Front Climate (✅ approved 2026-10-29 — Q41–Q44)
+# Phase 10 — Settings 2026 + Front Climate (✅ approved 2026-10-29 — Q41–Q44 · 10.0–10.5 done, 10.6 sweep next)
 
 **Source:** Figma page `4931:2` "↳ Settings & Climate · Photo Build" (Anastasiya). Read-me `4944:28019`: 19 categories × Light / Dark, Front Climate Light / Dark, reusable photo rows / sliders / header / long toggle, 10 climate symbols (on / off), 18 new colour variables + 6 type styles.
 Never fetch the page whole (260k chars) — node IDs below.
