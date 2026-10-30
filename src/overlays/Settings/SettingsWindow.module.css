@@ -168,6 +168,8 @@
    fill (#414343) would vanish into it — lift it to ~#585858, as the Dark Seats frame shows its seat adjuster. */
 [data-mode='dark'] .body {
   --photo-surface-control: color-mix(in srgb, var(--color-surface-panel) 88%, white);
+  /* …and the inset fill (#101112) read as a black hole on the grey — a shade under the panel instead */
+  --photo-surface-inset: color-mix(in srgb, var(--color-surface-panel) 70%, black);
 }
 
 /* Settings 2026 pages are static (Q41): the controls don't take taps — the body under them still scrolls. */

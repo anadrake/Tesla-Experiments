@@ -572,6 +572,18 @@
           64,
           840,
           112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
         ]
       }
     },
@@ -1295,6 +1307,346 @@
     {
       "name": "settings26-navigation-dark",
       "query": "mode=dark&settings=navigation",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-trips-light",
+      "query": "mode=light&settings=trips",
+      "ref": "settings-2026/trips-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-trips-dark",
+      "query": "mode=dark&settings=trips",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-profiles-light",
+      "query": "mode=light&settings=profiles",
+      "ref": "settings-2026/profiles-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-profiles-dark",
+      "query": "mode=dark&settings=profiles",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-wifi-dark",
+      "query": "mode=dark&settings=wifi",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-bluetooth-light",
+      "query": "mode=light&settings=bluetooth",
+      "ref": "settings-2026/bluetooth-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-bluetooth-dark",
+      "query": "mode=dark&settings=bluetooth",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-audio-light",
+      "query": "mode=light&settings=audio",
+      "ref": "settings-2026/audio-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-audio-dark",
+      "query": "mode=dark&settings=audio",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-upgrades-light",
+      "query": "mode=light&settings=upgrades",
+      "ref": "settings-2026/upgrades-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-upgrades-dark",
+      "query": "mode=dark&settings=upgrades",
       "regions": {
         "nav": [
           630,

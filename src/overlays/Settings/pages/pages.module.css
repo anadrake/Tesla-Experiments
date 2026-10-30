@@ -453,3 +453,215 @@
   font-size: 16px;
   color: var(--photo-accent);
 }
+
+/* Profiles */
+.profileCard {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+}
+
+.profileCard[data-expanded] {
+  gap: var(--space-12);
+  padding: 0 var(--space-24) var(--space-24);
+}
+
+.profileRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+  height: 68px;
+  padding: 0 var(--space-24);
+}
+
+.profileRow[data-tall] {
+  height: 88px;
+}
+
+.profileName {
+  margin: 0;
+  padding: 20px 0 20px 20px;
+  background: var(--photo-surface-inset);
+  color: var(--photo-content-primary);
+}
+
+.activeProfile {
+  width: 32px;
+  height: 32px;
+}
+
+.activeProfile svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Wi-Fi / Bluetooth: icon + label + trailing control on one line */
+.iconLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+}
+
+/* Bluetooth */
+.deviceMark {
+  margin-left: 10px;
+  color: var(--color-status-success);
+}
+
+.deviceMark[data-mark='favorite'] {
+  color: var(--photo-status-amber);
+}
+
+.iconSlot32 {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+}
+
+/* Audio */
+.raised {
+  background: var(--photo-surface-control-raised);
+}
+
+.eqCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-24);
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+}
+
+.eqBands {
+  position: relative;
+  display: flex;
+  gap: var(--space-24);
+}
+
+.eqBand {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 290px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-16);
+  text-align: center;
+}
+
+.fader {
+  position: relative;
+  width: 100px;
+  height: 220px;
+}
+
+.fader::before {
+  content: '';
+  position: absolute;
+  left: 48px;
+  top: 10px;
+  width: 4px;
+  height: 200px;
+  background: var(--photo-slider-rail);
+}
+
+.faderKnob {
+  position: absolute;
+  left: 38px;
+  width: 24px;
+  height: 24px;
+  margin-top: -12px;
+  border: 1px solid var(--photo-border-default);
+  border-radius: var(--radius-full);
+  background: var(--color-control-knob);
+}
+
+.eqBaseline {
+  position: absolute;
+  left: 60px;
+  top: 168px;
+  width: 576px;
+  height: 2px;
+  background: var(--photo-slider-rail);
+}
+
+.eqReset {
+  position: absolute;
+  left: 670px;
+  top: 152px;
+}
+
+.eqUnit {
+  position: absolute;
+  left: 664px;
+  top: 0;
+  line-height: 23px;
+  color: var(--photo-content-secondary);
+}
+
+.labels3 {
+  display: flex;
+}
+
+.labels3 > * {
+  flex: 1 0 0;
+}
+
+.labels3 > :nth-child(2) {
+  text-align: center;
+}
+
+.labels3 > :nth-child(3) {
+  text-align: right;
+}
+
+/* Photo / Immersive Slider 558×80 */
+.immersive {
+  position: relative;
+  flex: none;
+  width: 558px;
+  height: 80px;
+  border: 1.5px solid var(--photo-border-default);
+  border-radius: var(--radius-sm);
+}
+
+.immersiveTick {
+  position: absolute;
+  top: 28.5px;
+  width: 4px;
+  height: 20px;
+  background: var(--photo-slider-rail);
+}
+
+.immersiveSelected {
+  position: absolute;
+  left: 462.5px;
+  top: 0.5px;
+  width: 90px;
+  height: 76px;
+  border-radius: 5px;
+  background: var(--photo-surface-selected);
+}
+
+/* Upgrades: empty state */
+.emptyState {
+  height: 839px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-24);
+  text-align: center;
+}
+
+.emptyText {
+  margin: 0;
+  color: var(--photo-content-secondary);
+}
+
+.retry > span {
+  background: var(--photo-surface-control);
+}

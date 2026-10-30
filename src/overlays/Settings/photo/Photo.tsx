@@ -43,13 +43,16 @@ export function Segmented({ options, selected, width }: { options: string[]; sel
 }
 
 /** Switch (4229:27): 80×40. */
-export const Switch = ({ on }: { on: boolean }) => <span className={styles.switch} data-on={on || undefined} aria-checked={on} role="switch" />;
+/** `onCard`: on a filled card the off track is darker (Figma #a3a6a8 ≈ --photo-slider-rail). */
+export const Switch = ({ on, onCard = false }: { on: boolean; onCard?: boolean }) => (
+  <span className={styles.switch} data-on={on || undefined} data-card={onCard || undefined} aria-checked={on} role="switch" />
+);
 
 /** Setting Row (4231:420) / Long Setting Toggle (4986:26050): switch + title (+ info) + description. */
-export function ToggleRow({ on, title, description, info: hasInfo, badge }: { on: boolean; title: ReactNode; description?: ReactNode; info?: boolean; badge?: ReactNode }) {
+export function ToggleRow({ on, title, description, info: hasInfo, badge, onCard }: { on: boolean; title: ReactNode; description?: ReactNode; info?: boolean; badge?: ReactNode; onCard?: boolean }) {
   return (
     <div className={styles.toggleRow}>
-      <Switch on={on} />
+      <Switch on={on} onCard={onCard} />
       <div className={styles.toggleText}>
         <div className={styles.titleRow}>
           <p className="text-photo-setting-label">{title}</p>
@@ -141,3 +144,24 @@ export function Checkbox({ checked, label }: { checked: boolean; label: ReactNod
     </span>
   );
 }
+
+/** Settings 2026 / Device Row (4932:2): 108-tall filled card — optional icon, title + subtitle, trailing action(s). */
+export function DeviceRow({ icon, title, subtitle, children, height = 108 }: { icon?: ReactNode; title: ReactNode; subtitle?: ReactNode; children?: ReactNode; height?: number }) {
+  return (
+    <div className={styles.deviceRow} style={{ minHeight: height }}>
+      {icon}
+      <div className={styles.deviceLabels}>
+        <p className="text-title-l">{title}</p>
+        {subtitle && <p className={`text-body-l ${styles.secondary}`}>{subtitle}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/** The Device Row's action button: 160×86, radius md, on the row's fill. */
+export const RowAction = ({ children, width = 160 }: { children: ReactNode; width?: number }) => (
+  <span className={`text-title-l ${styles.rowAction}`} style={{ width }}>
+    {children}
+  </span>
+);

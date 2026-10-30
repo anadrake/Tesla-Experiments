@@ -13,6 +13,8 @@ import { useHud, type SettingsPage } from '../../state/store';
 import { presets, reducible, transition } from '../../tokens/motion';
 import { NAV_ITEMS, SEARCH_ITEM } from './navItems';
 import { ComingSoonPage } from './pages/ComingSoonPage';
+import { AudioPage } from './pages/AudioPage';
+import { BluetoothPage } from './pages/BluetoothPage';
 import { ChargingPage } from './pages/ChargingPage';
 import { ControlsPage } from './pages/ControlsPage';
 import { DisplayPage } from './pages/DisplayPage';
@@ -20,12 +22,16 @@ import { DynamicsPage } from './pages/DynamicsPage';
 import { LightsPage } from './pages/LightsPage';
 import { LocksPage } from './pages/LocksPage';
 import { NavigationPage } from './pages/NavigationPage';
+import { ProfilesPage } from './pages/ProfilesPage';
 import { SafetyPage } from './pages/SafetyPage';
 import { SchedulePage } from './pages/SchedulePage';
 import { SearchPage } from './pages/SearchPage';
 import { SeatsPage } from './pages/SeatsPage';
 import { ServicePage } from './pages/ServicePage';
 import { SoftwarePage } from './pages/SoftwarePage';
+import { TripsPage } from './pages/TripsPage';
+import { UpgradesPage } from './pages/UpgradesPage';
+import { WifiPage } from './pages/WifiPage';
 import { SelfDrivingPage } from './pages/SelfDrivingPage';
 import styles from './SettingsWindow.module.css';
 
@@ -46,6 +52,12 @@ const PAGES: Partial<Record<SettingsPage, () => JSX.Element>> = {
   service: ServicePage,
   software: SoftwarePage,
   navigation: NavigationPage,
+  trips: TripsPage,
+  profiles: ProfilesPage,
+  wifi: WifiPage,
+  bluetooth: BluetoothPage,
+  audio: AudioPage,
+  upgrades: UpgradesPage,
   display: DisplayPage,
   lights: LightsPage,
 };
