@@ -1673,6 +1673,83 @@
           1080
         ]
       }
+    },
+    {
+      "name": "climate-front-light",
+      "query": "mode=light&overlay=climate",
+      "ref": "settings-2026/climate-light.png",
+      "refFrame": true,
+      "regions": {
+        "modes": [
+          600,
+          240,
+          720,
+          120
+        ],
+        "nav": [
+          0,
+          360,
+          1920,
+          104
+        ],
+        "cabin": [
+          0,
+          464,
+          1920,
+          512
+        ],
+        "controls": [
+          0,
+          976,
+          1920,
+          104
+        ],
+        "top": [
+          0,
+          0,
+          1920,
+          240
+        ]
+      }
+    },
+    {
+      "name": "climate-front-dark",
+      "query": "mode=dark&overlay=climate",
+      "ref": "settings-2026/climate-dark.png",
+      "refFrame": true,
+      "regions": {
+        "modes": [
+          600,
+          240,
+          720,
+          120
+        ],
+        "nav": [
+          0,
+          360,
+          1920,
+          104
+        ],
+        "cabin": [
+          0,
+          464,
+          1920,
+          512
+        ],
+        "controls": [
+          0,
+          976,
+          1920,
+          104
+        ],
+        "top": [
+          0,
+          0,
+          1920,
+          240
+        ]
+      },
+      "tolerance": 0.2
     }
   ]
 }

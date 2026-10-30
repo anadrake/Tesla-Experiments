@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Wheel heat symbol" clip-path="url(#clip0_0_385)">
+<path id="Vector" d="M30.875 24.9375C30.875 31.4959 25.5584 36.8125 19 36.8125C12.4416 36.8125 7.125 31.4959 7.125 24.9375C7.125 18.3791 12.4416 13.0625 19 13.0625C25.5584 13.0625 30.875 18.3791 30.875 24.9375Z" stroke-width="2.85" stroke-linecap="round" stroke-linejoin="round" stroke="#5B5E61"/>
+<path id="Vector_2" d="M7.125 22.5625H30.875M19 24.9375V28.5M19 28.5V36.8125M19 28.5L11.875 23.75M19 28.5L26.125 23.75M11.875 2.375C8.3125 5.9375 15.4375 7.125 11.875 10.6875M19 2.375C15.4375 5.9375 22.5625 7.125 19 10.6875M26.125 2.375C22.5625 5.9375 29.6875 7.125 26.125 10.6875" stroke-width="2.85" stroke-linecap="round" stroke-linejoin="round" stroke="#5B5E61"/>
+</g>
+<defs>
+<clipPath id="clip0_0_385">
+<rect width="38" height="38" fill="white"/>
+</clipPath>
+</defs>
+</svg>

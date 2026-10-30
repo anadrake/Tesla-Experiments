@@ -31,6 +31,20 @@ export type CustomizeState = 'off' | 'revealed' | 'editing' | 'moving';
 export type WidgetDock = { panel: 'panel' | 'map'; full: 'left' | 'right' };
 export const DEFAULT_DOCK: WidgetDock = { panel: 'panel', full: 'left' };
 export type ClimateAction = 'frontDefrost' | 'rearDefrost' | 'leftSeat' | 'heatedSteering' | 'climate' | 'wipers';
+/** Front Climate sheet (Phase 10.5, Figma Climate 2026 / Panel 4936:2339). */
+export type ParkedClimate = 'off' | 'keep' | 'pet' | 'camp';
+export type SeatHeat = 0 | 1 | 2 | 3;
+export interface ClimateSheet {
+  power: boolean;
+  auto: boolean;
+  parked: ParkedClimate;
+  /** 0 = LO … 10 */
+  fan: number;
+  seatHeat: { driver: SeatHeat; passenger: SeatHeat };
+  wiperHeat: boolean;
+  recirculate: boolean;
+}
+export const FAN_MAX = 10;
 
 /** Settings nav tree pages (Phase 10: Figma Settings 2026 / Navtree 4932:14). `search` is the Search Settings row. */
 export const SETTINGS_PAGES = [
@@ -109,6 +123,13 @@ export interface HudState {
   closeOverlays: () => void;
   climate: Record<ClimateAction, boolean>;
   toggleClimate: (a: ClimateAction) => void;
+  /** Front Climate sheet: swipe up on the control bar (Q43). Defrost / heated steering share `climate` with Quick Actions. */
+  climateOpen: boolean;
+  setClimateOpen: (open: boolean) => void;
+  climateSheet: ClimateSheet;
+  setClimateSheet: (patch: Partial<ClimateSheet>) => void;
+  /** Off → Low → Medium → High → Off */
+  cycleSeatHeat: (seat: 'driver' | 'passenger') => void;
 
   /** Settings window (car icon in the control bar). */
   settingsOpen: boolean;
@@ -207,6 +228,25 @@ export const useHud = create<HudState>()((set) => ({
   closeOverlays: () => set((s) => closeAll(s)),
   climate: { frontDefrost: false, rearDefrost: false, leftSeat: false, heatedSteering: false, climate: false, wipers: false },
   toggleClimate: (a) => set((s) => ({ climate: { ...s.climate, [a]: !s.climate[a] } })),
+  climateOpen: false,
+  setClimateOpen: (climateOpen) => set((s) => (climateOpen ? { ...closeAll(s), climateOpen } : { climateOpen })),
+  climateSheet: {
+    power: true,
+    auto: true,
+    parked: 'off',
+    fan: 0,
+    seatHeat: { driver: 0, passenger: 0 },
+    wiperHeat: false,
+    recirculate: true,
+  },
+  setClimateSheet: (patch) => set((s) => ({ climateSheet: { ...s.climateSheet, ...patch } })),
+  cycleSeatHeat: (seat) =>
+    set((s) => ({
+      climateSheet: {
+        ...s.climateSheet,
+        seatHeat: { ...s.climateSheet.seatHeat, [seat]: ((s.climateSheet.seatHeat[seat] + 1) % 4) as SeatHeat },
+      },
+    })),
 
   settingsOpen: false,
   settingsPage: 'controls',
@@ -231,6 +271,7 @@ function closeAll(s: HudState): Partial<HudState> {
   return {
     quickActions: false,
     settingsOpen: false,
+    climateOpen: false,
     settingsTyping: false,
     ...(s.nav === 'typing' ? { nav: s.resumeTrip ? 'navigating' : 'idle', resumeTrip: false } : {}),
   };

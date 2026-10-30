@@ -709,6 +709,40 @@ await open('nav=navigating');
   check('Self-Driving Driving Panel → Collapsed: fades, jumps once (no slide)', xs.length === 2 && dipped, JSON.stringify(xs));
 }
 
+// Front Climate (10.5): swipe up on the control bar opens it, drag the top rows down closes it (Q43); simple toggles (Q42)
+const sheetTop = () => page.evaluate(() => document.querySelector('[aria-label="Climate"]')?.getBoundingClientRect().top ?? null);
+await open();
+await drag({ x: 1300, y: 1140 }, 0, -60, 10);
+await page.waitForTimeout(600);
+check('Climate: a short swipe up on the control bar springs back (stays closed)', param('overlay') === null && (await sheetTop()) === null, page.url());
+await drag({ x: 1300, y: 1140 }, 0, -420, 14);
+await page.waitForTimeout(700);
+check('…a long swipe up opens Front Climate (sheet at 240)', param('overlay') === 'climate' && Math.abs((await sheetTop()) - 240) < 2, `${await sheetTop()}`);
+await tap(1040, 300); // Pet
+check('…Off / Keep / Pet / Camp selects', (await hud('s => s.climateSheet.parked')) === 'pet');
+await page.getByRole('button', { name: 'Fan faster' }).click();
+await page.getByRole('button', { name: 'Fan faster' }).click();
+check('…fan steps up from LO', (await hud('s => s.climateSheet.fan')) === 2);
+await page.getByRole('button', { name: /driver seat heat/ }).click();
+await page.getByRole('button', { name: /driver seat heat/ }).click();
+check('…driver seat heat cycles (Off → Low → Medium)', (await hud('s => s.climateSheet.seatHeat.driver')) === 2);
+await page.getByRole('button', { name: 'Front defrost' }).click();
+check('…front defrost shares the Quick Actions toggle', (await hud('s => s.climate.frontDefrost')) === true);
+await drag({ x: 960, y: 412 }, 0, 400, 14); // the climate navigation row
+await page.waitForTimeout(700);
+check('…dragging the top rows down closes it', param('overlay') === null && (await sheetTop()) === null, page.url());
+await open('overlay=climate');
+await page.getByRole('button', { name: 'All apps' }).click();
+await page.waitForTimeout(600);
+check('…opening Quick Actions closes the climate sheet', param('overlay') === 'apps', page.url());
+await open();
+{
+  const before = await hud('s => s.driverTemp');
+  await page.getByRole('button', { name: 'Increase driver temperature' }).click();
+  await page.waitForTimeout(200);
+  check('Control bar taps still work with the swipe on it (temperature up)', (await hud('s => s.driverTemp')) === before + 1 && param('overlay') === null);
+}
+
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();
 process.exitCode = failed ? 1 : 0;

@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Seat heat symbol" clip-path="url(#clip0_0_415)">
+<path id="Vector" d="M8.3125 4.75C5.9375 4.75 4.75 7.125 4.75 10.6875V21.375C4.75 29.6875 9.5 34.4375 17.8125 34.4375H30.875C34.4375 34.4375 35.625 29.6875 32.0625 28.5H19C14.25 28.5 13.0625 24.9375 13.0625 20.1875V9.5C13.0625 7.125 11.875 4.75 8.3125 4.75Z" fill="#5B5E61"/>
+<path id="Vector_2" d="M22.5625 3.5625C17.8125 8.3125 27.3125 10.6875 22.5625 15.4375M29.6875 3.5625C24.9375 8.3125 34.4375 10.6875 29.6875 15.4375M36.8125 3.5625C32.0625 8.3125 41.5625 10.6875 36.8125 15.4375" stroke-width="2.85" stroke-linecap="round" stroke-linejoin="round" stroke="#5B5E61"/>
+</g>
+<defs>
+<clipPath id="clip0_0_415">
+<rect width="38" height="38" fill="white"/>
+</clipPath>
+</defs>
+</svg>

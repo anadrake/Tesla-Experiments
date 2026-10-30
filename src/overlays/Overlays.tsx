@@ -1,5 +1,6 @@
 import { AnimatePresence } from 'motion/react';
 import { useHud } from '../state/store';
+import { ClimateSheet } from './Climate/ClimateSheet';
 import { Keyboard } from './Keyboard/Keyboard';
 import { QuickActions } from './QuickActions/QuickActions';
 import { SettingsWindow } from './Settings/SettingsWindow';
@@ -9,10 +10,12 @@ export function Overlays() {
   const typing = useHud((s) => s.nav === 'typing' || s.settingsTyping);
   const quickActions = useHud((s) => s.quickActions);
   const settingsOpen = useHud((s) => s.settingsOpen);
+  const climateOpen = useHud((s) => s.climateOpen);
   return (
     <AnimatePresence>
       {quickActions && <QuickActions key="quick-actions" />}
       {settingsOpen && <SettingsWindow key="settings" />}
+      {climateOpen && <ClimateSheet key="climate" />}
       {/* last, so it sits over the settings window when Settings search is focused */}
       {typing && <Keyboard key="keyboard" />}
     </AnimatePresence>

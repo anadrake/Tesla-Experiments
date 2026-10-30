@@ -40,7 +40,7 @@ function save(key: string, value: string) {
 
 /**
  * Deep links: URL params mirror store state so any state can be opened directly
- * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widgets=music,energy,…&widget=<index>&customize=revealed|editing|moving&widgetDock=map,right (map views / car Full, separate)&nav=typing|navigating&overlay=apps&settings=<page>&keyboard=1 (Settings search typing)
+ * (used by scripts/shots.mjs and the reviewer agent). e.g. ?mode=dark&car=full|collapsed&music=collapsed|paused&widgets=music,energy,…&widget=<index>&customize=revealed|editing|moving&widgetDock=map,right (map views / car Full, separate)&nav=typing|navigating&overlay=apps|climate&settings=<page>&keyboard=1 (Settings search typing)
  */
 export function initUrlSync() {
   const params = new URLSearchParams(location.search);
@@ -54,6 +54,7 @@ export function initUrlSync() {
   const nav = params.get('nav');
   if (nav === 'typing' || nav === 'navigating') useHud.setState({ nav });
   if (params.get('overlay') === 'apps') useHud.setState({ quickActions: true });
+  if (params.get('overlay') === 'climate') useHud.setState({ climateOpen: true });
   const page = params.get('settings');
   if (page && (SETTINGS_PAGES as readonly string[]).includes(page))
     useHud.setState({
@@ -87,6 +88,7 @@ export function initUrlSync() {
     if (s.nav !== 'idle') p.set('nav', s.nav);
     else p.delete('nav');
     if (s.quickActions) p.set('overlay', 'apps');
+    else if (s.climateOpen) p.set('overlay', 'climate');
     else p.delete('overlay');
     if (s.settingsOpen) p.set('settings', s.settingsPage);
     else p.delete('settings');

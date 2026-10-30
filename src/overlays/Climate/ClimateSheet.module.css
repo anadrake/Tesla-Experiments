@@ -1,0 +1,228 @@
+/* Climate 2026 / Panel (4936:1865): 1920×840 at the bottom of the stage — 120 mode row (over the map) + 720 sheet */
+.root {
+  position: absolute;
+  left: 0;
+  top: 240px;
+  width: 1920px;
+  height: 840px;
+  display: flex;
+  flex-direction: column;
+  color: var(--photo-content-primary);
+  will-change: transform;
+}
+
+.modes {
+  flex: none;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Climate 2026 / Parked Mode: 720×78, control fill + 2px outline, white selected segment */
+.parked {
+  display: flex;
+  width: 720px;
+  height: 78px;
+  padding: var(--space-2);
+  border: var(--stroke-2) solid var(--photo-border-default);
+  border-radius: var(--radius-md);
+  background: var(--photo-surface-control);
+}
+
+.parkedSegment {
+  flex: 1 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  border-radius: var(--radius-md);
+  color: var(--photo-content-secondary);
+}
+
+.parkedSegment[data-selected] {
+  background: var(--photo-surface-selected);
+  color: var(--photo-content-primary);
+}
+
+.sheet {
+  position: relative;
+  flex: none;
+  height: 720px;
+  overflow: hidden;
+  background: var(--photo-surface-panel);
+}
+
+/* Cabin render (exported at the sheet's size, 1920×720) */
+.cabinLight,
+.cabinDark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.cabinDark,
+[data-mode='dark'] .cabinLight {
+  display: none;
+}
+
+[data-mode='dark'] .cabinDark {
+  display: block;
+}
+
+/* Climate navigation: power · Auto | Front / Rear | Schedule — 104 tall, 32 in */
+.nav {
+  position: relative;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.powerAuto {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  width: 254px;
+}
+
+.textButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-16);
+  height: var(--size-control-lg);
+  color: var(--photo-content-primary);
+}
+
+.textButton[data-accent] {
+  color: var(--photo-accent);
+}
+
+.schedule {
+  width: 280px;
+  justify-content: flex-end;
+}
+
+.tabs {
+  display: flex;
+  width: 400px;
+  height: 78px;
+}
+
+.tabs > span {
+  flex: 1 0 0;
+  display: grid;
+  place-items: center;
+  color: var(--photo-content-secondary);
+}
+
+.tabs > span[data-selected] {
+  color: var(--photo-content-primary);
+}
+
+/* Climate controls: the bottom 104 of the sheet */
+.controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 104px;
+}
+
+.symbol {
+  position: relative;
+  width: 88px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+}
+
+.heatDots {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  display: flex;
+  gap: 3px;
+  transform: translateX(-50%);
+}
+
+.heatDots > span {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--photo-status-alert);
+}
+
+.comfort {
+  position: absolute;
+  left: 32px;
+  top: 16px;
+  display: flex;
+  gap: var(--space-24);
+}
+
+/* Air controls: 720 wide, centred 50 left of the middle (550…1270) */
+.air {
+  position: absolute;
+  left: 550px;
+  top: 13px;
+  width: 720px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+}
+
+.recirculate {
+  position: absolute;
+  left: 604px;
+  top: 3px;
+}
+
+/* Fan speed stepper: ‹ fan LO › in 300 */
+.fan {
+  flex: none;
+  width: 300px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: 0 var(--space-12);
+}
+
+.fanStep {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  margin: -8px;
+  display: grid;
+  place-items: center;
+}
+
+.fanValue {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--photo-content-primary);
+}
+
+.passengerSeat {
+  position: absolute;
+  right: 32px;
+  top: 16px;
+}
+
+.separator {
+  position: absolute;
+  top: 37px;
+  width: 1px;
+  height: 30px;
+  background: var(--photo-border-default);
+}
