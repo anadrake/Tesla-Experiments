@@ -17,6 +17,7 @@ import { DrivingScene } from './DrivingScene';
 import { SpeedCluster } from './SpeedCluster';
 import { flip, flipBase, flipStyle, panelWidth, scene, selfDrive, tripCardRect, type Rect } from './geometry';
 import { Button } from '../settings/controls';
+import { useFadeSwap } from '../../lib/fadeSwap';
 import styles from './CarPanel.module.css';
 import { capture } from '../../lib/pointer';
 
@@ -150,7 +151,7 @@ export function CarPanel() {
         <PanelStatusBar view={view} driving={driving} />
         <Telltales view={view} driving={driving} />
 
-        <SelfDriveLayer rect={selfDrive[driving ? 'driving' : 'parked'][view]} />
+        <SelfDriveLayer rect={selfDrive[driving ? 'driving' : 'parked'][view]} full={view === 'full'} />
 
         {/* The widget bar lives in its own layer above the panel (WidgetBar/WidgetLayer) so it can dock on the map */}
         <motion.div
@@ -207,8 +208,10 @@ function FlipLayer({ rects, view, children }: { rects: Record<CarView, Rect>; vi
   );
 }
 
-function SelfDriveLayer({ rect }: { rect: (typeof selfDrive)['parked']['panel'] }) {
+/** Into / out of Full it cross-fades rather than slides across the panel (Anastasiya, 2026-10-29). */
+function SelfDriveLayer({ rect, full }: { rect: (typeof selfDrive)['parked']['panel']; full: boolean }) {
   const shown = rect.opacity !== 0;
+  const { animate, transition: t } = useFadeSwap({ ...rect, opacity: rect.opacity ?? 1 }, full ? 'full' : 'side', true);
   const layer = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (layer.current) layer.current.inert = !shown; // React 18 types lack `inert`
@@ -218,8 +221,8 @@ function SelfDriveLayer({ rect }: { rect: (typeof selfDrive)['parked']['panel'] 
       ref={layer}
       className={styles.layer}
       initial={false}
-      animate={rect}
-      transition={transition.screen}
+      animate={animate}
+      transition={t}
       data-no-panel-gesture
     >
       <Button variant="primary-transparent" width="100%" className={styles.selfDrive}>

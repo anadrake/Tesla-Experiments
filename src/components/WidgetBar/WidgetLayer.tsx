@@ -13,6 +13,7 @@ import { CustomizeEditor } from '../Customize/CustomizeEditor';
 import { WIDGETS } from './registry';
 import { WidgetBar } from './WidgetBar';
 import { rebase, useMove } from './move';
+import { useFadeSwap } from '../../lib/fadeSwap';
 import styles from './WidgetBar.module.css';
 
 /**
@@ -30,7 +31,8 @@ export function WidgetLayer() {
   const chicklet = view === 'collapsed' && dock.panel === 'panel' ? (driving ? 'large' : 'mini') : undefined;
   const rect = widgetBarRect(view, dock, driving ? chickletLargeRect : chickletRect(WIDGETS[activeWidget].mini));
   const slot = useRef<HTMLDivElement>(null);
-  const box = useSlotMotion(slot, rect, `${dock.panel}:${dock.full}`, `${view}:${driving}`);
+  // Docked on the map, into / out of Full it cross-fades; from the panel slot it slides (Anastasiya, 2026-10-29).
+  const box = useSlotMotion(slot, rect, `${dock.panel}:${dock.full}`, `${view}:${driving}`, view === 'full', dock.panel === 'map');
 
   return (
     <div className={styles.dockLayer}>
@@ -57,7 +59,7 @@ export function WidgetLayer() {
  * settles from there. Position + opacity are a `transform` animation (compositor, perf 9.5); the size only changes
  * into / out of the rail chicklet, and stays a small layout animation (the bar's content reflows).
  */
-function useSlotMotion(el: RefObject<HTMLElement>, rect: Rect, dockKey: string, sceneKey: string) {
+function useSlotMotion(el: RefObject<HTMLElement>, rect: Rect, dockKey: string, sceneKey: string, full: boolean, fade: boolean) {
   const width = useMotionValue(rect.width);
   const height = useMotionValue(rect.height);
   const prev = useRef({ dockKey, sceneKey, rect });
@@ -77,10 +79,11 @@ function useSlotMotion(el: RefObject<HTMLElement>, rect: Rect, dockKey: string, 
     animate(width, rect.width, reducible(transition.screen));
     animate(height, rect.height, reducible(transition.screen));
   }, [rect.left, rect.top, rect.width, rect.height, rect.opacity, dockKey, sceneKey]);
+  const swap = useFadeSwap({ transform: `translate(${rect.left}px, ${rect.top}px)`, opacity: rect.opacity ?? 1 }, full ? 'full' : 'side', fade);
   return {
     size: { left: 0, top: 0, width, height },
-    animate: { transform: `translate(${rect.left}px, ${rect.top}px)`, opacity: rect.opacity ?? 1 },
-    transition: dockJump ? transition.cut : transition.screen,
+    animate: swap.animate,
+    transition: dockJump ? transition.cut : swap.transition,
   };
 }
 

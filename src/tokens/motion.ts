@@ -56,6 +56,12 @@ export const transition = {
   sheetOpen: cutsTransform({ duration: duration.slow, ease: easing.enter }),
   sheetClose: cutsTransform({ duration: duration.slow, ease: easing.exit }),
   screen: cutsTransform({ duration: duration.slow, ease: easing.standard }),
+  /** Fade out in place → jump → fade in at the new spot (lib/fadeSwap.ts): the opacity dip (4 keyframes)… */
+  // Ease per segment (an array): a single ease spans the whole keyframe set on WAAPI but each segment in JS, so the
+  // compositor fade and a JS-driven jump would part ways.
+  fadeSwap: cutsTransform({ duration: duration.slow, ease: [easing.standard, 'linear', easing.standard], times: [0, 0.5, 0.5, 1] }),
+  /** …and the jump, at its midpoint (position values; keyframes there flashed the start value for a frame on finish). */
+  fadeSwapJump: { duration: 0, delay: duration.slow / 2 },
   dayNight: cutsTransform({ duration: duration.deliberate, ease: easing.standard }),
   /** Three blinks, one `slow` each (presets.flash). */
   flash: cutsTransform({ duration: duration.slow * 3, ease: 'linear' }),

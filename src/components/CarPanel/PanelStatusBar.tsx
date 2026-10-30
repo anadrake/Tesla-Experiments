@@ -14,6 +14,7 @@ import {
   telltales as telltaleRects,
   telltalesDriving,
 } from './geometry';
+import { useFadeSwap } from '../../lib/fadeSwap';
 import styles from './PanelStatusBar.module.css';
 
 const GEARS = ['P', 'R', 'N', 'D'] as const;
@@ -27,6 +28,10 @@ export function PanelStatusBar({ view, driving, battery = 90 }: { view: CarView;
   const toggleDrive = useHud((s) => s.toggleDrive);
   const gear: (typeof GEARS)[number] = driving ? 'D' : 'P';
   const rects = view === 'collapsed' && driving ? batteryDrivingCollapsed : { gauge: batteryRects.gauge[view], percent: batteryRects.percent[view] };
+  // Into / out of Full the battery cross-fades rather than sliding across (Anastasiya, 2026-10-29).
+  const scene = view === 'full' ? 'full' : 'side';
+  const percent = useFadeSwap(move(rects.percent), scene, true);
+  const gauge = useFadeSwap(move(rects.gauge), scene, true);
   return (
     <>
       <button
@@ -46,8 +51,8 @@ export function PanelStatusBar({ view, driving, battery = 90 }: { view: CarView;
         className={`${styles.percent} text-body-l`}
         style={moveStyle(rects.percent)}
         initial={false}
-        animate={move(rects.percent)}
-        transition={transition.screen}
+        animate={percent.animate}
+        transition={percent.transition}
       >
         {battery}%
       </motion.span>
@@ -55,8 +60,8 @@ export function PanelStatusBar({ view, driving, battery = 90 }: { view: CarView;
         className={styles.battery}
         style={moveStyle(rects.gauge)}
         initial={false}
-        animate={move(rects.gauge)}
-        transition={transition.screen}
+        animate={gauge.animate}
+        transition={gauge.transition}
       >
         <span className={styles.gauge} data-low={battery <= 20 || undefined}>
           <span className={styles.level} style={{ width: (37 * battery) / 100 }} />
