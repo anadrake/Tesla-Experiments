@@ -129,6 +129,7 @@
   --color-state-pressed-overlay: #00000014;
   --color-status-danger: #ed4e3b;
   --color-status-success: #25cb55;
+  --color-status-warning: #ffbd0a; /* Settings 2026 Service: low tire pressure */
   --color-status-info: #005aff; /* Customize insertion bar / drop slot */
   --color-shadow-panel-1: #7575751a;
   --color-shadow-panel-2: #75757514;
@@ -149,6 +150,7 @@
   --photo-status-amber: #ba8700;
   --photo-status-alert: #de333d;
   --photo-surface-control: #dadcdd;
+  --photo-surface-control-raised: #bfc2c3;
   --photo-slider-rail: #a5a8aa;
   --photo-charge: #31c954;
 }
@@ -205,6 +207,7 @@
   --photo-status-amber: #e8b829;
   --photo-status-alert: #f14952;
   --photo-surface-control: #414343;
+  --photo-surface-control-raised: #626564;
   --photo-slider-rail: #919594;
   --photo-charge: #51db65;
 }

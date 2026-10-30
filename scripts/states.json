@@ -949,6 +949,378 @@
           1080
         ]
       }
+    },
+    {
+      "name": "settings26-display-light",
+      "query": "mode=light&settings=display",
+      "ref": "settings-2026/display-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-display-dark",
+      "query": "mode=dark&settings=display",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-schedule-light",
+      "query": "mode=light&settings=schedule",
+      "ref": "settings-2026/schedule-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-schedule-dark",
+      "query": "mode=dark&settings=schedule",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-safety-light",
+      "query": "mode=light&settings=safety",
+      "ref": "settings-2026/safety-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-safety-dark",
+      "query": "mode=dark&settings=safety",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-service-light",
+      "query": "mode=light&settings=service",
+      "ref": "settings-2026/service-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-service-dark",
+      "query": "mode=dark&settings=service",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-software-light",
+      "query": "mode=light&settings=software",
+      "ref": "settings-2026/software-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-software-dark",
+      "query": "mode=dark&settings=software",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-navigation-light",
+      "query": "mode=light&settings=navigation",
+      "ref": "settings-2026/navigation-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-navigation-dark",
+      "query": "mode=dark&settings=navigation",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
     }
   ]
 }

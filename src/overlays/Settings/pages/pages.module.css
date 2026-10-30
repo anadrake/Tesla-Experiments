@@ -233,3 +233,223 @@
   background: var(--photo-content-secondary);
   opacity: 0.55;
 }
+
+/* Display: brightness slider + Auto */
+.brightnessRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-16);
+}
+
+.brightness {
+  position: relative;
+  flex: none;
+  width: 558px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 0 9px;
+  border: 1.5px solid var(--photo-border-default);
+  border-radius: var(--radius-sm);
+}
+
+.brightnessValue {
+  position: absolute;
+  left: 37px;
+  top: 0.5px;
+  width: 160px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  background: var(--photo-surface-selected);
+  color: var(--photo-content-primary);
+}
+
+/* Schedule rows */
+.scheduleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+  height: 136px;
+}
+
+.addButton {
+  flex: none;
+  width: 80px;
+  height: 80px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+  color: var(--photo-content-primary);
+  font: 600 34px / 28px var(--font-family-ui);
+}
+
+/* Safety */
+.icon48 {
+  width: 48px;
+  height: 48px;
+}
+
+.icon48 svg {
+  width: 100%;
+  height: 100%;
+}
+
+.checkList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding-left: 104px;
+}
+
+.dashcamRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-12);
+}
+
+/* Service */
+.serviceHead {
+  display: flex;
+  gap: var(--space-24);
+}
+
+.serviceHead > p {
+  flex: 1 0 0;
+}
+
+.inlineIcon {
+  display: inline-block;
+  vertical-align: -3px;
+}
+
+.accent {
+  color: var(--photo-accent);
+}
+
+.tireMap {
+  position: relative;
+  height: 430px;
+  overflow: hidden;
+}
+
+.serviceCar {
+  position: absolute;
+  left: 215px;
+  top: -20px;
+  width: 313px;
+  height: 470px;
+  object-fit: contain;
+}
+
+.tire {
+  position: absolute;
+  width: 140px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  color: var(--photo-content-primary);
+}
+
+.tire[data-low] .tirePsi {
+  color: var(--color-status-warning);
+}
+
+.tirePsi {
+  font: 600 24px / 25px var(--font-family-ui);
+}
+
+.tireWhen {
+  font: 500 16px / 25px var(--font-family-ui);
+  color: var(--photo-content-secondary);
+}
+
+.actionRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-24);
+}
+
+/* Software */
+.softwareCar {
+  width: 620px;
+  height: 350px;
+  object-fit: contain;
+}
+
+.appearance {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: var(--space-12);
+  height: 44px;
+}
+
+.paintSwatch {
+  width: 80px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control-raised);
+}
+
+.modelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Photo / Model 3 Wordmark 260×32: glyphs inset 15.63% 0.77% 12.5% 1.15% */
+.wordmark {
+  width: 260px;
+  height: 32px;
+  padding: 5px 2px 4px 3px;
+  box-sizing: border-box;
+}
+
+.wordmark svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Navigation */
+.volumeRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-20);
+}
+
+.volume {
+  position: relative;
+  flex: none;
+  width: 372px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 16px 0 14px;
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+  color: var(--photo-content-primary);
+}
+
+.volume > span:first-child {
+  width: 56px;
+}
+
+.volumeRail {
+  flex: none;
+  width: 230px;
+  height: 8px;
+  margin-right: 28px;
+  border-radius: 4px;
+  background: var(--photo-slider-rail);
+}
+
+.newBadge {
+  margin-left: 30px;
+  font-size: 16px;
+  color: var(--photo-accent);
+}

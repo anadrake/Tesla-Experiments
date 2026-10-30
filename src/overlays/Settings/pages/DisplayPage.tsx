@@ -1,50 +1,44 @@
-import brightness from '../../../assets/settings/brightness.svg';
-import { Button, Checkbox, Divider, FieldGroup, SegmentedControl, Select, SettingRow, Slider, ToggleButton } from '../../../components/settings/controls';
-import { useSetting } from '../../../components/settings/useSetting';
-import { toggleDayNight } from '../../../state/dayNight';
+import sunLarge from '../../../assets/settings/photo/sun-large.svg';
+import sunSmall from '../../../assets/settings/photo/sun-small.svg';
+import { Icon } from '../../../components/Icon/Icon';
 import { useHud } from '../../../state/store';
+import { Divider, FillButton, Section, Segmented, Stack, ToggleRow } from '../photo/Photo';
+import styles from './pages.module.css';
 
-const systemMode = () => (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+/** Photo / Brightness Slider (4959:25252): 558×80 outline, value box (160) after the small sun. */
+function BrightnessSlider({ value }: { value: number }) {
+  return (
+    <div className={styles.brightness}>
+      <Icon src={sunSmall} size={24} color="var(--photo-icon)" />
+      <span className={`text-photo-button ${styles.brightnessValue}`}>{value}%</span>
+      <Icon src={sunLarge} size={32} color="var(--photo-icon)" />
+    </div>
+  );
+}
 
-/**
- * Figma Settings / Display body. Appearance really switches the app (with the Day/Night dissolve);
- * Brightness + Auto and Night Shift share their values with the Controls and Search pages.
- */
+/** Figma Settings 2026 / Display (4933:1335). Static (Q41) — Appearance shows the app's current mode. */
 export function DisplayPage() {
   const mode = useHud((s) => s.mode);
-  const [appearance, setAppearance] = useSetting('display.appearance', 'Auto');
-  const [autoBrightness, setAutoBrightness] = useSetting('controls.brightnessAuto', true);
-
-  const choose = (v: string) => {
-    setAppearance(v);
-    const target = v === 'Auto' ? systemMode() : v.toLowerCase();
-    if (target !== mode) toggleDayNight();
-  };
-
   return (
-    <>
-      <FieldGroup title="Appearance">
-        <SegmentedControl options={['Light', 'Dark', 'Auto']} initial="Auto" width="fill" value={appearance} onChange={choose} />
-      </FieldGroup>
-      <SettingRow setting="display.nightShift" initial title="Night Shift" infoIcon description="Automatically adjust to warmer colors at night" />
-      <FieldGroup title="Brightness">
-        <Slider setting="controls.brightness" initial={50} icon={brightness} />
-        <Button variant={autoBrightness ? 'primary' : 'secondary'} onPress={() => setAutoBrightness(!autoBrightness)}>
-          Auto
-        </Button>
-      </FieldGroup>
-      <div>
-        <ToggleButton setting="display.screenClean">Screen Clean Mode</ToggleButton>
-      </div>
+    <Stack gap={28}>
+      <Section title="Appearance">
+        <Segmented options={['Light', 'Dark', 'Auto']} selected={mode === 'dark' ? 'Dark' : 'Light'} width={558} />
+      </Section>
+      <ToggleRow on title="Reduce Blue Light" description="Automatically adjust to warmer colors at night" />
+      <Section title="Brightness">
+        <div className={styles.brightnessRow}>
+          <BrightnessSlider value={12} />
+          <FillButton primary width={152}>
+            Auto
+          </FillButton>
+        </div>
+      </Section>
       <Divider />
-      <FieldGroup title="Touchscreen Language" helper="Long press the scroll wheel for a quick language switch">
-        <Select setting="display.language" options={['English', 'Español', 'Français', 'Deutsch']} initial="English" />
-        <Checkbox setting="display.languageAsk" label="Ask each time" />
-      </FieldGroup>
+      <ToggleRow on title="Automatic Blind Spot Camera" description="Show side camera when turn signal is engaged" />
       <Divider />
-      <FieldGroup title="Voice Recognition">
-        <Select setting="display.voice" options={['English', 'Español', 'Français', 'Deutsch']} initial="English" />
-      </FieldGroup>
-    </>
+      <FillButton width={360}>Screen Clean Mode</FillButton>
+      <Divider />
+      <FillButton width={360}>Customize Pet Mode</FillButton>
+    </Stack>
   );
 }

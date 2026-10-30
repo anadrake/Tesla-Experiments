@@ -121,8 +121,10 @@
 
 .outlineButton {
   flex: none;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-16);
   height: var(--size-control-lg);
   padding: 0 var(--space-24);
   border: 1.5px solid var(--photo-border-default);
@@ -180,4 +182,46 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.fillButton {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-16);
+  height: var(--size-control-lg);
+  padding: 0 var(--space-24);
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+  color: var(--photo-content-primary);
+  white-space: nowrap;
+}
+
+.fillButton[data-primary] {
+  background: var(--photo-accent);
+  color: var(--photo-content-on-accent);
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  color: var(--photo-content-secondary);
+}
+
+.checkBox {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: var(--stroke-2) solid var(--photo-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+}
+
+.checkBox[data-checked] {
+  border: none;
+  background: var(--photo-surface-selected);
 }

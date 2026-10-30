@@ -19,8 +19,13 @@ import { DisplayPage } from './pages/DisplayPage';
 import { DynamicsPage } from './pages/DynamicsPage';
 import { LightsPage } from './pages/LightsPage';
 import { LocksPage } from './pages/LocksPage';
+import { NavigationPage } from './pages/NavigationPage';
+import { SafetyPage } from './pages/SafetyPage';
+import { SchedulePage } from './pages/SchedulePage';
 import { SearchPage } from './pages/SearchPage';
 import { SeatsPage } from './pages/SeatsPage';
+import { ServicePage } from './pages/ServicePage';
+import { SoftwarePage } from './pages/SoftwarePage';
 import { SelfDrivingPage } from './pages/SelfDrivingPage';
 import styles from './SettingsWindow.module.css';
 
@@ -36,6 +41,11 @@ const PAGES: Partial<Record<SettingsPage, () => JSX.Element>> = {
   'self-driving': SelfDrivingPage,
   locks: LocksPage,
   seats: SeatsPage,
+  schedule: SchedulePage,
+  safety: SafetyPage,
+  service: ServicePage,
+  software: SoftwarePage,
+  navigation: NavigationPage,
   display: DisplayPage,
   lights: LightsPage,
 };

@@ -53,8 +53,8 @@
   min-height: 0;
   display: flex;
   align-items: center;
-  gap: var(--space-24);
-  padding-right: var(--space-24);
+  gap: var(--space-16); /* Figma 2026-10-29 update (4396:41134): 16 / pr 20 */
+  padding-right: var(--space-20);
   overflow: hidden;
 }
 
@@ -76,7 +76,16 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-4);
+}
+
+/* Shuffle · repeat, right of the track (144 wide) */
+.playbackModes {
+  flex: none;
+  width: 144px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .title {
@@ -103,22 +112,23 @@
 
 .progress {
   position: relative;
-  height: 4px;
+  height: 2px;
   flex: none;
 }
 
+/* Hairline progress (2026-10-29 update): 1px rail + played, 5px knob */
 .rail,
 .played {
   position: absolute;
   left: 0;
-  top: calc(50% - 0.5px);
-  height: 3px;
+  top: calc(50% - 1.5px);
+  height: 1px;
   transform: translateY(-50%);
 }
 
 .rail {
   right: 0;
-  background: var(--color-surface-sunken);
+  background: var(--photo-border-divider);
 }
 
 .played {
@@ -127,10 +137,10 @@
 
 .knob {
   position: absolute;
-  right: -3px;
+  right: -2px;
   top: 50%;
-  width: 7px;
-  height: 7px;
+  width: 5px;
+  height: 5px;
   border-radius: var(--radius-full);
   background: var(--color-icon-strong);
   transform: translateY(-50%);
@@ -142,7 +152,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--space-32);
+  padding: 0 26px; /* 2026-10-29 update: 26 (six controls) */
 }
 
 .mediaButton {

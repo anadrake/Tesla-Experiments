@@ -316,7 +316,7 @@ Never fetch the page whole (260k chars) — node IDs below.
 - New Window + Navtree: 19 categories (Controls, Dynamics, Charging, Self-Driving, Locks, Lights, Seats, Display, Schedule, Safety, Service, Software, Navigation, Trips, Profiles, Wi-Fi, Bluetooth, Audio, Upgrades), scrollable nav, search row, profile header with status icons. Category switching works; page bodies scroll.
 - Shared static pieces: photo rows (key / network / device / schedule / profile), sliders (charge / brightness / volume / immersive), long-label toggle, section titles.
 ### 10.2 — Pages A (M–L): Controls, Dynamics, Charging, Self-Driving, Locks, Lights, Seats (cabin art) ✅ 2026-10-29 — static photo kit `overlays/Settings/photo/`
-### 10.3 — Pages B (M–L): Display, Schedule, Safety, Service (vehicle art), Software, Navigation
+### 10.3 — Pages B (M–L): Display, Schedule, Safety, Service (vehicle art), Software, Navigation ✅ 2026-10-29
 ### 10.4 — Pages C (M): Trips, Profiles, Wi-Fi, Bluetooth, Audio (EQ), Upgrades
 ### 10.5 — Front Climate (L)
 - Sheet 1920×840 over the bottom of the screen: swipe up on the control bar opens it (follows the finger), drag down closes. Off / Keep / Pet / Camp row, Auto, Front / Rear (Rear = placeholder), Schedule, cabin render, seat heat, defrost / wheel / wiper symbols, fan LO–10.

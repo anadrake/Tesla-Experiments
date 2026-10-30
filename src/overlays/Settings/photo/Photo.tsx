@@ -3,6 +3,7 @@ import info from '../../../assets/settings/photo/info.svg';
 import minus from '../../../assets/settings/photo/minus.svg';
 import plus from '../../../assets/settings/photo/plus.svg';
 import chevronDown from '../../../assets/settings/photo/chevron-down.svg';
+import check from '../../../assets/settings/photo/check.svg';
 import { Icon } from '../../../components/Icon/Icon';
 import styles from './Photo.module.css';
 
@@ -45,7 +46,7 @@ export function Segmented({ options, selected, width }: { options: string[]; sel
 export const Switch = ({ on }: { on: boolean }) => <span className={styles.switch} data-on={on || undefined} aria-checked={on} role="switch" />;
 
 /** Setting Row (4231:420) / Long Setting Toggle (4986:26050): switch + title (+ info) + description. */
-export function ToggleRow({ on, title, description, info: hasInfo }: { on: boolean; title: ReactNode; description?: ReactNode; info?: boolean }) {
+export function ToggleRow({ on, title, description, info: hasInfo, badge }: { on: boolean; title: ReactNode; description?: ReactNode; info?: boolean; badge?: ReactNode }) {
   return (
     <div className={styles.toggleRow}>
       <Switch on={on} />
@@ -53,6 +54,7 @@ export function ToggleRow({ on, title, description, info: hasInfo }: { on: boole
         <div className={styles.titleRow}>
           <p className="text-photo-setting-label">{title}</p>
           {hasInfo && <Icon src={info} size={24} color="var(--photo-icon)" />}
+          {badge}
         </div>
         {description && <p className={`text-photo-body ${styles.secondary}`}>{description}</p>}
       </div>
@@ -81,9 +83,10 @@ export function Stepper({ value, width = 360 }: { value: ReactNode; width?: numb
 }
 
 /** Button, Tertiary (outlined, 1.5px) — or `bare` (text only, e.g. inside a card). 86 tall. */
-export function OutlineButton({ children, width, bare = false }: { children: ReactNode; width?: number; bare?: boolean }) {
+export function OutlineButton({ children, width, bare = false, icon }: { children: ReactNode; width?: number | string; bare?: boolean; icon?: ReactNode }) {
   return (
     <span className={`text-photo-button ${styles.outlineButton}`} data-bare={bare || undefined} style={{ width: width ?? '100%' }}>
+      {icon}
       {children}
     </span>
   );
@@ -113,6 +116,28 @@ export function Select({ value, width = 372 }: { value: ReactNode; width?: numbe
     <span className={styles.select} style={{ width }}>
       <span className="text-photo-button">{value}</span>
       <Icon src={chevronDown} color="var(--photo-icon)" />
+    </span>
+  );
+}
+
+/** Button, Secondary (filled control surface) / Primary (photo accent): 86 tall, radius sm. */
+export function FillButton({ children = null, width, primary = false, icon, iconSize = 48 }: { children?: ReactNode; width?: number | string; primary?: boolean; icon?: string; iconSize?: number }) {
+  return (
+    <span className={`text-photo-button ${styles.fillButton}`} data-primary={primary || undefined} style={{ width: width ?? '100%' }}>
+      {icon && <Icon src={icon} size={iconSize} color="var(--photo-icon)" />}
+      {children}
+    </span>
+  );
+}
+
+/** Checkbox (4229:46): 40² box — checked = raised white with a check, unchecked = control fill + 2px outline. */
+export function Checkbox({ checked, label }: { checked: boolean; label: ReactNode }) {
+  return (
+    <span className={styles.checkbox}>
+      <span className={styles.checkBox} data-checked={checked || undefined}>
+        {checked && <Icon src={check} size={40} color="var(--photo-icon)" />}
+      </span>
+      <span className="text-photo-body">{label}</span>
     </span>
   );
 }

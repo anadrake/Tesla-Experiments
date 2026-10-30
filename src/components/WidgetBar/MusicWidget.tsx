@@ -3,7 +3,9 @@ import spotify from '../../assets/media/spotify.svg';
 import spotifyChip from '../../assets/media/spotify-chip.svg';
 import arrowUp from '../../assets/icons/arrow-up.svg';
 import spotifySource from '../../assets/media/spotify-source.svg';
-import favoriteIcon from '../../assets/media/favorite.svg';
+import saved from '../../assets/media/saved.svg?raw';
+import shuffle from '../../assets/media/shuffle.svg';
+import repeat from '../../assets/media/repeat.svg';
 import previous from '../../assets/media/previous.svg';
 import pause from '../../assets/media/pause.svg';
 import play from '../../assets/media/play.svg';
@@ -12,14 +14,16 @@ import equalizer from '../../assets/media/equalizer.svg';
 import search from '../../assets/media/search.svg';
 import { useHud } from '../../state/store';
 import { Icon } from '../Icon/Icon';
+import { ThemedSvg } from '../ThemedSvg/ThemedSvg';
 import { Pressable } from '../Pressable/Pressable';
 import styles from './WidgetBar.module.css';
 
 export const TRACK = { title: 'Vampire', artist: 'Olivia Rodrigo', progress: 0.32 };
 
 /**
- * Figma ".Widget" Widget=Music, Size=Full. Album art tap → collapses the bar (like a swipe down); play/pause toggles.
- * Favorite toggles (Q12): Figma has no active state, so "on" = muted → strong icon color.
+ * Figma ".Widget" Widget=Music, Size=Full (updated 2026-10-29, 4899:2465): shuffle · repeat on the track row, a "saved"
+ * check among the controls (it took over the old star's toggle — Q12: off = muted, on = strong), hairline progress.
+ * Album art tap → collapses the bar (like a swipe down); play/pause toggles.
  */
 export function MusicWidget() {
   const playing = useHud((s) => s.playing);
@@ -43,9 +47,14 @@ export function MusicWidget() {
             {TRACK.artist}
           </p>
         </div>
-        <Pressable className={styles.mediaButton} aria-label="Favorite" aria-pressed={favorite} onClick={toggleFavorite}>
-          <Icon src={favoriteIcon} size={40} color={favorite ? 'var(--color-icon-strong)' : 'var(--color-icon-muted)'} />
-        </Pressable>
+        <div className={styles.playbackModes}>
+          <Pressable className={styles.mediaButton} aria-label="Shuffle">
+            <Icon src={shuffle} size={40} color="var(--color-icon-muted)" />
+          </Pressable>
+          <Pressable className={styles.mediaButton} aria-label="Repeat">
+            <Icon src={repeat} size={40} color="var(--color-icon-muted)" />
+          </Pressable>
+        </div>
       </div>
 
       <div className={styles.progress}>
@@ -64,6 +73,13 @@ export function MusicWidget() {
         </Pressable>
         <Pressable className={styles.mediaButton} aria-label="Next">
           <Icon src={next} size={40} color="var(--color-icon-strong)" />
+        </Pressable>
+        <Pressable className={styles.mediaButton} aria-label="Saved" aria-pressed={favorite} onClick={toggleFavorite}>
+          {/* Two-tone: disc = icon colour, check = the card's fill (a cut-out in either mode) */}
+          <ThemedSvg
+            svg={saved}
+            colors={{ '#A2A3A5': favorite ? 'var(--color-icon-strong)' : 'var(--color-icon-muted)', white: 'var(--color-surface-floating)' }}
+          />
         </Pressable>
         <Pressable className={styles.mediaButton} aria-label="Equalizer">
           <Icon src={equalizer} size={40} color="var(--color-icon-muted)" />
