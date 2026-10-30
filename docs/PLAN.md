@@ -300,7 +300,7 @@ Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **On
 - Per `4923:59013` and its row: widget docked on the map while the panel is collapsed; drop field in the 116 rail. Re-enable the gesture there; extend `gestures.mjs`.
 - Review: fidelity + function, then a final P8/P9 regression run.
 
-# Phase 10 — Settings 2026 + Front Climate (✅ approved 2026-10-29 — Q41–Q44 · 10.0–10.5 done, 10.6 sweep next)
+# Phase 10 — Settings 2026 + Front Climate (✅ approved 2026-10-29 — Q41–Q44 · 10.0–10.6 done; Q45 + iPad check open)
 
 **Source:** Figma page `4931:2` "↳ Settings & Climate · Photo Build" (Anastasiya). Read-me `4944:28019`: 19 categories × Light / Dark, Front Climate Light / Dark, reusable photo rows / sliders / header / long toggle, 10 climate symbols (on / off), 18 new colour variables + 6 type styles.
 Never fetch the page whole (260k chars) — node IDs below.
@@ -320,7 +320,7 @@ Never fetch the page whole (260k chars) — node IDs below.
 ### 10.4 — Pages C (M): Trips, Profiles, Wi-Fi, Bluetooth, Audio (EQ), Upgrades ✅ 2026-10-29
 ### 10.5 — Front Climate (L) ✅ 2026-10-29 — `overlays/Climate/`
 - Sheet 1920×840 over the bottom of the screen: swipe up on the control bar opens it (follows the finger), drag down closes. Off / Keep / Pet / Camp row, Auto, Front / Rear (Rear = placeholder), Schedule, cabin render, seat heat, defrost / wheel / wiper symbols, fan LO–10.
-### 10.6 — Sweep (S): fidelity script over all 40 states (Light + Dark), reviewer pass, gestures regression, iPad.
+### 10.6 — Sweep (S) ✅ 2026-10-30: fidelity script over all 40 states (Light + Dark), reviewer pass, gestures regression. Left: Q45 (nav row gap), iPad.
 
 Settings pages are **static** (Anastasiya, 2026-10-29) — the elements are there, controls don't change state. Old pages (Pedals, Autopilot…) are replaced by the new set.
 

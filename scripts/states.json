@@ -840,7 +840,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/dynamics-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-charging-dark",
@@ -870,7 +873,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/charging-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-self-driving-dark",
@@ -900,7 +906,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/self-driving-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-locks-dark",
@@ -930,7 +939,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/locks-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-lights-dark",
@@ -960,7 +972,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/lights-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-display-light",
@@ -1022,7 +1037,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/display-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-schedule-light",
@@ -1084,7 +1102,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/schedule-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-safety-light",
@@ -1146,7 +1167,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/safety-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-service-light",
@@ -1208,7 +1232,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/service-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-software-light",
@@ -1270,7 +1297,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/software-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-navigation-light",
@@ -1332,7 +1362,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/navigation-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-trips-light",
@@ -1394,7 +1427,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/trips-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-profiles-light",
@@ -1456,7 +1492,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/profiles-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-wifi-dark",
@@ -1486,7 +1525,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/wifi-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-bluetooth-light",
@@ -1548,7 +1590,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/bluetooth-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-audio-light",
@@ -1610,7 +1655,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/audio-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "settings26-upgrades-light",
@@ -1672,7 +1720,10 @@
           630,
           1080
         ]
-      }
+      },
+      "ref": "settings-2026/upgrades-dark.png",
+      "refFrame": true,
+      "tolerance": 0.2
     },
     {
       "name": "climate-front-light",
