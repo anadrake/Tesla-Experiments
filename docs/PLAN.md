@@ -300,6 +300,11 @@ Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **On
 - Per `4923:59013` and its row: widget docked on the map while the panel is collapsed; drop field in the 116 rail. Re-enable the gesture there; extend `gestures.mjs`.
 - Review: fidelity + function, then a final P8/P9 regression run.
 
+## Backups
+| Date | What | Restore |
+|---|---|---|
+| 2026-10-29 | Everything through Phase 9.6 + the Quick Actions refresh, dock right-align / separate sides, Quick Actions swipe-down (commit `a863020`) | `backups/2026-10-29-phase9-complete-a863020.zip` (full source, local only — git-ignored, 23 MB) · git tag `backup-2026-10-29` (`git checkout backup-2026-10-29`) |
+
 ## Review agents per sub-phase (same as P8)
 Two `hud-reviewer` runs in parallel (Sonnet, read-only):
 1. **Fidelity to Figma** — `npm run shots -- --only <states>` vs the 9.0 refs, Light + Dark, region by region; token / motion grep; Figma inconsistencies go to "ask Anastasiya", not copied.
