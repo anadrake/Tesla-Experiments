@@ -5,7 +5,7 @@ import { capture } from '../../lib/pointer';
 import { useStageScale } from '../../shell/Stage';
 import { useHud } from '../../state/store';
 import type { WidgetId } from '../../state/widgets';
-import { duration, presets, reducible, spring, transition } from '../../tokens/motion';
+import { duration, easing, presets, reducible, spring, transition } from '../../tokens/motion';
 import { Icon } from '../Icon/Icon';
 import { Pressable } from '../Pressable/Pressable';
 import { PlaceholderWidget, TrackWidget, WIDGETS } from '../WidgetBar/registry';
@@ -50,7 +50,15 @@ interface PagerGesture {
 
 /** Reduce Motion: cards fade in / out but don't grow, shrink or slide; a removed card closes up once it has faded. */
 const AFTER_FADE = { ...transition.cut, delay: duration.fast };
-const SLOT_MOTION = { ...transition.screen, x: spring };
+/**
+ * The neighbours slide in from past the frame's edge as they fade (Anastasiya, 2026-10-30: they popped in) — the
+ * fade is slow in / slow out, not the front-loaded standard curve that had them at 60% in 0.1s.
+ */
+const PEEK_IN = 48;
+const PEEK_FADE = { duration: duration.slow, ease: easing.gentle };
+const SLOT_MOTION = { ...transition.screen, x: spring, opacity: PEEK_FADE };
+/** The X goes first on close, before the card starts shrinking back (Anastasiya, 2026-10-30: it lingered). */
+const X_OUT = { duration: duration.instant };
 const SLOT_MOTION_REDUCED = { ...transition.toggle, width: transition.cut, marginRight: transition.cut, x: transition.cut };
 
 /** Removed (X) → collapses; moved elsewhere (`gone` = its key) → gone at once, the new card expands instead. */
@@ -100,6 +108,13 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
   const present = useIsPresent();
   const [settled, setSettled] = useState(false);
   const peek = present && settled;
+  // The peek-in slides on the fade's curve (the spring had it parked before it was half visible); after it, the spring.
+  const [entered, setEntered] = useState(false);
+  useEffect(() => {
+    if (!settled) return;
+    const t = setTimeout(() => setEntered(true), PEEK_FADE.duration * 1000);
+    return () => clearTimeout(t);
+  }, [settled]);
 
   useEffect(() => {
     // A swipe owns the strip; a lifted card doesn't (edge paging moves the strip under it).
@@ -127,6 +142,8 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
   const open = target ? GAP_OPEN[target.mode] : 0;
   /** Cards before the open gap move left, the rest right — the gap opens around its own centre. */
   const shift = (i: number) => (!target ? 0 : i < target.gap ? -open / 2 : open / 2);
+  /** Until the frame settles, the neighbours wait PEEK_IN further out (off the frame's edge), then slide in. */
+  const waiting = (i: number) => (settled || i === page ? 0 : i < page ? -PEEK_IN : PEEK_IN);
 
   const pointer = (e: React.PointerEvent) => editor.current && toEditor(editor.current, e.clientX, e.clientY);
 
@@ -219,10 +236,14 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
                   data-track-widget={id}
                   data-active={id === active || undefined}
                   initial={{ opacity: 0, scale: 0.9, width: 0, marginRight: 0 }}
-                  animate={{ opacity: id === active || peek ? 1 : 0, scale: 1, width: CARD_W, marginRight: CARD_GAP, x: shift(i) }}
+                  animate={{ opacity: id === active || peek ? 1 : 0, scale: 1, width: CARD_W, marginRight: CARD_GAP, x: shift(i) + waiting(i) }}
                   variants={{ out: exitCard(trackKey(id, gen), reduced) }}
                   exit="out"
-                  transition={{ ...(reduced ? SLOT_MOTION_REDUCED : SLOT_MOTION), ...(present ? {} : { opacity: transition.toggle }) }}
+                  transition={{
+                    ...(reduced ? SLOT_MOTION_REDUCED : SLOT_MOTION),
+                    ...(!reduced && !entered ? { x: PEEK_FADE } : {}),
+                    ...(present ? {} : { opacity: transition.toggle }),
+                  }}
                 >
                   {/* The held card is lifted out (DragLayer draws it); its place stays until it's dropped */}
                   <motion.div
@@ -235,7 +256,13 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
                   {/* Each card carries its own X, above it, so it slides with the card (Anastasiya, 2026-10-29) */}
                   <AnimatePresence initial={false}>
                     {track.length > 1 && dragged !== id && (
-                      <motion.div key="x" className={styles.closeSlot} {...presets.fadeIn} transition={transition.toggle}>
+                      <motion.div
+                        key="x"
+                        className={styles.closeSlot}
+                        {...presets.fadeIn}
+                        animate={{ opacity: present ? 1 : 0 }}
+                        transition={present ? transition.toggle : X_OUT}
+                      >
                         <Pressable
                           className={styles.close}
                           aria-label={`Remove ${WIDGETS[id].label}`}

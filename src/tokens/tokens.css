@@ -123,6 +123,9 @@
   --color-border-accent: #005aff; /* Start Self-Driving outline */
   --color-action-primary-transparent-bg-default: #005aff40; /* Button Primary Transparent (Start Self-Driving) */
   --color-chart-over-rated: #ff8a00; /* Energy widget trace above rated — unbound in Figma, same both modes */
+  /* Music progress rail — app token: the photo divider sits on the near-black photo panel, so in Dark it was
+     darker than the widget's #414141 (Anastasiya, 2026-10-30: too hard to see). Light keeps the divider. */
+  --color-progress-rail: var(--photo-border-divider);
   --color-control-track-off: #d0d1d2;
   --color-control-knob: #ffffff;
   --color-border-focus: #005aff;
@@ -187,6 +190,7 @@
   --color-border-accent: #8fb4ff;
   --color-action-primary-transparent-bg-default: #005aff40;
   --color-chart-over-rated: #ff8a00;
+  --color-progress-rail: var(--photo-border-default);
   --color-control-track-off: #5c5c5c;
   --color-state-pressed-overlay: #ffffff14; /* Dark value not in Figma vars (8% black is invisible on dark) — assumed 8% white */
   --color-status-info: #8fb4ff;

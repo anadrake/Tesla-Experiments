@@ -128,7 +128,7 @@
 
 .rail {
   right: 0;
-  background: var(--photo-border-divider);
+  background: var(--color-progress-rail);
 }
 
 .played {
