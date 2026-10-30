@@ -7,7 +7,7 @@
   height: 1016px;
   display: flex;
   gap: var(--space-2);
-  background: var(--photo-border-divider);
+  background: var(--color-surface-sunken);
   box-shadow: var(--elevation-panel);
 }
 
@@ -17,7 +17,7 @@
   width: 448px;
   display: flex;
   flex-direction: column;
-  background: var(--photo-surface-panel);
+  background: var(--color-surface-panel); /* not --photo-surface-panel: too dark in Dark (Anastasiya, 2026-10-29) */
 }
 
 .search {
@@ -93,7 +93,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  background: var(--photo-surface-panel);
+  background: var(--color-surface-panel);
 }
 
 .header {
