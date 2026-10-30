@@ -552,7 +552,8 @@
           630,
           1080
         ]
-      }
+      },
+      "tolerance": 0.2
     },
     {
       "name": "settings26-wifi-light",
@@ -571,6 +572,381 @@
           64,
           840,
           112
+        ]
+      }
+    },
+    {
+      "name": "settings26-dynamics-light",
+      "query": "mode=light&settings=dynamics",
+      "ref": "settings-2026/dynamics-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-charging-light",
+      "query": "mode=light&settings=charging",
+      "ref": "settings-2026/charging-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-self-driving-light",
+      "query": "mode=light&settings=self-driving",
+      "ref": "settings-2026/self-driving-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-locks-light",
+      "query": "mode=light&settings=locks",
+      "ref": "settings-2026/locks-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-lights-light",
+      "query": "mode=light&settings=lights",
+      "ref": "settings-2026/lights-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-seats-light",
+      "query": "mode=light&settings=seats",
+      "ref": "settings-2026/seats-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-seats-dark",
+      "query": "mode=dark&settings=seats",
+      "ref": "settings-2026/seats-dark.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      },
+      "tolerance": 0.2
+    },
+    {
+      "name": "settings26-dynamics-dark",
+      "query": "mode=dark&settings=dynamics",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-charging-dark",
+      "query": "mode=dark&settings=charging",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-self-driving-dark",
+      "query": "mode=dark&settings=self-driving",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-locks-dark",
+      "query": "mode=dark&settings=locks",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-lights-dark",
+      "query": "mode=dark&settings=lights",
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
         ]
       }
     }

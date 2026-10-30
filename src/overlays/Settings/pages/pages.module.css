@@ -23,3 +23,213 @@
 .muted {
   color: var(--color-content-tertiary);
 }
+
+/* ---- Settings 2026 pages (Phase 10) ---- */
+.photoPrimary {
+  margin: 0;
+  color: var(--photo-content-primary);
+}
+
+.inlineTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Charging: charge limit card (4960:25348) */
+.chargeCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-24) var(--space-24) 0;
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+}
+
+/* Photo / Charge Slider 696×88: rail 12→684 at y 61, ticks at y 43, labels at y 8 */
+.chargeSlider {
+  position: relative;
+  height: 88px;
+  color: var(--photo-content-primary);
+}
+
+.chargeRail,
+.chargeFill {
+  position: absolute;
+  left: 12px;
+  top: 61px;
+  height: 10px;
+  border-radius: 5px;
+}
+
+.chargeRail {
+  right: 12px;
+  background: var(--photo-slider-rail);
+}
+
+.chargeFill {
+  background: var(--photo-charge);
+}
+
+.chargeTick {
+  position: absolute;
+  top: 43px;
+  width: 2px;
+  height: 8px;
+  background: var(--photo-slider-rail);
+}
+
+.chargeTick > span {
+  position: absolute;
+  left: 1px;
+  bottom: 12px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.chargeHandle {
+  position: absolute;
+  left: 670px;
+  top: 52px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--photo-border-default);
+  border-radius: var(--radius-full);
+  background: var(--color-control-knob);
+}
+
+/* Self-Driving: "1% Self-Driving" (28 / 20 on one 40px line) and the two-column stats card */
+.fsdShare {
+  margin: 0;
+  line-height: 40px;
+  color: var(--photo-content-primary);
+}
+
+.statCard {
+  display: flex;
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+  overflow: hidden;
+}
+
+.statCard > div {
+  flex: 1 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-16) 0 var(--space-16) var(--space-24);
+}
+
+.statCard > div + div {
+  border-left: 1px solid var(--photo-border-default);
+}
+
+/* Buttons: Secondary (filled control surface), 86 tall */
+.fillButton {
+  flex: none;
+  display: grid;
+  place-items: center;
+  height: var(--size-control-lg);
+  padding: 0 var(--space-24);
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+  color: var(--photo-content-primary);
+  white-space: nowrap;
+}
+
+.titledBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+/* Locks: Keys header + the key list card */
+.keysHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-24);
+}
+
+.keysList {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+}
+
+.keyRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+  height: 120px;
+  padding: 0 var(--space-24);
+}
+
+.keyLabels {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Seats: 744×820 cabin box; artwork at inset 1.22% 19.35% 0 8.06% (object-contain) */
+.seatCabin {
+  position: relative;
+  height: 820px;
+}
+
+.cabinLight,
+.cabinDark {
+  position: absolute;
+  left: 8.06%;
+  right: 19.35%;
+  top: 1.22%;
+  bottom: 0;
+  width: 72.59%;
+  height: 98.78%;
+  object-fit: contain;
+}
+
+.cabinLight {
+  opacity: 0.3; /* Figma: the Light cutaway sits at 30% */
+}
+
+.cabinDark,
+[data-mode='dark'] .cabinLight {
+  display: none;
+}
+
+[data-mode='dark'] .cabinDark {
+  display: block;
+}
+
+.heatSpot {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+}
+
+/* Passenger seat forward / back: 80×160, right 114, centred 4 above the middle */
+.seatAdjust {
+  position: absolute;
+  right: 114px;
+  top: calc(50% - 4px);
+  transform: translateY(-50%);
+  width: 80px;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: var(--radius-sm);
+  background: var(--photo-surface-control);
+}
+
+.seatAdjustRule {
+  width: 48px;
+  height: 2px;
+  background: var(--photo-content-secondary);
+  opacity: 0.55;
+}

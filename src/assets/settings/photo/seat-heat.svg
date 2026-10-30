@@ -1,0 +1,7 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Driver heat">
+<path id="Heat wave 1" d="M16.8868 16C6.88675 26 26.8868 36 16.8868 46" stroke-width="3" stroke-linecap="round" stroke="#5B5E61"/>
+<path id="Heat wave 2" d="M28.8868 16C18.8868 26 38.8868 36 28.8868 46" stroke-width="3" stroke-linecap="round" stroke="#5B5E61"/>
+<path id="Heat wave 3" d="M40.8868 16C30.8868 26 50.8868 36 40.8868 46" stroke-width="3" stroke-linecap="round" stroke="#5B5E61"/>
+</g>
+</svg>

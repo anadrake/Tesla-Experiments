@@ -1,0 +1,183 @@
+/* Settings 2026 photo kit — Figma 4931:2. Colours: --photo-* tokens. */
+.section,
+.stack {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.section p,
+.toggleText p {
+  margin: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  color: var(--photo-content-primary);
+}
+
+.secondary {
+  color: var(--photo-content-secondary);
+}
+
+/* Segmented Control: 80 tall, 1.5px photo outline, 2px inset; segments share the width */
+.segmented {
+  display: flex;
+  height: 80px;
+  padding: var(--space-2);
+  border: 1.5px solid var(--photo-border-default);
+  border-radius: var(--radius-md);
+}
+
+.segment {
+  flex: 1 0 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 var(--space-20);
+  border-radius: var(--radius-md);
+  color: var(--photo-content-primary);
+  text-align: center;
+  white-space: pre-line;
+}
+
+.segment[data-selected] {
+  background: var(--photo-surface-selected);
+}
+
+/* Switch 80×40: track + 32 knob, 4 in */
+.switch {
+  position: relative;
+  flex: none;
+  width: 80px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--photo-border-divider);
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--photo-content-on-accent);
+}
+
+.switch[data-on] {
+  background: var(--photo-accent);
+}
+
+.switch[data-on]::after {
+  left: auto;
+  right: 4px;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-24);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--space-8) 0;
+}
+
+.toggleText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.divider {
+  flex: none;
+  width: 100%;
+  height: 1px;
+  background: var(--photo-border-divider);
+}
+
+/* Stepper: filled control surface, − value + */
+.stepper {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  height: 80px;
+  padding: 0 var(--space-12);
+  border-radius: var(--radius-md);
+  background: var(--photo-surface-control);
+  color: var(--photo-content-primary);
+}
+
+.stepper > span:not([aria-hidden]) {
+  flex: 1;
+  text-align: center;
+}
+
+.outlineButton {
+  flex: none;
+  display: grid;
+  place-items: center;
+  height: var(--size-control-lg);
+  padding: 0 var(--space-24);
+  border: 1.5px solid var(--photo-border-default);
+  border-radius: var(--radius-sm);
+  color: var(--photo-content-primary);
+  white-space: nowrap;
+}
+
+.outlineButton[data-bare] {
+  border-color: transparent;
+}
+
+.iconRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+  width: 100%;
+}
+
+.iconRowLabel {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: var(--photo-content-primary);
+}
+
+.text {
+  margin: 0;
+  color: var(--photo-content-primary);
+}
+
+.text[data-tone='secondary'] {
+  color: var(--photo-content-secondary);
+}
+
+.text[data-tone='accent'] {
+  color: var(--photo-accent);
+}
+
+.select {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  height: 80px;
+  padding: 0 var(--space-20) 0 var(--space-24);
+  border-radius: var(--radius-md);
+  background: var(--photo-surface-control);
+  color: var(--photo-content-primary);
+}
+
+.select > span:first-child {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

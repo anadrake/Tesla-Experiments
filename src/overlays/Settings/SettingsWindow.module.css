@@ -136,8 +136,17 @@
   background: var(--photo-status-alert);
 }
 
-/* Settings Panel Body: scrolls vertically (Figma), space/32 between blocks */
+/* Settings Panel Body: scrolls vertically (Figma), space/32 between blocks.
+   Settings 2026 (Phase 10): the shared settings controls take the photo palette here — their tokens point at the
+   --photo-* ones — so pages are built from the same kit. Backgrounds stay --color-surface-panel (Anastasiya). */
 .body {
+  --color-border-default: var(--photo-border-default);
+  --color-surface-selected: var(--photo-surface-selected);
+  --color-surface-sunken: var(--photo-surface-inset);
+  --color-content-primary: var(--photo-content-primary);
+  --color-content-secondary: var(--photo-content-secondary);
+  --color-action-primary-bg-default: var(--photo-accent);
+  --color-content-on-accent: var(--photo-content-on-accent);
   flex: 1;
   min-height: 0;
   display: flex;
@@ -153,6 +162,21 @@
 
 .body > * {
   flex-shrink: 0; /* scroll instead of squashing controls */
+}
+
+/* Dark: the panel is the earlier grey (#414141, Anastasiya) instead of Figma's near-black, so the photo control
+   fill (#414343) would vanish into it — lift it to ~#585858, as the Dark Seats frame shows its seat adjuster. */
+[data-mode='dark'] .body {
+  --photo-surface-control: color-mix(in srgb, var(--color-surface-panel) 88%, white);
+}
+
+/* Settings 2026 pages are static (Q41): the controls don't take taps — the body under them still scrolls. */
+.static {
+  display: contents;
+}
+
+.static * {
+  pointer-events: none;
 }
 
 .body::-webkit-scrollbar {

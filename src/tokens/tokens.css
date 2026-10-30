@@ -148,6 +148,9 @@
   --photo-accent: #2468ed;
   --photo-status-amber: #ba8700;
   --photo-status-alert: #de333d;
+  --photo-surface-control: #dadcdd;
+  --photo-slider-rail: #a5a8aa;
+  --photo-charge: #31c954;
 }
 
 [data-mode='dark'] {
@@ -201,6 +204,9 @@
   --photo-accent: #3d7df7;
   --photo-status-amber: #e8b829;
   --photo-status-alert: #f14952;
+  --photo-surface-control: #414343;
+  --photo-slider-rail: #919594;
+  --photo-charge: #51db65;
 }
 
 /* Effect styles */
@@ -239,3 +245,7 @@
 /* Settings 2026 photo styles (Phase 10) */
 .text-photo-header { font: 600 24px / 32px var(--font-family-ui); letter-spacing: 0; }
 .text-photo-navigation { font: 500 26px / 36px var(--font-family-ui); letter-spacing: 0; }
+.text-photo-setting-label { font: 600 22px / 28px var(--font-family-ui); letter-spacing: 0; }
+.text-photo-button { font: 600 22px / 28px var(--font-family-ui); letter-spacing: 0; }
+.text-photo-body { font: 500 20px / 25px var(--font-family-ui); letter-spacing: 0; }
+.text-photo-caption { font: 500 18px / 23px var(--font-family-ui); letter-spacing: 0; }

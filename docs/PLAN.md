@@ -315,7 +315,7 @@ Never fetch the page whole (260k chars) — node IDs below.
 ### 10.1 — Settings shell (M) ✅ 2026-10-29 (shared rows/sliders move to 10.2, built with the first pages that use them)
 - New Window + Navtree: 19 categories (Controls, Dynamics, Charging, Self-Driving, Locks, Lights, Seats, Display, Schedule, Safety, Service, Software, Navigation, Trips, Profiles, Wi-Fi, Bluetooth, Audio, Upgrades), scrollable nav, search row, profile header with status icons. Category switching works; page bodies scroll.
 - Shared static pieces: photo rows (key / network / device / schedule / profile), sliders (charge / brightness / volume / immersive), long-label toggle, section titles.
-### 10.2 — Pages A (M–L): Controls, Dynamics, Charging, Self-Driving, Locks, Lights, Seats (cabin art)
+### 10.2 — Pages A (M–L): Controls, Dynamics, Charging, Self-Driving, Locks, Lights, Seats (cabin art) ✅ 2026-10-29 — static photo kit `overlays/Settings/photo/`
 ### 10.3 — Pages B (M–L): Display, Schedule, Safety, Service (vehicle art), Software, Navigation
 ### 10.4 — Pages C (M): Trips, Profiles, Wi-Fi, Bluetooth, Audio (EQ), Upgrades
 ### 10.5 — Front Climate (L)

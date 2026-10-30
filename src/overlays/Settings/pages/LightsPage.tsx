@@ -1,35 +1,26 @@
-import { Divider, FieldGroup, SegmentedControl, SettingRow, ToggleButton } from '../../../components/settings/controls';
-import { useHud } from '../../../state/store';
+import { Divider, Section, Segmented, Stack, ToggleRow } from '../photo/Photo';
 
-/**
- * Figma Settings / Lights body. Headlights and Auto High Beam share their values with the Controls page
- * (same setting keys), so changing one updates the other.
- */
+/** Figma Settings 2026 / Lights (4933:1133). Static (Q41). */
 export function LightsPage() {
-  const toDisplay = () => useHud.getState().setSettingsPage('display');
   return (
-    <>
-      <FieldGroup title="Headlights" infoIcon link="Display" onLink={toDisplay}>
-        <SegmentedControl setting="controls.headlights" options={['Off', 'Parking', 'On', 'Auto']} initial="Auto" width="fill" />
-      </FieldGroup>
-      <div>
-        <ToggleButton setting="lights.frontFog" initial>
-          Front Fog
-        </ToggleButton>
-      </div>
-      <FieldGroup title="Auto Turn Signals">
-        <SegmentedControl setting="lights.turnSignals" options={['Off', 'Auto Cancel']} initial="Auto Cancel" width="fill" />
-      </FieldGroup>
-      <SettingRow setting="controls.autoHighBeam" initial title="Auto High Beam" />
-      <SettingRow setting="lights.afterExit" initial title="Headlights After Exit" />
+    <Stack gap={28}>
+      <Section title="Headlights">
+        <Segmented options={['Off', 'Parking', 'On', 'Auto']} selected="Auto" />
+      </Section>
+      <Section title="Auto Turn Signals" info>
+        <Segmented options={['Off', 'Auto Cancel']} selected="Auto Cancel" width={372} />
+      </Section>
+      <ToggleRow
+        on
+        title="Adaptive Headlights"
+        description="Selectively dims individual pixels of the high beams to reduce glare for other traffic, and adjusts headlights for curves."
+      />
+      <ToggleRow on={false} title="Headlights after Exit" />
       <Divider />
-      <FieldGroup title="Dome Lights">
-        <SegmentedControl setting="lights.dome" options={['Off', 'On', 'Auto']} initial="Auto" width="fill" />
-      </FieldGroup>
-      <div>
-        <ToggleButton setting="lights.ambient">Ambient Lights</ToggleButton>
-      </div>
-      <SettingRow setting="lights.welcome" initial title="Welcome Lights" description="Light up the cabin when you approach" />
-    </>
+      <Section title="Dome Lights">
+        <Segmented options={['Off', 'On', 'Auto']} selected="Off" width={558} />
+      </Section>
+      <ToggleRow on={false} title="Steering Wheel Lights" />
+    </Stack>
   );
 }

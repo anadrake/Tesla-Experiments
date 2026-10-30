@@ -5,7 +5,8 @@
 //   - if the ref is a whole Figma frame with the bezel (`refFrame: true`, 2032×1328 at any scale), crops the display
 //     out of it (display at 56,51 — 1920×1200),
 //   - scales both to the ref's resolution, compares per region (`regions` in the state, else a 4×3 grid; display px)
-//     and prints, per region, the share of pixels that visibly differ (colour difference > 12%; a mean would be
+//     and prints, per region, the share of pixels that visibly differ (colour difference > 12%, or the state's
+//     `tolerance` — e.g. Dark settings, whose grey background differs from the refs on purpose; a mean would be
 //     diluted by the shared background). Regions over --max % (default 8) get ✗.
 //   - writes shots/fidelity/<name>.png: app | Figma | diff heat map, regions outlined.
 // Text that differs on purpose (clock, dates) shows up as small diffs — read the heat map, not just the numbers.
@@ -46,7 +47,7 @@ for (const s of targets) {
   const ref = readFileSync(`design-ref/${s.ref}`).toString('base64');
   const regions = s.regions ?? grid();
   const result = await lab.evaluate(
-    async ({ shot, ref, regions, frame, isFrame }) => {
+    async ({ shot, ref, regions, frame, isFrame, tol }) => {
       const load = (b64) =>
         new Promise((res) => {
           const i = new Image();
@@ -88,7 +89,7 @@ for (const s of targets) {
         let n = 0;
         for (let yy = Math.round(y * s); yy < Math.round((y + h) * s); yy++)
           for (let xx = Math.round(x * s); xx < Math.round((x + w) * s); xx++) {
-            sum += px[yy * W + xx] > 0.12 ? 1 : 0;
+            sum += px[yy * W + xx] > tol ? 1 : 0;
             n++;
           }
         scores[name] = n ? (100 * sum) / n : 0;
@@ -114,7 +115,7 @@ for (const s of targets) {
       for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
       return { scores, png: btoa(bin) };
     },
-    { shot, ref, regions, frame: FRAME, isFrame: !!s.refFrame },
+    { shot, ref, regions, frame: FRAME, isFrame: !!s.refFrame, tol: s.tolerance ?? 0.12 },
   );
   const { writeFileSync } = await import('node:fs');
   writeFileSync(`shots/fidelity/${s.name}.png`, Buffer.from(result.png, 'base64'));

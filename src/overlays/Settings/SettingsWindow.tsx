@@ -13,10 +13,15 @@ import { useHud, type SettingsPage } from '../../state/store';
 import { presets, reducible, transition } from '../../tokens/motion';
 import { NAV_ITEMS, SEARCH_ITEM } from './navItems';
 import { ComingSoonPage } from './pages/ComingSoonPage';
+import { ChargingPage } from './pages/ChargingPage';
 import { ControlsPage } from './pages/ControlsPage';
 import { DisplayPage } from './pages/DisplayPage';
+import { DynamicsPage } from './pages/DynamicsPage';
 import { LightsPage } from './pages/LightsPage';
+import { LocksPage } from './pages/LocksPage';
 import { SearchPage } from './pages/SearchPage';
+import { SeatsPage } from './pages/SeatsPage';
+import { SelfDrivingPage } from './pages/SelfDrivingPage';
 import styles from './SettingsWindow.module.css';
 
 /**
@@ -26,6 +31,11 @@ import styles from './SettingsWindow.module.css';
 const PAGES: Partial<Record<SettingsPage, () => JSX.Element>> = {
   search: SearchPage,
   controls: ControlsPage,
+  dynamics: DynamicsPage,
+  charging: ChargingPage,
+  'self-driving': SelfDrivingPage,
+  locks: LocksPage,
+  seats: SeatsPage,
   display: DisplayPage,
   lights: LightsPage,
 };
@@ -127,7 +137,13 @@ export function SettingsWindow() {
         </header>
         {/* tab switch: duration/fast + easing/standard (Figma motion rules) */}
         <motion.div className={styles.body} key={page} {...presets.fadeIn} transition={transition.toggle}>
-          <Page />
+          {page === 'search' ? (
+            <Page />
+          ) : (
+            <div className={styles.static}>
+              <Page />
+            </div>
+          )}
         </motion.div>
       </section>
     </motion.div>
