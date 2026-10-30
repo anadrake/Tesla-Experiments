@@ -12,6 +12,7 @@ Runs on iPad Pro (GitHub Pages, Add to Home Screen). Design concept — not affi
 - `npm run dev` — dev server on LAN (open the printed Network URL on the iPad)
 - `npm run build` — typecheck + production build
 - `npm run shots [-- --only a,b] [--ipad]` — screenshot states in `scripts/states.json` → `shots/` (needs dev server)
+- `npm run fidelity -- --only a,b [--max 8]` — compare states against their Figma refs (per-region % of differing pixels + heat maps in `shots/fidelity/`; needs dev server)
 - `node scripts/perf.mjs [--cpu 4] [--only a,b] [--base URL]` — frame-time / paint eval of the main animations (needs dev server)
 
 ## Conventions

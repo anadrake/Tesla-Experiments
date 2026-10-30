@@ -300,6 +300,30 @@ Rough size: S ≈ short session, M ≈ one session, L ≈ one long session. **On
 - Per `4923:59013` and its row: widget docked on the map while the panel is collapsed; drop field in the 116 rail. Re-enable the gesture there; extend `gestures.mjs`.
 - Review: fidelity + function, then a final P8/P9 regression run.
 
+# Phase 10 — Settings 2026 + Front Climate (✅ approved 2026-10-29 — Q41–Q44)
+
+**Source:** Figma page `4931:2` "↳ Settings & Climate · Photo Build" (Anastasiya). Read-me `4944:28019`: 19 categories × Light / Dark, Front Climate Light / Dark, reusable photo rows / sliders / header / long toggle, 10 climate symbols (on / off), 18 new colour variables + 6 type styles.
+Never fetch the page whole (260k chars) — node IDs below.
+
+- **Screens (Light / Dark, 2032×1328 frames):** Controls `4938:28190`/`28221` · Dynamics `28253`/`28284` · Charging `28316`/`28347` · Self-Driving `28379`/`28410` · Locks `28442`/`28473` · Lights `28505`/`28536` · Seats `28568`/`28599` · Display `28631`/`28662` · Schedule `28694`/`28725` · Safety `28757`/`28788` · Service `28820`/`28851` · Software `28883`/`28914` · Navigation `28946`/`28977` · Trips `29009`/`29040` · Profiles `29072`/`29103` · Wi-Fi `29135`/`29166` · Bluetooth `29198`/`29229` · Audio `29261`/`29292` · Upgrades `29324`/`29355` (all `4938:`). Climate Front `4938:29417`/`29504`. Home `4938:29388`/`29475`.
+- **Components:** Window `4932:119`, Navtree `4932:14` / Lower `4939:27808`, page bodies `4933:527`… (`Settings 2026 / <Name>` symbols, 840×1015), Photo rows / sliders / header `4959:25185`–`25269`, Long toggle `4986:26050`, icons `4959:25151`…, Climate Panel `4936:2339` (1920×840), Climate Symbol `4975:25932`, Parked Mode `4942:27958`, Fan Speed `4942:28036`, Seat Heat `4935:2085`, Seats Cabin `4952:25392`, vehicle art `4967:25460`, `4977:25888`.
+
+## Sub-phases (each: build → fidelity check vs the Figma frame → reviewer → WORKLOG → commit)
+### 10.0 — References & tokens (S) ✅ 2026-10-29
+- 38 settings + 2 climate refs (≤1024px) into `design-ref/settings-2026/`; the 18 colour variables (Light + Dark) and 6 type styles into `tokens.css`; component list → COMPONENTS.md.
+- New `scripts/fidelity.mjs`: shoots a state, crops the display out of the Figma frame ref, scales both alike and reports a per-region pixel diff (nav / header / body) — the "looks right vs the mock" check, reused by every later sub-phase.
+### 10.1 — Settings shell (M) ✅ 2026-10-29 (shared rows/sliders move to 10.2, built with the first pages that use them)
+- New Window + Navtree: 19 categories (Controls, Dynamics, Charging, Self-Driving, Locks, Lights, Seats, Display, Schedule, Safety, Service, Software, Navigation, Trips, Profiles, Wi-Fi, Bluetooth, Audio, Upgrades), scrollable nav, search row, profile header with status icons. Category switching works; page bodies scroll.
+- Shared static pieces: photo rows (key / network / device / schedule / profile), sliders (charge / brightness / volume / immersive), long-label toggle, section titles.
+### 10.2 — Pages A (M–L): Controls, Dynamics, Charging, Self-Driving, Locks, Lights, Seats (cabin art)
+### 10.3 — Pages B (M–L): Display, Schedule, Safety, Service (vehicle art), Software, Navigation
+### 10.4 — Pages C (M): Trips, Profiles, Wi-Fi, Bluetooth, Audio (EQ), Upgrades
+### 10.5 — Front Climate (L)
+- Sheet 1920×840 over the bottom of the screen: swipe up on the control bar opens it (follows the finger), drag down closes. Off / Keep / Pet / Camp row, Auto, Front / Rear (Rear = placeholder), Schedule, cabin render, seat heat, defrost / wheel / wiper symbols, fan LO–10.
+### 10.6 — Sweep (S): fidelity script over all 40 states (Light + Dark), reviewer pass, gestures regression, iPad.
+
+Settings pages are **static** (Anastasiya, 2026-10-29) — the elements are there, controls don't change state. Old pages (Pedals, Autopilot…) are replaced by the new set.
+
 ## Backups
 | Date | What | Restore |
 |---|---|---|

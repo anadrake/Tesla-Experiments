@@ -125,16 +125,6 @@
       "ref": "settings-search-dark.png"
     },
     {
-      "name": "settings-pedals-light",
-      "query": "mode=light&settings=pedals",
-      "ref": "settings-pedals-light.png"
-    },
-    {
-      "name": "settings-pedals-dark",
-      "query": "mode=dark&settings=pedals",
-      "ref": "settings-pedals-dark.png"
-    },
-    {
       "name": "settings-display-light",
       "query": "mode=light&settings=display",
       "ref": "settings-display-light.png"
@@ -499,6 +489,90 @@
     {
       "name": "move-map-customize-dark",
       "query": "mode=dark&widgetDock=map&customize=editing"
+    },
+    {
+      "name": "settings26-controls-light",
+      "query": "mode=light&settings=controls",
+      "ref": "settings-2026/controls-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-controls-dark",
+      "query": "mode=dark&settings=controls",
+      "ref": "settings-2026/controls-dark.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ],
+        "body": [
+          1080,
+          176,
+          840,
+          904
+        ],
+        "outside": [
+          0,
+          0,
+          630,
+          1080
+        ]
+      }
+    },
+    {
+      "name": "settings26-wifi-light",
+      "query": "mode=light&settings=wifi",
+      "ref": "settings-2026/wifi-light.png",
+      "refFrame": true,
+      "regions": {
+        "nav": [
+          630,
+          64,
+          448,
+          1016
+        ],
+        "header": [
+          1080,
+          64,
+          840,
+          112
+        ]
+      }
     }
   ]
 }

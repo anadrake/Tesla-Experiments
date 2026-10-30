@@ -42,7 +42,7 @@ One row per built component. Check here before reading Figma: if it's listed, it
 | Chicklet (Music / Odometer / Tire) | `4596:70708` / `70712` / `70716` | `WidgetBar.tsx` (`chicklet="large"`) | ✅ P4 | Driving collapsed rail |
 | Quick Actions | `4273:450` (in `4300:2105`) | `src/overlays/QuickActions/` | ✅ P5 · updated 2026-10-29 | Pinned dark; Customize button (no action yet); 6 climate toggles (+ Climate fan); 23 apps 6/6/6/5, PNG pictograms `assets/apps/qa/` (192px, cropped per Figma artwork) |
 | App Tile | `4231:398` | `src/components/AppTile/` | ✅ P5 | Default / Pressed; On = blue glyph (Q14) |
-| Settings Window + Navtree + Settings Panel | `4258:39` / `4275:556` | `src/overlays/Settings/` | ✅ P6a | Pages registered in `SettingsWindow.tsx` PAGES; nav items in `navItems.ts` |
+| Settings 2026 / Window + Navtree + Photo / Settings Header | `4932:119` / `4932:14` / `4959:25269` | `src/overlays/Settings/` | ✅ P10.1 (was P6a) | Search row + 19 scrolling categories (`navItems.ts`), photo tokens; pages registered in `SettingsWindow.tsx` PAGES |
 | Tile / Tile Group | `4231:164` / `4231:385` | `src/components/settings/Tiles.tsx` | ✅ P6a | TileChoice (single) · TileToggles · ToggleTile (On / Active) |
 | Switch · Checkbox · Segmented · Select · Slider · Button · Search Field · Divider · Section Title · Field Group · Setting Row | `4229:27` · `4229:46` · `4229:168` · `4230:61` · `4230:120` · `4227:127` · `4230:136` · `4226:33` · `4231:419` · `4275:535` · `4231:420` | `src/components/settings/controls.tsx` | ✅ P6 | All take a `setting` key → `useSetting`; + ToggleButton, Segmented `width="fill"` / controlled mode |
 

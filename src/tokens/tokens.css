@@ -135,6 +135,20 @@
   --color-shadow-panel-2: #75757514;
   --color-shadow-panel-3: #41414112;
   --color-shadow-map: #00000040;
+
+  /* Settings 2026 "photo" palette (Figma 4931:2, matched to the in-car photos) — Phase 10 */
+  --photo-surface-panel: #f0f0f0;
+  --photo-surface-selected: #ffffff;
+  --photo-surface-inset: #e4e5e6;
+  --photo-border-divider: #d5d7d8;
+  --photo-border-default: #bfc1c2;
+  --photo-content-primary: #303234;
+  --photo-content-secondary: #646668;
+  --photo-content-on-accent: #ffffff;
+  --photo-icon: #5b5e61;
+  --photo-accent: #2468ed;
+  --photo-status-amber: #ba8700;
+  --photo-status-alert: #de333d;
 }
 
 [data-mode='dark'] {
@@ -175,6 +189,19 @@
   --color-shadow-panel-1: #0000001a;
   --color-shadow-panel-2: #00000014;
   --color-shadow-panel-3: #00000012;
+
+  --photo-surface-panel: #161719;
+  --photo-surface-selected: #92938f;
+  --photo-surface-inset: #101112;
+  --photo-border-divider: #383b3d;
+  --photo-border-default: #5b5e5f;
+  --photo-content-primary: #f4f4f3;
+  --photo-content-secondary: #d2d3d1;
+  --photo-content-on-accent: #ffffff;
+  --photo-icon: #e4e5e3;
+  --photo-accent: #3d7df7;
+  --photo-status-amber: #e8b829;
+  --photo-status-alert: #f14952;
 }
 
 /* Effect styles */
@@ -210,3 +237,6 @@
 .text-map-street-s { font: 600 12px / 1.2 var(--font-family-map); letter-spacing: 0.03em; }
 .text-overline { font: 600 var(--font-size-18) / 1.2 var(--font-family-ui); letter-spacing: 0.06em; text-transform: uppercase; }
 .text-body-s { font: 500 var(--font-size-14) / 1.2 var(--font-family-ui); letter-spacing: 0; }
+/* Settings 2026 photo styles (Phase 10) */
+.text-photo-header { font: 600 24px / 32px var(--font-family-ui); letter-spacing: 0; }
+.text-photo-navigation { font: 500 26px / 36px var(--font-family-ui); letter-spacing: 0; }

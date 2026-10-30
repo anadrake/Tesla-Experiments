@@ -32,10 +32,10 @@ export type WidgetDock = { panel: 'panel' | 'map'; full: 'left' | 'right' };
 export const DEFAULT_DOCK: WidgetDock = { panel: 'panel', full: 'left' };
 export type ClimateAction = 'frontDefrost' | 'rearDefrost' | 'leftSeat' | 'heatedSteering' | 'climate' | 'wipers';
 
-/** Settings nav tree pages (Figma Navtree 4258:39). 6a: search, controls. 6b: pedals, display, lights. */
+/** Settings nav tree pages (Phase 10: Figma Settings 2026 / Navtree 4932:14). `search` is the Search Settings row. */
 export const SETTINGS_PAGES = [
-  'search', 'controls', 'pedals', 'charging', 'autopilot', 'locks', 'lights',
-  'display', 'trips', 'navigation', 'safety', 'service', 'software', 'upgrades',
+  'search', 'controls', 'dynamics', 'charging', 'self-driving', 'locks', 'lights', 'seats', 'display', 'schedule',
+  'safety', 'service', 'software', 'navigation', 'trips', 'profiles', 'wifi', 'bluetooth', 'audio', 'upgrades',
 ] as const;
 export type SettingsPage = (typeof SETTINGS_PAGES)[number];
 export type SettingValue = string | number | boolean;
