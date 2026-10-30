@@ -56,6 +56,8 @@ const AFTER_FADE = { ...transition.cut, delay: duration.fast };
  */
 const PEEK_IN = 48;
 const PEEK_FADE = { duration: duration.base, ease: easing.gentle }; // slow (0.4) dragged (Anastasiya)
+/** They start halfway through the open morph, not after it (Anastasiya): the clip has nearly closed in by then. */
+const PEEK_START = duration.base / 2;
 const SLOT_MOTION = { ...transition.screen, x: spring, opacity: PEEK_FADE };
 /** The X goes first on close, before the card starts shrinking back (Anastasiya, 2026-10-30: it lingered). */
 const X_OUT = { duration: duration.instant };
@@ -104,10 +106,14 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
   const drag = useRef<PagerGesture | null>(null);
   const reduced = !!useReducedMotion();
   const { frameBg, frameClip, trackView, chrome } = useEditorMotion();
-  // The neighbours peek only once the frame's clip has closed in, and fade out first thing on close (motion.ts frameClip).
+  // The neighbours peek once the frame's clip has mostly closed in (PEEK_START), and fade out first thing on close (motion.ts frameClip).
   const present = useIsPresent();
   const [settled, setSettled] = useState(false);
   const peek = present && settled;
+  useEffect(() => {
+    const t = setTimeout(() => setSettled(true), PEEK_START * 1000);
+    return () => clearTimeout(t);
+  }, []);
   // The peek-in slides on the fade's curve (the spring had it parked before it was half visible); after it, the spring.
   const [entered, setEntered] = useState(false);
   useEffect(() => {
@@ -161,7 +167,6 @@ export function CustomizeTrack({ editor }: { editor: RefObject<HTMLElement> }) {
       <motion.div
         className={styles.frameClip}
         variants={frameClip}
-        onAnimationComplete={(def) => def === 'shown' && setSettled(true)}
       >
         <motion.div
           className={styles.view}
