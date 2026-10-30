@@ -215,7 +215,8 @@ export const useHud = create<HudState>()((set) => ({
     set((s) => ({
       ...closeAll(s),
       settingsOpen: !s.settingsOpen,
-      ...(!s.settingsOpen && s.carView === 'full' ? { carView: 'panel' as const } : {}),
+      // Opening Settings from any car view (Full or Collapsed) returns the car panel to Panel (Anastasiya, 2026-10-29).
+      ...(!s.settingsOpen && s.carView !== 'panel' ? { carView: 'panel' as const } : {}),
     })),
   setSettingsPage: (settingsPage) => set({ settingsPage, settingsTyping: false }),
   settingsTyping: false,

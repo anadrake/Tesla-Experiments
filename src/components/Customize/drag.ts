@@ -10,7 +10,9 @@ import { CARD_H, CARD_W, CENTRE_CARD, FRAME, STRIP_ORIGIN, gapInStrip, stripX } 
  * Drag an app icon from the picker, or hold a track card 0.3s (Q19) and drag it, to a gap between cards:
  * nearing a gap shows the blue insertion bar, staying there opens it into a drop slot (the icon settles into it).
  * Drop on a gap → insert / move there and page to it. Only gaps are targets (Q20). An app already on the track
- * dropped next to itself → nothing changes, its card blinks 3× and the icon floats back. Anywhere else → floats back.
+ * dropped next to itself → nothing changes, its card blinks 3× and the icon floats back. Anywhere else → floats back,
+ * except a track card dragged out of the track's band (onto the map / up into the picker): it dims while out, and
+ * letting go there removes it from the track (Anastasiya, 2026-10-29) — not the last one, like X.
  *
  * Transient UI state (not deep-linked), so it lives here rather than in the HUD store. Positions are editor
  * coordinates (= panel design px, see geometry.ts); pointer sources call start / move / drop / cancel.
@@ -54,6 +56,9 @@ const inView = (x: number) => x >= FRAME.left && x <= FRAME.left + FRAME.width;
  */
 const EDGE = { left: FRAME.left + 90, right: FRAME.left + FRAME.width - 90 };
 
+/** A track card dragged out of the band dims to this — let go and it's removed. */
+const REMOVE_OPACITY = 0.4;
+
 /** Track cards lift a little when held (Q19), then shrink while dragged so the gaps stay visible. */
 export const GHOST_SCALE = { lifted: 1.04, dragging: 0.6 };
 
@@ -71,6 +76,8 @@ interface DragState {
    * centred card, so the strip shifts one card to keep what you're looking at still. `n` retriggers.
    */
   moved: { key: string; before: boolean; n: number } | null;
+  /** A track card is out of the band: dropping now removes it. */
+  removing: boolean;
 }
 
 export const useDrag = create<DragState>()(() => ({
@@ -80,6 +87,7 @@ export const useDrag = create<DragState>()(() => ({
   flash: null,
   gen: {},
   moved: null,
+  removing: false,
 }));
 
 /** React key of an app's track card (changes when the app is moved). */
@@ -121,7 +129,7 @@ export function startDrag(source: DragSource, centre: { x: number; y: number }, 
   } else ghost.scale.jump(1);
   pinned = chasing = false;
   clearTimers();
-  useDrag.setState({ source, phase: 'drag', target: null });
+  useDrag.setState({ source, phase: 'drag', target: null, removing: false });
 }
 
 /** The track card is being dragged now (not just held): shrink it around the finger. */
@@ -189,6 +197,11 @@ export function moveDrag(pointer: { x: number; y: number }) {
   const dir = want && next >= 0 && next < widgetTrack.length ? want : 0; // nowhere to page → no edge zone
 
   const gap = inBand ? nearestGap(pointer.x, target?.gap, source) : undefined;
+  const removing = source.kind === 'track' && !inBand && widgetTrack.length > 1;
+  if (removing !== useDrag.getState().removing) {
+    useDrag.setState({ removing });
+    animate(ghost.opacity, removing ? REMOVE_OPACITY : 1, transition.toggle);
+  }
 
   const lit = gap !== undefined;
   if (dir !== edgeDir || (dir && lit !== edgeLit)) {
@@ -234,7 +247,7 @@ export function moveDrag(pointer: { x: number; y: number }) {
 function settle(to: { x: number; y: number }, opts: { scale?: number; fade?: boolean }) {
   clearTimers();
   pinned = chasing = false;
-  useDrag.setState({ phase: 'settling', target: null });
+  useDrag.setState({ phase: 'settling', target: null, removing: false });
   const done = () => useDrag.setState({ source: null, phase: 'drag' });
   // Reduce Motion: nothing travels — a picker icon fades out where it was dropped, anything else cuts home.
   if (prefersReducedMotion()) {
@@ -260,12 +273,19 @@ function settle(to: { x: number; y: number }, opts: { scale?: number; fade?: boo
 export function cancelDrag() {
   const { source } = useDrag.getState();
   if (!source) return;
+  ghost.opacity.set(1);
   settle(home, { scale: 1 });
 }
 
 export function dropDrag() {
-  const { source, target, phase } = useDrag.getState();
+  const { source, target, phase, removing } = useDrag.getState();
   if (!source || phase !== 'drag') return;
+  if (removing) {
+    // Out of the track → removed: its slot closes up like X, the card fades away where it was let go.
+    const { widgetTrack, setWidgetTrack } = useHud.getState();
+    setWidgetTrack(widgetTrack.filter((id) => id !== source.id));
+    return settle({ x: ghost.x.get(), y: ghost.y.get() }, { fade: true });
+  }
   if (!target) return cancelDrag();
   const { widgetTrack: track, setWidgetTrack, setWidgetPage } = useHud.getState();
   const at = track.indexOf(source.id);
@@ -298,7 +318,7 @@ export function dropDrag() {
 export function resetDrag() {
   clearTimers();
   pinned = chasing = false;
-  useDrag.setState({ source: null, phase: 'drag', target: null, moved: null });
+  useDrag.setState({ source: null, phase: 'drag', target: null, moved: null, removing: false });
 }
 
 /** Client px → editor coords. */

@@ -646,6 +646,60 @@ await open('overlay=apps');
 await tap(1196, 340);
 check('…a tap on a tile still toggles it', (await hud('s => s.climate.climate')) === true && param('overlay') === 'apps', page.url());
 
+// Customize: a track card dragged out of the track (onto the map) dims, and dropping it there removes it (2026-10-29)
+await open('customize=editing');
+{
+  await page.mouse.move(315, 817);
+  await page.mouse.down();
+  await page.waitForTimeout(450);
+  await page.mouse.move(1300, 500, { steps: 12 });
+  await page.waitForTimeout(300);
+  const dim = await page.evaluate(() => +getComputedStyle(document.querySelector('[data-drag-ghost]')).opacity);
+  check('Customize: a track card dragged onto the map dims (will be removed)', dim < 0.6, `opacity ${dim}`);
+  await page.mouse.up();
+  await page.waitForTimeout(900);
+}
+check('…let go there: removed from the track', !(param('widgets') ?? 'music').split(',').includes('music') && (await ghostGone()), page.url());
+await open('customize=editing');
+await page.mouse.move(315, 817);
+await page.mouse.down();
+await page.waitForTimeout(450);
+await page.mouse.move(315, 990, { steps: 8 }); // just under the frame: still in the band
+await page.mouse.move(1300, 990, { steps: 8 });
+await page.mouse.move(315, 817, { steps: 12 }); // …and back over the track: no longer removing
+await page.waitForTimeout(200);
+await page.mouse.up();
+await page.waitForTimeout(900);
+check('…dragged back in before letting go: kept', (param('widgets') ?? 'music').includes('music') || param('widgets') === null, page.url());
+
+// Settings from any car view → the car panel goes to Panel (2026-10-29)
+for (const car of ['full', 'collapsed']) {
+  await open(`car=${car}`);
+  await hud('s => s.toggleSettings()');
+  await page.waitForTimeout(300);
+  check(`Settings opened from car=${car} → car panel back to Panel`, param('car') === null && param('settings') !== null, page.url());
+}
+
+// Self-Driving button: Driving Panel ⇄ Collapsed cross-fades (no slide) (2026-10-29)
+await open('nav=navigating');
+{
+  const samples = await page.evaluate(() => new Promise((res) => {
+    const el = document.querySelector('[class*="_selfDrive_"]').closest('[class*="_layer_"]');
+    const out = [];
+    const t0 = performance.now();
+    window.hud.getState().setCarView('collapsed');
+    const f = () => {
+      const r = el.getBoundingClientRect();
+      out.push([Math.round(r.x), +getComputedStyle(el).opacity]);
+      if (performance.now() - t0 < 450) requestAnimationFrame(f); else res(out);
+    };
+    requestAnimationFrame(f);
+  }));
+  const xs = [...new Set(samples.map((s) => s[0]))];
+  const dipped = Math.min(...samples.map((s) => s[1])) < 0.1;
+  check('Self-Driving Driving Panel → Collapsed: fades, jumps once (no slide)', xs.length === 2 && dipped, JSON.stringify(xs));
+}
+
 check('no page errors', errors.length === 0, errors.join(' | '));
 await browser.close();
 process.exitCode = failed ? 1 : 0;

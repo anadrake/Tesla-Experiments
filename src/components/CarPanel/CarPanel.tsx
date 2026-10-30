@@ -151,7 +151,7 @@ export function CarPanel() {
         <PanelStatusBar view={view} driving={driving} />
         <Telltales view={view} driving={driving} />
 
-        <SelfDriveLayer rect={selfDrive[driving ? 'driving' : 'parked'][view]} full={view === 'full'} />
+        <SelfDriveLayer rect={selfDrive[driving ? 'driving' : 'parked'][view]} view={view} />
 
         {/* The widget bar lives in its own layer above the panel (WidgetBar/WidgetLayer) so it can dock on the map */}
         <motion.div
@@ -208,10 +208,10 @@ function FlipLayer({ rects, view, children }: { rects: Record<CarView, Rect>; vi
   );
 }
 
-/** Into / out of Full it cross-fades rather than slides across the panel (Anastasiya, 2026-10-29). */
-function SelfDriveLayer({ rect, full }: { rect: (typeof selfDrive)['parked']['panel']; full: boolean }) {
+/** Any view change cross-fades it between its spots rather than sliding (Full, and the Driving rail — Anastasiya, 2026-10-29). */
+function SelfDriveLayer({ rect, view }: { rect: (typeof selfDrive)['parked']['panel']; view: CarView }) {
   const shown = rect.opacity !== 0;
-  const { animate, transition: t } = useFadeSwap({ ...rect, opacity: rect.opacity ?? 1 }, full ? 'full' : 'side', true);
+  const { animate, transition: t } = useFadeSwap({ ...rect, opacity: rect.opacity ?? 1 }, view, true);
   const layer = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (layer.current) layer.current.inert = !shown; // React 18 types lack `inert`
