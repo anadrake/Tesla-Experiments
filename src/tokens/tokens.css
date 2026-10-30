@@ -103,7 +103,7 @@
   --color-surface-field: #e0e0e0;
   --color-surface-selected: #d0d1d2;
   --color-surface-sunken: #d0d1d2;
-  --color-move-field: var(--color-surface-sunken); /* 9.4 move field (sketch Rectangle 41) */
+  --color-move-field: #41414180; /* 9.4 move field: grey 900 at 50% (sunken #d0d1d2 blended into the light map — Anastasiya, 2026-10-29) */
   --color-surface-inverse: #414141; /* music chicklet progress (played) */
   --color-surface-glass: #f6f6f6cc; /* Figma vars report #000000f2 for Light; Light refs + component fallback show neutral-50 · 80% — see WORKLOG */
   --color-content-primary: #414141;
