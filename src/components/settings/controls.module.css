@@ -158,10 +158,11 @@
 }
 
 .button[data-variant='primary-transparent'] {
-  /* Start Self-Driving: 2px at 70% (Anastasiya, 2026-10-29 — Figma's literal 3px read heavy) */
-  border: var(--stroke-2) solid color-mix(in srgb, var(--color-border-accent) 70%, transparent);
-  background: var(--color-action-primary-transparent-bg-default);
-  color: var(--color-content-accent);
+  /* Start Self-Driving: 2px (Anastasiya, 2026-10-29 — Figma's literal 3px read heavy); grey, not Figma's blue, with
+     the stroke at half its 70% (Anastasiya, 2026-10-30). Fill mirrors the blue one: the colour at 25%. */
+  border: var(--stroke-2) solid color-mix(in srgb, var(--color-border-strong) 35%, transparent);
+  background: color-mix(in srgb, var(--color-border-strong) 25%, transparent);
+  color: var(--color-content-primary);
 }
 
 /* ---- Search Field ---- */
