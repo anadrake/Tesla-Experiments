@@ -55,7 +55,7 @@ const AFTER_FADE = { ...transition.cut, delay: duration.fast };
  * fade is slow in / slow out, not the front-loaded standard curve that had them at 60% in 0.1s.
  */
 const PEEK_IN = 48;
-const PEEK_FADE = { duration: duration.slow, ease: easing.gentle };
+const PEEK_FADE = { duration: duration.base, ease: easing.gentle }; // slow (0.4) dragged (Anastasiya)
 const SLOT_MOTION = { ...transition.screen, x: spring, opacity: PEEK_FADE };
 /** The X goes first on close, before the card starts shrinking back (Anastasiya, 2026-10-30: it lingered). */
 const X_OUT = { duration: duration.instant };
